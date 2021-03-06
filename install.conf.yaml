@@ -1,16 +1,29 @@
-- clean: ['~']
+- clean: ["~"]
 
 - link:
+    ~/.asdf: asdf
     ~/.bash_profile: bash_profile
     ~/.bashrc: bashrc
     ~/.bash_logout: bash_logout
     ~/.editorconfig: editorconfig
     ~/.gitconfig: gitconfig
+    ~/.nanorc: nanorc
+    ~/.npmrc: npmrc
+    ~/.p10k.zsh: p10k.zsh
     ~/.zshrc: zshrc
+    ~/.oh-my-zsh/custom/alias.zsh: zsh/alias.zsh
+    ~/.oh-my-zsh/custom/plugins/:
+      create: true
+      glob: true
+      path: zsh/plugins/*
+    ~/.oh-my-zsh/custom/themes/:
+      create: true
+      glob: true
+      path: zsh/themes/*
 
 - create:
     ~/.ssh:
       mode: 0700
 
 - shell:
-  - [git submodule update --init --recursive, Installing submodules]
+    - [git submodule update --init --recursive, Installing submodules]
