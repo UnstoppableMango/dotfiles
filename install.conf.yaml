@@ -4,8 +4,13 @@
     ~/.bash_profile: bash_profile
     ~/.bashrc: bashrc
     ~/.bash_logout: bash_logout
+    ~/.editorconfig: editorconfig
     ~/.gitconfig: gitconfig
     ~/.zshrc: zshrc
+
+- create:
+    ~/.ssh:
+      mode: 0700
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
