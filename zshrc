@@ -84,6 +84,7 @@ VSCODE=code-insiders
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  npm
   nvm
   vscode
   #react-native
