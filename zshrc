@@ -88,7 +88,7 @@ plugins=(
   nvm
   vscode
   #react-native
-  #golang
+  golang
   #asdf
   #dotnet
   docker
@@ -141,3 +141,6 @@ zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
 # add Pulumi to the PATH
 export PATH=$PATH:$HOME/.pulumi/bin
+
+export GOPATH=$HOME/go
+export PATH=$PATH:$HOME/go/bin
