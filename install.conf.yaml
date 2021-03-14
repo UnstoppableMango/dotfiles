@@ -10,6 +10,9 @@
     ~/.nanorc: nanorc
     ~/.p10k.zsh: p10k.zsh
     ~/.zshrc: zshrc
+    ~/.oh-my-zsh:
+      create: true
+      path: oh-my-zsh
     ~/.oh-my-zsh/custom/alias.zsh: zsh/alias.zsh
     ~/.oh-my-zsh/custom/plugins/:
       create: true
