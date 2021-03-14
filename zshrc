@@ -90,7 +90,7 @@ plugins=(
   #react-native
   golang
   #asdf
-  #dotnet
+  dotnet
   docker
   archlinux
   direnv
