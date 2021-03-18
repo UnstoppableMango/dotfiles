@@ -105,6 +105,9 @@ plugins=(
   zsh-syntax-highlighting
 )
 
+# https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/nvm
+export NVM_AUTOLOAD=1
+
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
