@@ -74,9 +74,6 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-## https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/vscode#using-multiple-flavours
-VSCODE=code-insiders
-
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
@@ -105,8 +102,16 @@ plugins=(
   zsh-syntax-highlighting
 )
 
+zstyle ':completion:*:*:docker:*' option-stacking yes
+zstyle ':completion:*:*:docker-*:*' option-stacking yes
+
+## https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/vscode#using-multiple-flavours
+VSCODE=code-insiders
+
 # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/nvm
-export NVM_AUTOLOAD=1
+NVM_AUTOLOAD=1
+
+zstyle :omz:plugins:keychain options --quiet
 
 source $ZSH/oh-my-zsh.sh
 
@@ -135,11 +140,6 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-
-zstyle :omz:plugins:keychain options --quiet
-
-zstyle ':completion:*:*:docker:*' option-stacking yes
-zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
