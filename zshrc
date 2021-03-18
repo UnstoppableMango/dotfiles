@@ -143,3 +143,5 @@ export PATH=$PATH:$HOME/.pulumi/bin
 
 export GOPATH=$HOME/go
 export PATH=$PATH:$HOME/go/bin
+
+export KUBECONFIG=$KUBECONFIG:$HOME/.kube/the-cluster.yaml
