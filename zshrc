@@ -94,8 +94,8 @@ plugins=(
   helm
   kubectl
   rsync
-  ssh-agent
   keychain
+  # ssh-agent
   systemd
   zsh-interactive-cd
   zsh-autosuggestions
