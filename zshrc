@@ -96,6 +96,7 @@ plugins=(
   rsync
   keychain
   # ssh-agent
+  thefuck
   systemd
   zsh-interactive-cd
   zsh-autosuggestions
