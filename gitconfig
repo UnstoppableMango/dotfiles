@@ -1,3 +1,10 @@
 [user]
 	email = ecr.referee@hotmail.com
 	name = Erik Rasmussen
+	signingKey = A2FDA4B840621240D8C2F0363F0AE5F71679A2EE
+[gpg]
+	program = /usr/bin/gpg
+[commit]
+	gpgSign = true
+[tag]
+	forceSignAnnotated = true
