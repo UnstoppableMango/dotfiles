@@ -152,3 +152,5 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$HOME/go/bin
 
 export KUBECONFIG=$KUBECONFIG:$HOME/.kube/the-cluster.yaml
+
+export PATH=$PATH:$HOME/.local/bin
