@@ -145,6 +145,9 @@ source $ZSH/oh-my-zsh.sh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+export DOTNET_NOLOGO=true
+export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
+
 # add Pulumi to the PATH
 export PATH=$PATH:$HOME/.pulumi/bin
 
@@ -154,3 +157,4 @@ export PATH=$PATH:$HOME/go/bin
 export KUBECONFIG=$KUBECONFIG:$HOME/.kube/the-cluster.yaml
 
 export PATH=$PATH:$HOME/.local/bin
+export PATH=$PATH:$HOME/.dotnet/tools
