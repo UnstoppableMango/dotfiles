@@ -87,6 +87,7 @@ plugins=(
   #react-native
   golang
   #asdf
+  deno
   dotnet
   docker
   archlinux
