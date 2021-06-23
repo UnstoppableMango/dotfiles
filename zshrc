@@ -158,3 +158,6 @@ export KUBECONFIG=$KUBECONFIG:$HOME/.kube/the-cluster.yaml
 
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.dotnet/tools
+
+# https://github.com/standard-error/lvmcache-statistics/blob/master/lvmcache-statistics.sh
+alias lvs-cache='lvs -a -o +devices,cache_total_blocks,cache_used_blocks,cache_dirty_blocks,cache_read_hits,cache_read_misses,cache_write_hits,cache_write_misses,segtype'
