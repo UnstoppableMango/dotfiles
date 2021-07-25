@@ -161,7 +161,7 @@ export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.dotnet/tools
 
 export DENO_DIR=$HOME/.deno
-export PATH=$PATH:$DENO_DIR/bin
+# export PATH=$PATH:$DENO_DIR/bin # This appears to already be on the path
 
 # https://github.com/standard-error/lvmcache-statistics/blob/master/lvmcache-statistics.sh
 alias lvs-cache='lvs -a -o +devices,cache_total_blocks,cache_used_blocks,cache_dirty_blocks,cache_read_hits,cache_read_misses,cache_write_hits,cache_write_misses,segtype'
