@@ -82,6 +82,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(
   git
   npm
+  yarn
   nvm
   vscode
   #react-native
