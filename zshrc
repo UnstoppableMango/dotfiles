@@ -150,9 +150,6 @@ source $ZSH/oh-my-zsh.sh
 export DOTNET_NOLOGO=true
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 
-# add Pulumi to the PATH
-export PATH=$PATH:$HOME/.pulumi/bin
-
 export GOPATH=$HOME/go
 export PATH=$PATH:$HOME/go/bin
 
