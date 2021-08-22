@@ -91,6 +91,7 @@ plugins=(
   deno
   dotnet
   docker
+  docker-compose
   archlinux
   direnv
   helm
