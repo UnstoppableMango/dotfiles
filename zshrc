@@ -154,7 +154,9 @@ export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 export GOPATH=$HOME/go
 export PATH=$PATH:$HOME/go/bin
 
-export KUBECONFIG=$KUBECONFIG:$HOME/.kube/the-cluster.yaml
+if [ -f "$HOME/.kube/the-cluster.yaml" ]; then
+  export KUBECONFIG=$KUBECONFIG:$HOME/.kube/the-cluster.yaml;
+fi
 
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.dotnet/tools
