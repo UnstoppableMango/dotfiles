@@ -13,6 +13,8 @@
     ~/.oh-my-zsh:
       create: true
       path: oh-my-zsh
+
+- link:
     ~/.oh-my-zsh/custom/alias.zsh: zsh/alias.zsh
     ~/.oh-my-zsh/custom/plugins/:
       create: true
