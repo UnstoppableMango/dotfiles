@@ -114,6 +114,10 @@ VSCODE=code-insiders
 
 # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/nvm
 NVM_AUTOLOAD=1
+NVM_SYMLINK_CURRENT=true
+if [ -d "$HOME/.nvm/current/bin" ] ; then
+    PATH="$HOME/.nvm/current/bin:$PATH"
+fi
 
 zstyle :omz:plugins:keychain options --quiet
 
