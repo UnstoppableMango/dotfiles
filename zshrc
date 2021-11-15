@@ -162,6 +162,10 @@ if [ -f "$HOME/.kube/the-cluster.yaml" ]; then
   export KUBECONFIG=$KUBECONFIG:$HOME/.kube/the-cluster.yaml;
 fi
 
+if [ -f "$HOME/.kube/kpi.yaml" ]; then
+  export KUBECONFIG=$KUBECONFIG:$HOME/.kube/kpi.yaml;
+fi
+
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.dotnet/tools
 
