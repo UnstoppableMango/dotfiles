@@ -119,7 +119,8 @@ if [ -d "$HOME/.nvm/current/bin" ] ; then
     PATH="$HOME/.nvm/current/bin:$PATH"
 fi
 
-zstyle :omz:plugins:keychain agents gpg,ssh options --quiet
+zstyle :omz:plugins:keychain agents gpg,ssh
+zstyle :omz:plugins:keychain options --quiet
 
 source $ZSH/oh-my-zsh.sh
 
