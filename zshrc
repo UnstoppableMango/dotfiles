@@ -179,3 +179,5 @@ export GPG_TTY=$(tty)
 
 # add Pulumi to the PATH
 export PATH=$PATH:$HOME/.pulumi/bin
+
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
