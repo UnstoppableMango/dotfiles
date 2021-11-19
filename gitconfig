@@ -8,3 +8,5 @@
 	gpgSign = true
 [tag]
 	forceSignAnnotated = true
+[core]
+	editor = micro
