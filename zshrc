@@ -101,10 +101,18 @@ plugins=(
   # ssh-agent
   thefuck
   systemd
-  zsh-interactive-cd
+  # zsh-interactive-cd
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
+
+if [[ -n $SSH_CONNECTION ]]; then
+  plugins += keychain
+
+  zstyle :omz:plugins:keychain agents gpg,ssh
+  zstyle :omz:plugins:keychain identities id_rsa
+  # zstyle :omz:plugins:keychain options --quiet
+fi
 
 zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
@@ -118,10 +126,6 @@ NVM_SYMLINK_CURRENT=true
 if [ -d "$HOME/.nvm/current/bin" ] ; then
     PATH="$HOME/.nvm/current/bin:$PATH"
 fi
-
-# zstyle :omz:plugins:keychain agents gpg,ssh
-# zstyle :omz:plugins:keychain identities id_rsa
-# zstyle :omz:plugins:keychain options --quiet
 
 source $ZSH/oh-my-zsh.sh
 
