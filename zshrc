@@ -107,7 +107,7 @@ plugins=(
 )
 
 if [[ -n $SSH_CONNECTION ]]; then
-  plugins += keychain
+  plugins+=keychain
 
   zstyle :omz:plugins:keychain agents gpg,ssh
   zstyle :omz:plugins:keychain identities id_rsa
