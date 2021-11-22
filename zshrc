@@ -117,8 +117,10 @@ fi
 zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
-## https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/vscode#using-multiple-flavours
-VSCODE=code-insiders
+if [ -f /usr/bin/code-insiders ]; then
+  ## https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/vscode#using-multiple-flavours
+  VSCODE=code-insiders
+fi
 
 # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/nvm
 NVM_AUTOLOAD=1
