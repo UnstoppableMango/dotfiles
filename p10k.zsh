@@ -1591,6 +1591,11 @@
   # really need it.
   typeset -g POWERLEVEL9K_DISABLE_HOT_RELOAD=true
 
+  # Terminal resize mess
+  # https://github.com/romkatv/powerlevel10k#horrific-mess-when-resizing-terminal-window
+  typeset -g POWERLEVEL9K_TERM_SHELL_INTEGRATION=true
+  typeset -g POWERLEVEL9K_SHOW_RULER=false
+
   # If p10k is already loaded, reload configuration.
   # This works even with POWERLEVEL9K_DISABLE_HOT_RELOAD=true.
   (( ! $+functions[p10k] )) || p10k reload
