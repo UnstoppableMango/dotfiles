@@ -190,3 +190,7 @@ export GPG_TTY=$(tty)
 export PATH=$PATH:$HOME/.pulumi/bin
 
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+if [ -n "${KITTY_PID+1}" ]; then
+  alias ssh="kitty +kitten ssh"
+fi
