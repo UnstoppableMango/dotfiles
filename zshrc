@@ -191,7 +191,7 @@ alias lvs-cache='lvs -a -o +devices,cache_total_blocks,cache_used_blocks,cache_d
 # Allow unlocking key over ssh connections
 if [[ -n $SSH_CONNECTION ]]; then
   export GPG_TTY=$(tty)
-else
+fi
 
 # Use kitty ssh when in a kitty terminal
 if [ -n "${KITTY_PID+1}" ]; then
