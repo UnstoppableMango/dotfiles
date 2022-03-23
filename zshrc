@@ -111,8 +111,9 @@ if [[ -n $SSH_CONNECTION ]]; then
   plugins+=keychain
 
   zstyle :omz:plugins:keychain agents gpg,ssh
+  # TODO: Will fail trying to load the GPG key, something about pinentry
   zstyle :omz:plugins:keychain identities id_rsa A2FDA4B840621240D8C2F0363F0AE5F71679A2EE
-  # zstyle :omz:plugins:keychain options --quiet
+  zstyle :omz:plugins:keychain options --quiet
 fi
 
 zstyle ':completion:*:*:docker:*' option-stacking yes
