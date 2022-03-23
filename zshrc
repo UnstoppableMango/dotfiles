@@ -123,7 +123,8 @@ if [ -f /usr/bin/code-insiders ]; then
 fi
 
 # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/nvm
-NVM_AUTOLOAD=1
+NVM_LAZY=1
+# NVM_AUTOLOAD=1 # Is slow and lazy doesn't seem to help
 NVM_SYMLINK_CURRENT=true
 if [ -d "$HOME/.nvm/current/bin" ] ; then
     PATH="$HOME/.nvm/current/bin:$PATH"
@@ -163,35 +164,45 @@ export VISUAL="$EDITOR"
 
 # TODO: Figure out where PATH duplicates are coming from
 
+# .NET vars
 export DOTNET_NOLOGO=true
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 
+# Go stuff
 export GOPATH=$HOME/go
 export PATH=$PATH:$HOME/go/bin
 
+# Add deno stuff
+export DENO_DIR=$HOME/.deno
+export PATH=$PATH:$DENO_DIR/bin
+
+# Add Pulumi to the PATH
+export PATH=$PATH:$HOME/.pulumi/bin
+
+# Add krew to the PATH
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+# Add local binaries to the PATH
+export PATH=$PATH:$HOME/.local/bin
+
+# https://github.com/standard-error/lvmcache-statistics/blob/master/lvmcache-statistics.sh
+alias lvs-cache='lvs -a -o +devices,cache_total_blocks,cache_used_blocks,cache_dirty_blocks,cache_read_hits,cache_read_misses,cache_write_hits,cache_write_misses,segtype'
+
+# Allow unlocking key over ssh connections
+if [[ -n $SSH_CONNECTION ]]; then
+  export GPG_TTY=$(tty)
+else
+
+# Use kitty ssh when in a kitty terminal
+if [ -n "${KITTY_PID+1}" ]; then
+  alias ssh="kitty +kitten ssh"
+fi
+
+# Add kubeconfig files if they exist
 if [ -f "$HOME/.kube/the-cluster.yaml" ]; then
   export KUBECONFIG=$KUBECONFIG:$HOME/.kube/the-cluster.yaml;
 fi
 
 if [ -f "$HOME/.kube/kpi.yaml" ]; then
   export KUBECONFIG=$KUBECONFIG:$HOME/.kube/kpi.yaml;
-fi
-
-export PATH=$PATH:$HOME/.local/bin
-
-export DENO_DIR=$HOME/.deno
-export PATH=$PATH:$DENO_DIR/bin
-
-# https://github.com/standard-error/lvmcache-statistics/blob/master/lvmcache-statistics.sh
-alias lvs-cache='lvs -a -o +devices,cache_total_blocks,cache_used_blocks,cache_dirty_blocks,cache_read_hits,cache_read_misses,cache_write_hits,cache_write_misses,segtype'
-
-export GPG_TTY=$(tty)
-
-# add Pulumi to the PATH
-export PATH=$PATH:$HOME/.pulumi/bin
-
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-
-if [ -n "${KITTY_PID+1}" ]; then
-  alias ssh="kitty +kitten ssh"
 fi
