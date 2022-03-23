@@ -99,6 +99,7 @@ plugins=(
   rsync
   # keychain
   # ssh-agent
+  gpg-agent
   thefuck
   systemd
   # zsh-interactive-cd
@@ -187,11 +188,6 @@ export PATH=$PATH:$HOME/.local/bin
 
 # https://github.com/standard-error/lvmcache-statistics/blob/master/lvmcache-statistics.sh
 alias lvs-cache='lvs -a -o +devices,cache_total_blocks,cache_used_blocks,cache_dirty_blocks,cache_read_hits,cache_read_misses,cache_write_hits,cache_write_misses,segtype'
-
-# Allow unlocking key over ssh connections
-if [[ -n $SSH_CONNECTION ]]; then
-  export GPG_TTY=$(tty)
-fi
 
 # Use kitty ssh when in a kitty terminal
 if [ -n "${KITTY_PID+1}" ]; then
