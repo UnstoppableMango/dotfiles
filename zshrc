@@ -111,7 +111,7 @@ if [[ -n $SSH_CONNECTION ]]; then
   plugins+=keychain
 
   zstyle :omz:plugins:keychain agents gpg,ssh
-  # zstyle :omz:plugins:keychain identities id_rsa
+  zstyle :omz:plugins:keychain identities id_rsa 1D97A9A598C459F2A26247F430748326BD50DB4D
   # zstyle :omz:plugins:keychain options --quiet
 fi
 
