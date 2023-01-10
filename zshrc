@@ -187,6 +187,9 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 # Add local binaries to the PATH
 export PATH=$PATH:$HOME/.local/bin
 
+# Add rust/cargo binaries to the PATH
+export PATH=$PATH:$HOME/.cargo/bin
+
 # https://github.com/standard-error/lvmcache-statistics/blob/master/lvmcache-statistics.sh
 alias lvs-cache='lvs -a -o +devices,cache_total_blocks,cache_used_blocks,cache_dirty_blocks,cache_read_hits,cache_read_misses,cache_write_hits,cache_write_misses,segtype'
 
