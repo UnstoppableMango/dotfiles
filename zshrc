@@ -206,3 +206,6 @@ fi
 if [ -f "$HOME/.kube/kpi.yaml" ]; then
   export KUBECONFIG=$KUBECONFIG:$HOME/.kube/kpi.yaml;
 fi
+
+# opam configuration
+[[ ! -r /home/erik/.opam/opam-init/init.zsh ]] || source /home/erik/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
