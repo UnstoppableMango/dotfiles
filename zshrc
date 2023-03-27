@@ -85,23 +85,23 @@ plugins=(
   yarn
   nvm
   vscode
-  #react-native
+  react-native
   golang
   #asdf
-  deno
+  # deno
   dotnet
   docker
   docker-compose
-  archlinux
-  direnv
-  helm
+  # archlinux
+  # direnv
+  # helm
   kubectl
   rsync
   # keychain
   # ssh-agent
-  gpg-agent
+  # gpg-agent
   thefuck
-  systemd
+  # systemd
   # zsh-interactive-cd
   zsh-autosuggestions
   zsh-syntax-highlighting
@@ -218,3 +218,8 @@ if command -v &> /dev/null; then
 	# Load Angular CLI autocompletion.
 	source <(ng completion script)
 fi
+
+# opam configuration
+[[ ! -r /home/erik/.opam/opam-init/init.zsh ]] || source /home/erik/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
+
+eval "$(/usr/local/bin/brew shellenv)"
