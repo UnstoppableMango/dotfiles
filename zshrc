@@ -164,6 +164,12 @@ export VISUAL="$EDITOR"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+case `hostname` in
+  darter)
+    typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION=$' \uF32A'
+  ;;
+esac
+
 export MOZ_USE_XINPUT2=1
 
 # TODO: Figure out where PATH duplicates are coming from
