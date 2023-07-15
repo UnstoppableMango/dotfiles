@@ -164,6 +164,8 @@ export VISUAL="$EDITOR"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+export MOZ_USE_XINPUT2=1
+
 # TODO: Figure out where PATH duplicates are coming from
 
 # .NET vars
