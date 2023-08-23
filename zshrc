@@ -184,8 +184,9 @@ export DOTNET_NOLOGO=true
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 
 # Go stuff
-export GOPATH=$HOME/go
-export PATH=$PATH:$HOME/go/bin
+#export GOPATH=$HOME/go
+#export PATH=$PATH:$HOME/go/bin
+export PATH="$PATH:/usr/local/go/bin"
 
 # Add deno stuff
 export DENO_DIR=$HOME/.deno
@@ -231,3 +232,5 @@ export PATH="/Users/erasmussen/.rd/bin:$PATH"
 eval $(thefuck --alias)
 
 export PATH=$PATH:$HOME/.dotnet/tools
+
+. <(kubebuilder completion zsh)
