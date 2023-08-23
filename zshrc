@@ -229,3 +229,5 @@ export PATH="/Users/erasmussen/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
 eval $(thefuck --alias)
+
+export PATH=$PATH:$HOME/.dotnet/tools
