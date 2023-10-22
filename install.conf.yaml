@@ -1,5 +1,8 @@
 - clean: ["~"]
 
+- shell:
+    - [git submodule update --init --recursive, Installing submodules]
+
 - link:
     ~/.asdf: asdf
     ~/.bash_profile: bash_profile
@@ -38,6 +41,3 @@
 - create:
     ~/.ssh:
       mode: 0700
-
-- shell:
-    - [git submodule update --init --recursive, Installing submodules]
