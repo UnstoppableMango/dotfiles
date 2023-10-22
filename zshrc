@@ -206,14 +206,10 @@ if [ -n "${KITTY_PID+1}" ]; then
   alias ssh="kitty +kitten ssh"
 fi
 
-# Add kubeconfig files if they exist
-if [ -f "$HOME/.kube/the-cluster.yaml" ]; then
-  export KUBECONFIG=$KUBECONFIG:$HOME/.kube/the-cluster.yaml;
-fi
-
-if [ -f "$HOME/.kube/kpi.yaml" ]; then
-  export KUBECONFIG=$KUBECONFIG:$HOME/.kube/kpi.yaml;
-fi
-
 # opam configuration
 [[ ! -r /home/erik/.opam/opam-init/init.zsh ]] || source /home/erik/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
+
+if command -v &> /dev/null; then
+	# Load Angular CLI autocompletion.
+	source <(ng completion script)
+fi
