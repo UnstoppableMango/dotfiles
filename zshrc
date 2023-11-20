@@ -119,10 +119,13 @@ fi
 zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
+VSCODE=code
 if [ -f /usr/bin/code-insiders ]; then
   ## https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/vscode#using-multiple-flavours
   VSCODE=code-insiders
 fi
+
+NVM_HOMEBREW=$(brew --prefix nvm)
 
 # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/nvm
 NVM_LAZY=1
@@ -142,11 +145,11 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
+#if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='micro'
-else
-  export EDITOR='code-insiders --wait --new-window'
-fi
+#else
+#  export EDITOR="$VSCODE --wait --new-window"
+#fi
 export VISUAL="$EDITOR"
 
 # Compilation flags
@@ -202,9 +205,9 @@ export PATH=$PATH:$HOME/.cargo/bin
 alias lvs-cache='lvs -a -o +devices,cache_total_blocks,cache_used_blocks,cache_dirty_blocks,cache_read_hits,cache_read_misses,cache_write_hits,cache_write_misses,segtype'
 
 # Use kitty ssh when in a kitty terminal
-if [ -n "${KITTY_PID+1}" ]; then
-  alias ssh="kitty +kitten ssh"
-fi
+#if [ -n "${KITTY_PID+1}" ]; then
+#  alias ssh="kitty +kitten ssh"
+#fi
 
 # opam configuration
 [[ ! -r /home/erik/.opam/opam-init/init.zsh ]] || source /home/erik/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null

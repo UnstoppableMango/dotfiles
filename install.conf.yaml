@@ -12,7 +12,9 @@
     ~/.gitconfig: gitconfig
     ~/.nanorc: nanorc
     ~/.p10k.zsh: p10k.zsh
-    ~/.zshrc: zshrc
+    ~/.zshrc:
+      path: zshrc
+      force: true
     ~/.oh-my-zsh:
       create: true
       path: oh-my-zsh
