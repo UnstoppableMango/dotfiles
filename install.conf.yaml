@@ -17,6 +17,7 @@
       force: true
     ~/.oh-my-zsh:
       create: true
+      force: true
       path: oh-my-zsh
 
 - link:
