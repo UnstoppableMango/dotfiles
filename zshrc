@@ -119,16 +119,6 @@ fi
 zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
-VSCODE=code
-if [ -f /usr/bin/code-insiders ]; then
-  ## https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/vscode#using-multiple-flavours
-  VSCODE=code-insiders
-fi
-
-if [[ "$(hostname)" == "WDXKR4W2H2H57" ]]; then
-    NVM_HOMEBREW=$(brew --prefix nvm)
-fi
-
 # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/nvm
 NVM_LAZY=1
 # NVM_AUTOLOAD=1 # Is slow and lazy doesn't seem to help
@@ -147,11 +137,11 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-#if [[ -n $SSH_CONNECTION ]]; then
+# if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='micro'
-#else
-#  export EDITOR="$VSCODE --wait --new-window"
-#fi
+# else
+#   export EDITOR='code-insiders --wait --new-window'
+# fi
 export VISUAL="$EDITOR"
 
 # Compilation flags
@@ -218,3 +208,19 @@ if command -v &> /dev/null; then
 	# Load Angular CLI autocompletion.
 	source <(ng completion script)
 fi
+
+alias p='pulumi'
+alias pp='pulumi preview'
+alias ppd='pulumi preview --diff'
+alias pup='pulumi up -yf'
+alias pd='pulumi destroy -yf'
+
+# bun completions
+[ -s "/home/erik/.dotfiles/oh-my-zsh/completions/_bun" ] && source "/home/erik/.dotfiles/oh-my-zsh/completions/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# add Pulumi to the PATH
+export PATH=$PATH:/home/erik/.pulumi/bin
