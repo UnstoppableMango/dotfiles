@@ -1,10 +1,9 @@
 [user]
 	email = erik.rasmussen@unmango.dev
 	name = Erik Rasmussen
-	signingKey = 4E9CB6FBED6916091600A624994B7134F0AA1F27
+	signingKey = 27DA5D049D4EEE32015BE9C29E0C29600DBC6D14
 [gpg]
-	program = gpg2
-	format = openpgp
+	program = gpg
 [commit]
 	gpgSign = true
 [tag]
@@ -12,21 +11,10 @@
 [core]
 	editor = micro
 [credential]
-	helper = /usr/lib/git-core/git-credential-libsecret
-[filter "lfs"]
-	process = git-lfs filter-process
-	required = true
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-[gpg "ssh"]
-	program = ssh-keygen
-	allowedSignersFile = 
+	helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
 [push]
-	autoSetupRemotel = true
+	autoSetupRemove = true
+	autoSetupRemove = true
 	autoSetupRemote = true
-[credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+[init]
+	defaultBranch = main

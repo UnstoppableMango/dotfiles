@@ -172,10 +172,13 @@ export MOZ_USE_XINPUT2=1
 # .NET vars
 export DOTNET_NOLOGO=true
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
+export DOTNET_ROOT="$HOME/.dotnet"
+export PATH=$PATH:$DOTNET_ROOT
 
 # Go stuff
 export GOPATH=$HOME/go
 export PATH=$PATH:$HOME/go/bin
+export PATH=$PATH:/usr/local/go/bin
 
 # Add deno stuff
 export DENO_DIR=$HOME/.deno
@@ -209,18 +212,36 @@ if command -v &> /dev/null; then
 	source <(ng completion script)
 fi
 
+# opam configuration
+[[ ! -r /home/erik/.opam/opam-init/init.zsh ]] || source /home/erik/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+if command -v ng>/dev/null; then
+  # Load Angular CLI autocompletion.
+  source <(ng completion script)
+fi
+
 alias p='pulumi'
-alias pp='pulumi preview'
-alias ppd='pulumi preview --diff'
 alias pup='pulumi up -yf'
+alias pp='pulumi preview --suppress-outputs'
+alias ppd='pulumi preview --diff'
 alias pd='pulumi destroy -yf'
+alias t='talosctl'
+alias tl='talosctl list'
+
+[ -f "/home/erik/.ghcup/env" ] && source "/home/erik/.ghcup/env" # ghcup-env
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 # bun completions
-[ -s "/home/erik/.dotfiles/oh-my-zsh/completions/_bun" ] && source "/home/erik/.dotfiles/oh-my-zsh/completions/_bun"
+[ -s "/home/erik/.bun/_bun" ] && source "/home/erik/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# add Pulumi to the PATH
-export PATH=$PATH:/home/erik/.pulumi/bin
+export DPRINT_INSTALL="/home/erik/.dprint"
+export PATH="$DPRINT_INSTALL/bin:$PATH"
