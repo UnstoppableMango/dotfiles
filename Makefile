@@ -1,6 +1,7 @@
 NIX ?= nix
 
 build: result
+update: flake.lock
 
 format fmt:
 	$(NIX) fmt
