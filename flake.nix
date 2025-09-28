@@ -23,9 +23,9 @@
 
       nixosConfigurations.hades = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [
-          nixos-hardware.nixosModules.asus-rog-strix-x570e
-          nixos-hardware.nixosModules.common-gpu-nvidia
+        modules = with nixos-hardware.nixosModules; [
+          asus-rog-strix-x570e
+          common-gpu-nvidia
           ./hosts/hades/configuration.nix
           {
             home-manager.useGlobalPkgs = true;

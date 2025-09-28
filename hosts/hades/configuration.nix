@@ -6,10 +6,10 @@
 
 {
   imports = [
-    <nixos-hardware/asus/rog-strix/x570e>
-    <nixos-hardware/common/gpu/nvidia/turing>
-    <nixos-hardware/common/pc/ssd>
-    <home-manager/nixos>
+    # <nixos-hardware/asus/rog-strix/x570e>
+    # <nixos-hardware/common/gpu/nvidia/turing>
+    # <nixos-hardware/common/pc/ssd>
+    # <home-manager/nixos>
     ./cachix.nix
     /etc/nixos/hardware-configuration.nix
   ];
