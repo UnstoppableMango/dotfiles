@@ -2,17 +2,13 @@ NIX ?= nix
 
 SRC != find -path '*.nix' -printf '%P\n'
 
-build: result
+check:
+	$(NIX) flake check
+
 update: flake.lock
 
 format fmt:
 	$(NIX) fmt
-
-check:
-	$(NIX) flake check
-
-result: ${SRC}
-	$(NIX) build
 
 flake.lock: ${SRC}
 	$(NIX) flake update

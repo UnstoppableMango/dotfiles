@@ -1,5 +1,5 @@
 {
-	desktops = import ./desktops;
-	editors = import ./editors;
-	shells = import ./shells;
+  desktops = import ./desktops;
+  editors = import ./editors;
+  shells = import ./shells;
 }

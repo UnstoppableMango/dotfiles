@@ -24,4 +24,10 @@
       totem # video player
     ]
   );
+
+  packages = with pkgs; [
+    chrome-gnome-shell
+    gnome-shell-extensions
+    gnome-settings-daemon
+  ];
 }

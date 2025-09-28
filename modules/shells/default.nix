@@ -1,5 +1,5 @@
 {
-	bash = import ./bash;
-	fish = import ./fish;
-	zsh = import ./zsh;
+  bash = import ./bash;
+  fish = import ./fish;
+  zsh = import ./zsh;
 }

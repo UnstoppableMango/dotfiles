@@ -1,3 +1,3 @@
 {
-	gnome = import ./gnome;
+  gnome = import ./gnome;
 }
