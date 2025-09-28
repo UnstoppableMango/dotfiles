@@ -16,5 +16,13 @@
     }:
     {
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;
+
+      homeConfigurations = {
+        "erik@hades" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+
+          modules = [ "./home.nix" ];
+        };
+      };
     };
 }
