@@ -6,12 +6,8 @@
 
 {
   imports = [
-    # <nixos-hardware/asus/rog-strix/x570e>
-    # <nixos-hardware/common/gpu/nvidia/turing>
-    # <nixos-hardware/common/pc/ssd>
-    # <home-manager/nixos>
-    ./cachix.nix
-    /etc/nixos/hardware-configuration.nix
+    # ./cachix.nix
+    ./hardware-configuration.nix
   ];
 
   fileSystems = {
@@ -169,228 +165,228 @@
     ];
   };
 
-  home-manager = {
-    useUserPackages = true;
-    useGlobalPkgs = true;
-    backupFileExtension = ".bak";
-  };
+  # home-manager = {
+  #   useUserPackages = true;
+  #   useGlobalPkgs = true;
+  #   backupFileExtension = ".bak";
+  # };
 
-  home-manager.users.erik =
-    { pkgs, lib, ... }:
-    {
-      nix = {
-        settings.experimental-features = [
-          "nix-command"
-          "flakes"
-        ];
-      };
+  # home-manager.users.erik =
+  #   { pkgs, lib, ... }:
+  #   {
+  #     nix = {
+  #       settings.experimental-features = [
+  #         "nix-command"
+  #         "flakes"
+  #       ];
+  #     };
 
-      home.packages = with pkgs; [
-        htop
-        thefuck
-        neofetch
-        seabird
-        gh
-        github-desktop
+  #     home.packages = with pkgs; [
+  #       htop
+  #       thefuck
+  #       neofetch
+  #       seabird
+  #       gh
+  #       github-desktop
 
-        nix-zsh-completions
-        zsh-nix-shell
-        zsh-powerlevel10k
+  #       nix-zsh-completions
+  #       zsh-nix-shell
+  #       zsh-powerlevel10k
 
-        gnomeExtensions.appindicator
-        gnomeExtensions.dash-to-dock
-        gnomeExtensions.docker
-        gnomeExtensions.gsconnect
-      ];
+  #       gnomeExtensions.appindicator
+  #       gnomeExtensions.dash-to-dock
+  #       gnomeExtensions.docker
+  #       gnomeExtensions.gsconnect
+  #     ];
 
-      # Let Home Manager install and manage itself
-      programs.home-manager.enable = true;
+  #     # Let Home Manager install and manage itself
+  #     programs.home-manager.enable = true;
 
-      home.shell = {
-        enableZshIntegration = true;
-      };
+  #     home.shell = {
+  #       enableZshIntegration = true;
+  #     };
 
-      # https://github.com/nix-community/home-manager/tree/master/modules/programs/zsh
-      # shell = pkgs.zsh;
-      programs.zsh = {
-        enable = true;
-        enableCompletion = true;
-        autosuggestion.enable = true;
-        syntaxHighlighting.enable = true;
+  #     # https://github.com/nix-community/home-manager/tree/master/modules/programs/zsh
+  #     # shell = pkgs.zsh;
+  #     programs.zsh = {
+  #       enable = true;
+  #       enableCompletion = true;
+  #       autosuggestion.enable = true;
+  #       syntaxHighlighting.enable = true;
 
-        history = {
-          expireDuplicatesFirst = true;
-        };
+  #       history = {
+  #         expireDuplicatesFirst = true;
+  #       };
 
-        # initContent = lib.mkOrder 450 ''
-        #   source "''${XDG_CACHE_HOME:-''$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
-        #   source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-        #   source ~/.p10k.zsh
-        # '';
-        # initContent = lib.mkOrder 550 "source ~/.p10k.zsh";
-        initContent = "source ~/.p10k.zsh";
-        plugins = [
-          {
-            name = "powerlevel10k";
-            src = pkgs.zsh-powerlevel10k;
-            file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-          }
-        ];
+  #       # initContent = lib.mkOrder 450 ''
+  #       #   source "''${XDG_CACHE_HOME:-''$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+  #       #   source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+  #       #   source ~/.p10k.zsh
+  #       # '';
+  #       # initContent = lib.mkOrder 550 "source ~/.p10k.zsh";
+  #       initContent = "source ~/.p10k.zsh";
+  #       plugins = [
+  #         {
+  #           name = "powerlevel10k";
+  #           src = pkgs.zsh-powerlevel10k;
+  #           file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+  #         }
+  #       ];
 
-        oh-my-zsh = {
-          enable = true;
-          plugins = [
-            "sudo"
-            "ssh-agent"
-            "gpg-agent"
-            "thefuck"
+  #       oh-my-zsh = {
+  #         enable = true;
+  #         plugins = [
+  #           "sudo"
+  #           "ssh-agent"
+  #           "gpg-agent"
+  #           "thefuck"
 
-            "git"
-            "nix-shell"
-            "direnv"
+  #           "git"
+  #           "nix-shell"
+  #           "direnv"
 
-            "nvm"
-            "npm"
-            "yarn"
-            "deno"
-            "bun"
+  #           "nvm"
+  #           "npm"
+  #           "yarn"
+  #           "deno"
+  #           "bun"
 
-            "golang"
-            "dotnet"
+  #           "golang"
+  #           "dotnet"
 
-            "kubectl"
-            "docker"
-            "helm"
-          ];
-          # theme = "powerlevel10k/powerlevel10k";
-        };
-      };
+  #           "kubectl"
+  #           "docker"
+  #           "helm"
+  #         ];
+  #         # theme = "powerlevel10k/powerlevel10k";
+  #       };
+  #     };
 
-      programs.git = {
-        enable = true;
-        userName = "UnstoppableMango";
-        userEmail = "erik.rasmussen@unmango.dev";
-      };
+  #     programs.git = {
+  #       enable = true;
+  #       userName = "UnstoppableMango";
+  #       userEmail = "erik.rasmussen@unmango.dev";
+  #     };
 
-      programs.neovim = {
-        enable = true;
-      };
+  #     programs.neovim = {
+  #       enable = true;
+  #     };
 
-      programs.emacs = {
-        enable = true;
-        extraPackages = epkgs: [
-          epkgs.nix-mode
-        ];
-      };
+  #     programs.emacs = {
+  #       enable = true;
+  #       extraPackages = epkgs: [
+  #         epkgs.nix-mode
+  #       ];
+  #     };
 
-      # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.vscode.enable
-      programs.vscode = {
-        enable = true;
-        haskell = {
-          enable = true;
+  #     # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.vscode.enable
+  #     programs.vscode = {
+  #       enable = true;
+  #       haskell = {
+  #         enable = true;
 
-          # TODO: https://nix-community.github.io/home-manager/options.xhtml#opt-programs.vscode.haskell.hie.executablePath
-          hie.enable = false;
-        };
+  #         # TODO: https://nix-community.github.io/home-manager/options.xhtml#opt-programs.vscode.haskell.hie.executablePath
+  #         hie.enable = false;
+  #       };
 
-        profiles.default = {
-          enableExtensionUpdateCheck = false;
-          enableUpdateCheck = false;
-        };
+  #       profiles.default = {
+  #         enableExtensionUpdateCheck = false;
+  #         enableUpdateCheck = false;
+  #       };
 
-        profiles.UnstoppableMango = {
-          extensions =
-            with pkgs.vscode-extensions;
-            [
-              mkhl.direnv
-              yzhang.markdown-all-in-one
-              dbaeumer.vscode-eslint
-              eamodio.gitlens
-              ms-vscode-remote.vscode-remote-extensionpack
-              github.vscode-github-actions
-              editorconfig.editorconfig
+  #       profiles.UnstoppableMango = {
+  #         extensions =
+  #           with pkgs.vscode-extensions;
+  #           [
+  #             mkhl.direnv
+  #             yzhang.markdown-all-in-one
+  #             dbaeumer.vscode-eslint
+  #             eamodio.gitlens
+  #             ms-vscode-remote.vscode-remote-extensionpack
+  #             github.vscode-github-actions
+  #             editorconfig.editorconfig
 
-              redhat.vscode-yaml
-              tamasfe.even-better-toml
-              jnoortheen.nix-ide
-              ziglang.vscode-zig
-              zxh404.vscode-proto3
-              golang.go
-              ms-dotnettools.csharp
-              ms-dotnettools.csdevkit
-              ionide.ionide-fsharp
-              # ionide.ionide-fake
-              rust-lang.rust-analyzer
-              ocamllabs.ocaml-platform
-              graphql.vscode-graphql
-              graphql.vscode-graphql-syntax
-              apollographql.vscode-apollo
+  #             redhat.vscode-yaml
+  #             tamasfe.even-better-toml
+  #             jnoortheen.nix-ide
+  #             ziglang.vscode-zig
+  #             zxh404.vscode-proto3
+  #             golang.go
+  #             ms-dotnettools.csharp
+  #             ms-dotnettools.csdevkit
+  #             ionide.ionide-fsharp
+  #             # ionide.ionide-fake
+  #             rust-lang.rust-analyzer
+  #             ocamllabs.ocaml-platform
+  #             graphql.vscode-graphql
+  #             graphql.vscode-graphql-syntax
+  #             apollographql.vscode-apollo
 
-              # TODO
-              # mogeko.haskell-extension-pack
-              haskell.haskell
+  #             # TODO
+  #             # mogeko.haskell-extension-pack
+  #             haskell.haskell
 
-              # TODO: Swap these around
-              ms-azuretools.vscode-docker
-              # docker.docker
-              # ms-azuretools.vscode-containers
+  #             # TODO: Swap these around
+  #             ms-azuretools.vscode-docker
+  #             # docker.docker
+  #             # ms-azuretools.vscode-containers
 
-              ms-kubernetes-tools.vscode-kubernetes-tools
-              # weaveworks.vscode-gitops-tools # TODO
-            ]
-            ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-              {
-                name = "vscode-icontheme-nomo-dark";
-                publisher = "be5invis";
-                version = "1.3.7";
-                sha256 = "sha256-WdRUvM5KUXU8I8/6TIkhugwgV4ECbLXnAt+LlaenvLU=";
-              }
-            ];
+  #             ms-kubernetes-tools.vscode-kubernetes-tools
+  #             # weaveworks.vscode-gitops-tools # TODO
+  #           ]
+  #           ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+  #             {
+  #               name = "vscode-icontheme-nomo-dark";
+  #               publisher = "be5invis";
+  #               version = "1.3.7";
+  #               sha256 = "sha256-WdRUvM5KUXU8I8/6TIkhugwgV4ECbLXnAt+LlaenvLU=";
+  #             }
+  #           ];
 
-          userSettings = {
-            terminal.integrated.fontFamily = "MesloLGS NF";
-            workbench.iconTheme = "vs-nomo-dark";
-          };
-        };
-      };
+  #         userSettings = {
+  #           terminal.integrated.fontFamily = "MesloLGS NF";
+  #           workbench.iconTheme = "vs-nomo-dark";
+  #         };
+  #       };
+  #     };
 
-      services.gpg-agent = {
-        enable = true;
-        enableSshSupport = true;
-      };
+  #     services.gpg-agent = {
+  #       enable = true;
+  #       enableSshSupport = true;
+  #     };
 
-      dconf = {
-        enable = true;
-        settings."org/gnome/shell" = {
-          disable-user-extensions = false;
-          enabled-extensions = with pkgs.gnomeExtensions; [
-            appindicator.extensionUuid
-            dash-to-dock.extensionUuid
-            docker.extensionUuid
-            gsconnect.extensionUuid
-            system-monitor.extensionUuid
-          ];
-        };
-        settings."org/gnome/desktop/interface" = {
-          color-scheme = "prefer-dark";
-        };
-        settings."org/gnome/shell/extensions/dash-to-dock" = {
-          dock-fixed = true;
-          dock-position = "RIGHT";
-          extend-height = true;
-          intellihide = false;
-        };
-      };
+  #     dconf = {
+  #       enable = true;
+  #       settings."org/gnome/shell" = {
+  #         disable-user-extensions = false;
+  #         enabled-extensions = with pkgs.gnomeExtensions; [
+  #           appindicator.extensionUuid
+  #           dash-to-dock.extensionUuid
+  #           docker.extensionUuid
+  #           gsconnect.extensionUuid
+  #           system-monitor.extensionUuid
+  #         ];
+  #       };
+  #       settings."org/gnome/desktop/interface" = {
+  #         color-scheme = "prefer-dark";
+  #       };
+  #       settings."org/gnome/shell/extensions/dash-to-dock" = {
+  #         dock-fixed = true;
+  #         dock-position = "RIGHT";
+  #         extend-height = true;
+  #         intellihide = false;
+  #       };
+  #     };
 
-      # This value determines the Home Manager release that your configuration is
-      # compatible with. This helps avoid breakage when a new Home Manager release
-      # introduces backwards incompatible changes.
-      #
-      # You should not change this value, even if you update Home Manager. If you do
-      # want to update the value, then make sure to first check the Home Manager
-      # release notes.
-      home.stateVersion = "25.05"; # Please read the comment before changing.
-    };
+  #     # This value determines the Home Manager release that your configuration is
+  #     # compatible with. This helps avoid breakage when a new Home Manager release
+  #     # introduces backwards incompatible changes.
+  #     #
+  #     # You should not change this value, even if you update Home Manager. If you do
+  #     # want to update the value, then make sure to first check the Home Manager
+  #     # release notes.
+  #     home.stateVersion = "25.05"; # Please read the comment before changing.
+  #   };
 
   # Enable automatic login for the user.
   services.displayManager.autoLogin.enable = true;
@@ -405,6 +401,7 @@
 
   nixpkgs.config.allowUnfree = true;
 
+	hardware.nvidia.open = true;
   hardware.openrazer.enable = true;
 
   # List packages installed in system profile. To search, run:

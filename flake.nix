@@ -2,7 +2,7 @@
   description = "UnstoppableMango's dotfiles";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:nixos/nixos-hardware/master";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -23,18 +23,20 @@
 
       nixosConfigurations.hades = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = with nixos-hardware.nixosModules; [
-          asus-rog-strix-x570e
-          common-gpu-nvidia
+        modules = [
+          nixos-hardware.nixosModules.asus-rog-strix-x570e
+          nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
+          nixos-hardware.nixosModules.common-pc-ssd
+					home-manager.nixosModules.home-manager
           ./hosts/hades/configuration.nix
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = false;
-            home-manger.users.erik = "github:unstoppablemango/dotfiles/nix";
+          # {
+          #   home-manager.useGlobalPkgs = true;
+          #   home-manager.useUserPackages = false;
+          #   home-manager.users.erik = ./home.nix;
 
-            # Optionally, use home-manager.extraSpecialArgs to pass
-            # arguments to home.nix
-          }
+          #   # Optionally, use home-manager.extraSpecialArgs to pass
+          #   # arguments to home.nix
+          # }
         ];
       };
     };

@@ -1,2 +1,5 @@
-result
 .direnv/
+cachix/
+result
+./hardware-configuration.nix
+./configuration.nix
