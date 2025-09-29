@@ -1,8 +1,9 @@
 { config, pkgs, ... }:
 {
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+	services.displayManager.gdm.enable = true;
+	services.displayManager.defaultSession = "gnome";
+	services.desktopManager.gnome.enable = true;
 
   environment.gnome.excludePackages = (
     with pkgs;
@@ -25,7 +26,7 @@
     ]
   );
 
-  packages = with pkgs; [
+  environment.systemPackages = with pkgs; [
     chrome-gnome-shell
     gnome-shell-extensions
     gnome-settings-daemon

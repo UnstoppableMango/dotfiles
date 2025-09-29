@@ -1,6 +1,15 @@
 {
   description = "UnstoppableMango's dotfiles";
 
+  nixConfig = {
+    extra-substituters = [
+      "https://unstoppablemango.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "unstoppablemango.cachix.org-1:m7uEI6X1Ov8DyFWJQX4WsRFRWFuzRW5c/Xms8ZaP74U="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:nixos/nixos-hardware/master";
@@ -25,18 +34,18 @@
         system = "x86_64-linux";
         modules = [
           nixos-hardware.nixosModules.asus-rog-strix-x570e
-          nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
+          (nixos-hardware + "/common/gpu/nvidia/turing")
           nixos-hardware.nixosModules.common-pc-ssd
-					home-manager.nixosModules.home-manager
+          home-manager.nixosModules.home-manager
           ./hosts/hades/configuration.nix
-          # {
-          #   home-manager.useGlobalPkgs = true;
-          #   home-manager.useUserPackages = false;
-          #   home-manager.users.erik = ./home.nix;
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = false;
+            home-manager.users.erik = ./home.nix;
 
-          #   # Optionally, use home-manager.extraSpecialArgs to pass
-          #   # arguments to home.nix
-          # }
+            # Optionally, use home-manager.extraSpecialArgs to pass
+            # arguments to home.nix
+          }
         ];
       };
     };

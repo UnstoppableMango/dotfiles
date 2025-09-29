@@ -6,8 +6,8 @@
 
 {
   imports = [
-    # ./cachix.nix
     ./hardware-configuration.nix
+		../../modules/desktops/gnome
   ];
 
   fileSystems = {
@@ -61,31 +61,6 @@
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  environment.gnome.excludePackages = (
-    with pkgs;
-    [
-      atomix # puzzle game
-      cheese # webcam tool
-      epiphany # web browser
-      evince # document viewer
-      geary # email reader
-      gedit # text editor
-      gnome-characters
-      gnome-music
-      gnome-photos
-      gnome-terminal
-      gnome-tour
-      hitori # sudoku game
-      iagno # go game
-      tali # poker game
-      totem # video player
-    ]
-  );
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -401,7 +376,7 @@
 
   nixpkgs.config.allowUnfree = true;
 
-	hardware.nvidia.open = true;
+  hardware.nvidia.open = true;
   hardware.openrazer.enable = true;
 
   # List packages installed in system profile. To search, run:
