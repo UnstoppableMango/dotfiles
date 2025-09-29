@@ -283,7 +283,8 @@
           yzhang.markdown-all-in-one
           dbaeumer.vscode-eslint
           eamodio.gitlens
-          ms-vscode-remote.vscode-remote-extensionpack
+					ms-vscode-remote.remote-containers
+          ms-vscode-remote.remote-ssh
           github.vscode-github-actions
           editorconfig.editorconfig
 
@@ -296,7 +297,6 @@
           ms-dotnettools.csharp
           ms-dotnettools.csdevkit
           ionide.ionide-fsharp
-          # ionide.ionide-fake
           rust-lang.rust-analyzer
           ocamllabs.ocaml-platform
           graphql.vscode-graphql
@@ -307,18 +307,30 @@
           # mogeko.haskell-extension-pack
           haskell.haskell
 
-          # TODO: Swap these around
-          ms-azuretools.vscode-docker
-          # docker.docker
-          # ms-azuretools.vscode-containers
-
           ms-kubernetes-tools.vscode-kubernetes-tools
-          # weaveworks.vscode-gitops-tools # TODO
         ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
           {
             name = "vscode-icontheme-nomo-dark";
             publisher = "be5invis";
             version = "1.3.7";
+            sha256 = "sha256-WdRUvM5KUXU8I8/6TIkhugwgV4ECbLXnAt+LlaenvLU=";
+          }
+          {
+            name = "ionide-fake";
+            publisher = "ionide";
+            version = "1.2.3";
+            sha256 = "sha256-WdRUvM5KUXU8I8/6TIkhugwgV4ECbLXnAt+LlaenvLU=";
+          }
+          {
+            name = "docker";
+            publisher = "docker";
+            version = "0.17.0";
+            sha256 = "sha256-WdRUvM5KUXU8I8/6TIkhugwgV4ECbLXnAt+LlaenvLU=";
+          }
+          {
+            name = "vscode-gitops-tools";
+            publisher = "weaveworks";
+            version = "0.27.0";
             sha256 = "sha256-WdRUvM5KUXU8I8/6TIkhugwgV4ECbLXnAt+LlaenvLU=";
           }
         ];
