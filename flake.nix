@@ -35,13 +35,10 @@
           (nixos-hardware + "/common/gpu/nvidia/turing")
           nixos-hardware.nixosModules.common-pc-ssd
           home-manager.nixosModules.home-manager
-          ./desktops/gnome
-          ./editors/jetbrains
           ./hosts/hades/configuration.nix
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = false;
-            home-manager.users.erik = ./home.nix;
           }
         ];
       };
