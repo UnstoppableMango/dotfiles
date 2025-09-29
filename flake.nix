@@ -36,10 +36,6 @@
           nixos-hardware.nixosModules.common-pc-ssd
           home-manager.nixosModules.home-manager
           ./hosts/hades/configuration.nix
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = false;
-          }
         ];
       };
     };

@@ -154,6 +154,12 @@
     ];
   };
 
+  home-manager = {
+    useUserPackages = true;
+    useGlobalPkgs = true;
+    backupFileExtension = ".bak";
+  };
+
   home-manager.users.erik = { pkgs, lib, ... }: {
     nix = {
       settings.experimental-features = [ "nix-command" "flakes" ];
