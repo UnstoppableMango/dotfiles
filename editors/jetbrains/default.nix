@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 {
-  packages = with pkgs; [
+  environment.systemPackages = with pkgs; [
     jetbrains.webstorm
     jetbrains.rust-rover
     jetbrains.ruby-mine

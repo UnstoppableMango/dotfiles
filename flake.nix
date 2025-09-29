@@ -28,8 +28,6 @@
     {
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;
 
-      nixosModules = import ./modules;
-
       nixosConfigurations.hades = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
@@ -37,14 +35,13 @@
           (nixos-hardware + "/common/gpu/nvidia/turing")
           nixos-hardware.nixosModules.common-pc-ssd
           home-manager.nixosModules.home-manager
+					./desktops/gnome
+					./editors/jetbrains
           ./hosts/hades/configuration.nix
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = false;
             home-manager.users.erik = ./home.nix;
-
-            # Optionally, use home-manager.extraSpecialArgs to pass
-            # arguments to home.nix
           }
         ];
       };
