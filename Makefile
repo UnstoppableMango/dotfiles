@@ -1,9 +1,13 @@
-NIX ?= nix
+NIX       ?= nix
+WATCHEXEC ?= watchexec
 
 SRC != find -path '*.nix' -printf '%P\n'
 
 check:
 	$(NIX) flake check
+
+watch:
+	$(WATCHEXEC) -e nix $(NIX) flake check
 
 update: flake.lock
 
