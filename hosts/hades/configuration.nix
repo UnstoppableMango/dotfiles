@@ -5,6 +5,8 @@
 { config, pkgs, ... }:
 
 {
+	nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   imports = [
     ./hardware-configuration.nix
   ];
@@ -161,10 +163,6 @@
   };
 
   home-manager.users.erik = { pkgs, lib, ... }: {
-    nix = {
-      settings.experimental-features = [ "nix-command" "flakes" ];
-    };
-
     home.packages = with pkgs; [
       htop
       pay-respects
@@ -319,7 +317,7 @@
             name = "ionide-fake";
             publisher = "ionide";
             version = "1.2.3";
-            sha256 = "sha256-WdRUvM5KUXU8I8/6TIkhugwgV4ECbLXnAt+LlaenvLU=";
+            sha256 = "sha256-SeiW8zHWwaOc+OlRI2jxdIZFhe6eSvb1kDGs2li3T0Y=";
           }
           {
             name = "docker";
