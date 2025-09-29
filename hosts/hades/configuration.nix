@@ -323,13 +323,13 @@
             name = "docker";
             publisher = "docker";
             version = "0.17.0";
-            sha256 = "sha256-WdRUvM5KUXU8I8/6TIkhugwgV4ECbLXnAt+LlaenvLU=";
+            sha256 = "sha256-c1M5pC8JGm+IKQIviE163kYQOX8Nx0Gty7rV7OQCy88=";
           }
           {
             name = "vscode-gitops-tools";
             publisher = "weaveworks";
             version = "0.27.0";
-            sha256 = "sha256-WdRUvM5KUXU8I8/6TIkhugwgV4ECbLXnAt+LlaenvLU=";
+            sha256 = "sha256-7MCKDnHCot/CL/SqZ2WuTxbqFdF75EC5WC+OxW0dcaE=";
           }
         ];
 
