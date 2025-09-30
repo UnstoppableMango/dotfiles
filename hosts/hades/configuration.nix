@@ -331,6 +331,36 @@
             version = "0.27.0";
             sha256 = "sha256-7MCKDnHCot/CL/SqZ2WuTxbqFdF75EC5WC+OxW0dcaE=";
           }
+          {
+            name = "project-manager";
+            publisher = "alefragnani";
+            version = "12.8.0";
+            sha256 = "sha256-sNiDyWdQ40Xeu7zp1ioRCi3majrPshlVbUSV2klr4r4=";
+          }
+          {
+            name = "vscode-buf";
+            publisher = "bufbuild";
+            version = "0.8.1";
+            sha256 = "sha256-pJG1vrx5BmI+60rh+OkeVASDLQPQGNaeAYs/07Va438=";
+          }
+          {
+            name = "dprint";
+            publisher = "dprint";
+            version = "0.16.7";
+            sha256 = "sha256-9o3mEmQ/8XjWnqpTjsVG4iYv1pe71ZRMO11PNmm6z4k=";
+          }
+          {
+            name = "shellcheck";
+            publisher = "timonwong";
+            version = "0.38.3";
+            sha256 = "sha256-qDispRN7jRIIsP+5lamyR+sNoOwTwl+55QftzO7WBm4=";
+          }
+          {
+            name = "vscode-containers";
+            publisher = "ms-azuretools";
+            version = "2.2.0";
+            sha256 = "sha256-UxWsu7AU28plnT0QMdpPJrcYZIV09FeC+rmYKf39a6M=";
+          }
         ];
 
         userSettings = {
