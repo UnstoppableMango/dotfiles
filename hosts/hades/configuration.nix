@@ -180,6 +180,7 @@
       gnomeExtensions.docker
       gnomeExtensions.gsconnect
 			gnomeExtensions.tweaks-in-system-menu
+			gnomeExtensions.user-themes
     ];
 
     # Let Home Manager install and manage itself
@@ -378,26 +379,46 @@
 
     dconf = {
       enable = true;
-      settings."org/gnome/shell" = {
-        disable-user-extensions = false;
-        enabled-extensions = with pkgs.gnomeExtensions; [
-          appindicator.extensionUuid
-          dash-to-dock.extensionUuid
-          docker.extensionUuid
-          gsconnect.extensionUuid
-          system-monitor.extensionUuid
-					tweaks-in-system-menu.extensionUuid
-        ];
-      };
-      settings."org/gnome/desktop/interface" = {
-        color-scheme = "prefer-dark";
-      };
-      settings."org/gnome/shell/extensions/dash-to-dock" = {
-        dock-fixed = true;
-        dock-position = "RIGHT";
-        extend-height = true;
-        intellihide = false;
-      };
+			settings = {
+				# dconf dump / > tmp.dconf
+				"org/gnome/shell" = {
+					disable-user-extensions = false;
+					enabled-extensions = with pkgs.gnomeExtensions; [
+						appindicator.extensionUuid
+						dash-to-dock.extensionUuid
+						docker.extensionUuid
+						gsconnect.extensionUuid
+						system-monitor.extensionUuid
+						tweaks-in-system-menu.extensionUuid
+						user-themes.extensionUuid
+					];
+				};
+				"org/gnome/desktop/interface" = {
+					accent-color = "pink";
+					clock-format = "12h";
+					clock-show-seconds = false;
+					clock-show-weekday = true;
+					color-scheme = "prefer-dark";
+					cursor-theme = "breeze_cursors";
+					enable-hot-corners = false;
+					icon-theme = "breeze_cursors";
+				};
+				"org/gnome/shell/extensions/dash-to-dock" = {
+					autohide = false;
+					custom-background-color = false;
+					custom-theme-shrink = true;
+					dash-max-icon-size = 48;
+					dock-fixed = true;
+					dock-position = "RIGHT";
+					extend-height = true;
+					intellihide = false;
+					running-indicator-dominant-color = false;
+					running-indicator-style = "DOTS";
+					show-show-apps-button = true; # This is not a typo
+					show-trash = false;
+					unity-backlit-items = false;
+				};
+			};
     };
 
     # This value determines the Home Manager release that your configuration is
@@ -439,6 +460,7 @@
     openrazer-daemon
     polychromatic
     kdePackages.breeze
+    kdePackages.breeze-icons
 
     chrome-gnome-shell
     gnome-shell-extensions
