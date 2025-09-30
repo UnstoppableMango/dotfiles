@@ -179,6 +179,7 @@
       gnomeExtensions.dash-to-dock
       gnomeExtensions.docker
       gnomeExtensions.gsconnect
+			gnomeExtensions.tweaks-in-system-menu
     ];
 
     # Let Home Manager install and manage itself
@@ -385,6 +386,7 @@
           docker.extensionUuid
           gsconnect.extensionUuid
           system-monitor.extensionUuid
+					tweaks-in-system-menu.extensionUuid
         ];
       };
       settings."org/gnome/desktop/interface" = {
@@ -441,6 +443,7 @@
     chrome-gnome-shell
     gnome-shell-extensions
     gnome-settings-daemon
+		gnome-tweaks
 
     firefox-devedition
     google-chrome
