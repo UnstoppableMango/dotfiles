@@ -136,7 +136,10 @@
       gnumake
       dprint
 			buf
-      dotnet-sdk
+			(with dotnetCorePackages; combinePackages [
+				sdk_9_0
+				sdk_10_0
+			])
       go
       jetbrains.webstorm
       jetbrains.rust-rover
