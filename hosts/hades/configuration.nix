@@ -365,6 +365,7 @@
         userSettings = {
           terminal.integrated.fontFamily = "MesloLGS NF";
           workbench.iconTheme = "vs-nomo-dark";
+          redhat.telemetry.enabled = false;
 					# https://github.com/alefragnani/vscode-project-manager/blob/master/README.md#available-settings
 					projectManager = {
 						git = {
