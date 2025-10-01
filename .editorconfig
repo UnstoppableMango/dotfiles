@@ -1,0 +1,17 @@
+root = true
+
+[*]
+indent_style = tab
+insert_final_newline = true
+tab_width = 4
+trim_trailing_whitespace = true
+
+[*.{json}]
+indent_size = 2
+
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+[*.nix]
+indent_style = space # https://github.com/NixOS/nixfmt/issues/77
