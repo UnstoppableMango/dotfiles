@@ -7,6 +7,7 @@ pkgs.mkShell {
     dprint
     gnumake
     nixfmt-tree
+    shellcheck
     watchexec
   ];
 }
