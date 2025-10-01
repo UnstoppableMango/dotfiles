@@ -135,6 +135,7 @@
       k9s
       gnumake
       dprint
+			buf
       dotnet-sdk
       go
       jetbrains.webstorm
@@ -202,12 +203,6 @@
         expireDuplicatesFirst = true;
       };
 
-      # initContent = lib.mkOrder 450 ''
-      #   source "''${XDG_CACHE_HOME:-''$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
-      #   source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-      #   source ~/.p10k.zsh
-      # '';
-      # initContent = lib.mkOrder 550 "source ~/.p10k.zsh";
       initContent = "source ~/.p10k.zsh";
       plugins = [
         {
@@ -241,6 +236,8 @@
           "docker"
           "helm"
         ];
+
+				# This is printing warnings... thought it was required?
         # theme = "powerlevel10k/powerlevel10k";
       };
     };
@@ -277,7 +274,7 @@
         enableUpdateCheck = false;
       };
 
-      profiles.UnstoppableMango = {
+      profiles.Hades = {
         extensions = with pkgs.vscode-extensions; [
           mkhl.direnv
           yzhang.markdown-all-in-one
@@ -368,6 +365,21 @@
         userSettings = {
           terminal.integrated.fontFamily = "MesloLGS NF";
           workbench.iconTheme = "vs-nomo-dark";
+					# https://github.com/alefragnani/vscode-project-manager/blob/master/README.md#available-settings
+					projectManager = {
+						git = {
+							baseFolders = [
+								"~/src/github.com/UnstoppableMango"
+								"~/src/github.com/unmango"
+								"~/src/github.com/pulumiverse"
+							];
+						};
+						tags = [
+							"Personal"
+							"Work"
+							"FOSS"
+						];
+					};
         };
       };
     };
