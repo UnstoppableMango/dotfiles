@@ -384,6 +384,18 @@
                 version = "2.2.0";
                 sha256 = "sha256-UxWsu7AU28plnT0QMdpPJrcYZIV09FeC+rmYKf39a6M=";
               }
+              {
+                name = "helm-intellisense";
+                publisher = "tim-koehler";
+                version = "0.15.0";
+                sha256 = "sha256-Tl0X2jtgTsjf2tvyAJLGxEGrmLXACYWWErcDJuQYg+o=";
+              }
+              {
+                name = "shell-format";
+                publisher = "foxundermoon";
+                version = "7.2.8";
+                sha256 = "sha256-Z3vmRzqPCxkQbn39I54bh/ND+0HcE9iFUhKQ29GRd7o=";
+              }
             ];
 
           userSettings = {
