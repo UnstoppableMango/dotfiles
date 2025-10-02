@@ -153,6 +153,7 @@
         with dotnetCorePackages;
         combinePackages [
           sdk_9_0
+          sdk_10_0-bin
 
           # This is OOMKilling my machine for some reason
           # sdk_10_0
@@ -333,6 +334,8 @@
               golang.go
               ms-dotnettools.csharp
               ms-dotnettools.csdevkit
+              ms-dotnettools.vscodeintellicode-csharp
+              ms-dotnettools.vscode-dotnet-runtime
               ionide.ionide-fsharp
               rust-lang.rust-analyzer
               ocamllabs.ocaml-platform
