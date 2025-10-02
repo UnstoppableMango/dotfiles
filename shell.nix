@@ -2,7 +2,7 @@
   pkgs ? import <nixpkgs> { },
 }:
 
-pkgs.mkShell {
+pkgs.mkShellNoCC {
   packages = with pkgs; [
     dprint
     gnumake
@@ -10,4 +10,6 @@ pkgs.mkShell {
     shellcheck
     watchexec
   ];
+
+  WATCHEXEC = pkgs.watchexec + "/bin/watchexec";
 }
