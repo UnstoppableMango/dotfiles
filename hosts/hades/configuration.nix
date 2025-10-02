@@ -413,6 +413,12 @@
                 version = "7.2.8";
                 sha256 = "sha256-Z3vmRzqPCxkQbn39I54bh/ND+0HcE9iFUhKQ29GRd7o=";
               }
+              {
+                name = "resharper-code";
+                publisher = "JetBrains";
+                version = "0.0.11";
+                sha256 = "sha256-gdOU+BHqiXtueWe8Z/mTHkWmlFUz1cOtWBxp+sllEIE=";
+              }
             ];
 
           userSettings = {
