@@ -274,7 +274,14 @@
           key = "264283BBFDC491BC";
           signByDefault = true;
         };
-        config = {
+        # Still fiddling with these
+        # https://github.com/git/git/blob/master/contrib/diff-highlight/README
+        diff-highlight.enable = true;
+        # https://github.com/so-fancy/diff-so-fancy
+        # diff-so-fancy.enable = true;
+        # https://github.com/Wilfred/difftastic
+        # difftastic.enable = true;
+        extraConfig = {
           push.autoSetupRemote = true;
         };
       };
