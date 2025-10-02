@@ -274,6 +274,9 @@
           key = "264283BBFDC491BC";
           signByDefault = true;
         };
+        config = {
+          push.autoSetupRemote = true;
+        };
       };
 
       programs.neovim = {
