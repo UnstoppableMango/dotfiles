@@ -153,7 +153,9 @@
         with dotnetCorePackages;
         combinePackages [
           sdk_9_0
-          sdk_10_0
+
+          # This is OOMKilling my machine for some reason
+          # sdk_10_0
         ]
       )
       go
@@ -267,6 +269,11 @@
         enable = true;
         userName = "UnstoppableMango";
         userEmail = "erik.rasmussen@unmango.dev";
+        signing = {
+          format = "openpgp";
+          key = "264283BBFDC491BC";
+          signByDefault = true;
+        };
       };
 
       programs.neovim = {
