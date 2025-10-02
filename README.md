@@ -36,3 +36,8 @@ $ make watch
 [Running: nix flake check]
 [Command was successful]
 ```
+
+## References and Links
+
+- <https://github.com/brenno263/nix-config>
+- <https://nixos-and-flakes.thiscute.world>
