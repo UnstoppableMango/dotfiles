@@ -528,19 +528,23 @@
     nano
     micro
     curl
+    jq
     kubectl
     kind
+    yq-go
 
     jetbrains-mono
     openrazer-daemon
     polychromatic
     kdePackages.breeze
     kdePackages.breeze-icons
+    paper-icon-theme
 
     chrome-gnome-shell
     gnome-shell-extensions
     gnome-settings-daemon
     gnome-tweaks
+    gimp3
 
     firefox-devedition
     google-chrome
