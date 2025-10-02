@@ -539,6 +539,7 @@
     kdePackages.breeze
     kdePackages.breeze-icons
     paper-icon-theme
+    vimix-icon-theme
 
     chrome-gnome-shell
     gnome-shell-extensions
