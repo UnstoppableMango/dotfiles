@@ -428,7 +428,7 @@
                 name = "resharper-code";
                 publisher = "JetBrains";
                 version = "0.0.11";
-                sha256 = "sha256-gdOU+BHqiXtueWe8Z/mTHkWmlFUz1cOtWBxp+sllEIE=";
+                sha256 = "sha256-UxvwGkefK/b6/sK8WcCis2MWRNkPH/hHAy2BY7GfW70=";
               }
             ];
 
