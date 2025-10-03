@@ -6,6 +6,7 @@ pkgs.mkShellNoCC {
   packages = with pkgs; [
     dprint
     gnumake
+    nixfmt
     nixfmt-tree
     shellcheck
     watchexec
