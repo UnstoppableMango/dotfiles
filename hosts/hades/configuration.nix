@@ -5,10 +5,18 @@
 { config, pkgs, ... }:
 
 {
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
+  nix.settings = {
+    extra-substituters = [
+      "https://unstoppablemango.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "unstoppablemango.cachix.org-1:m7uEI6X1Ov8DyFWJQX4WsRFRWFuzRW5c/Xms8ZaP74U="
+    ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+  };
 
   imports = [
     ./hardware-configuration.nix
@@ -539,6 +547,7 @@
     kdePackages.breeze
     kdePackages.breeze-icons
     paper-icon-theme
+    vimix-icon-theme
 
     chrome-gnome-shell
     gnome-shell-extensions
