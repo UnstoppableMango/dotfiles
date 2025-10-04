@@ -14,6 +14,10 @@ watch:
 
 update: flake.lock
 
+system:
+	sudo nix flake update --flake /etc/nixos
+	sudo nixos-rebuild switch --flake /etc/nixos
+
 format fmt:
 	$(NIX) fmt
 
