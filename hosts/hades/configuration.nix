@@ -484,7 +484,7 @@
             color-scheme = "prefer-dark";
             cursor-theme = "breeze_cursors";
             enable-hot-corners = false;
-            icon-theme = "Vimix-ruby";
+            icon-theme = "Papirus";
             monospace-font-name = "FiraCode Nerd Font Mono 11";
           };
           "org/gnome/shell/extensions/dash-to-dock" = {
