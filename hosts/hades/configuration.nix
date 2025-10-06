@@ -545,10 +545,13 @@
     jetbrains-mono
     openrazer-daemon
     polychromatic
+
+    # I'll pick one eventually...
     kdePackages.breeze
     kdePackages.breeze-icons
     paper-icon-theme
     vimix-icon-theme
+    papirus-icon-theme
 
     chrome-gnome-shell
     gnome-shell-extensions
