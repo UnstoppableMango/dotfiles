@@ -130,6 +130,11 @@
     fileSystems = [ "/" ];
   };
 
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
@@ -558,7 +563,6 @@
     gnome-settings-daemon
     gnome-tweaks
     gimp3
-    appimage-run
 
     firefox-devedition
     google-chrome
