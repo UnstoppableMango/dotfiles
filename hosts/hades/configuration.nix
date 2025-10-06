@@ -558,6 +558,7 @@
     gnome-settings-daemon
     gnome-tweaks
     gimp3
+    appimage-run
 
     firefox-devedition
     google-chrome
