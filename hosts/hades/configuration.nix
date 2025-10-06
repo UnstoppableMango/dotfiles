@@ -130,6 +130,11 @@
     fileSystems = [ "/" ];
   };
 
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
