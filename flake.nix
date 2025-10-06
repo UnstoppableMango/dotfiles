@@ -19,6 +19,10 @@
     {
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;
 
+      nixosModules = {
+        vscode = import ./editors/vscode;
+      };
+
       nixosConfigurations.hades = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [

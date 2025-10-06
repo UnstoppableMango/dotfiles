@@ -484,7 +484,8 @@
             color-scheme = "prefer-dark";
             cursor-theme = "breeze_cursors";
             enable-hot-corners = false;
-            icon-theme = "breeze_cursors";
+            icon-theme = "Vimix-ruby";
+            monospace-font-name = "FiraCode Nerd Font Mono 11";
           };
           "org/gnome/shell/extensions/dash-to-dock" = {
             autohide = false;
@@ -544,10 +545,13 @@
     jetbrains-mono
     openrazer-daemon
     polychromatic
+
+    # I'll pick one eventually...
     kdePackages.breeze
     kdePackages.breeze-icons
     paper-icon-theme
     vimix-icon-theme
+    papirus-icon-theme
 
     chrome-gnome-shell
     gnome-shell-extensions
