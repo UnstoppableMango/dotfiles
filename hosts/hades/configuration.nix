@@ -178,6 +178,7 @@
       jetbrains.ruby-mine
       jetbrains.rider
       jetbrains.idea-ultimate
+      jetbrains.pycharm-professional
       jetbrains.goland
       jetbrains.datagrip
       jetbrains.clion
