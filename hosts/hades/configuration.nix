@@ -191,6 +191,8 @@
       tutanota-desktop
       slack
       signal-desktop
+      claude-code
+      claude-monitor
     ];
   };
 
