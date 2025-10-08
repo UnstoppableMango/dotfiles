@@ -553,6 +553,8 @@
     kubectl
     kind
     yq-go
+    ripgrep
+    ripgrep-all
 
     jetbrains-mono
     openrazer-daemon
