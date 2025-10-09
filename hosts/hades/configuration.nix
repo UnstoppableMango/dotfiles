@@ -212,6 +212,7 @@
         seabird
         gh
         github-desktop
+        github-copilot-cli
 
         nix-zsh-completions
         zsh-nix-shell
@@ -344,6 +345,8 @@
               ms-vscode-remote.remote-containers
               ms-vscode-remote.remote-ssh
               github.vscode-github-actions
+              github.copilot
+              anthropic.claude-code
               editorconfig.editorconfig
 
               redhat.vscode-yaml
