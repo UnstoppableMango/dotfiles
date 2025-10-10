@@ -1,5 +1,5 @@
 { pkgs, ... }:
 {
-  options = {};
-  config = {};
+  options = { };
+  config = { };
 }
