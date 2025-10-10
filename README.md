@@ -40,4 +40,6 @@ $ make watch
 ## References and Links
 
 - <https://github.com/brenno263/nix-config>
+- <https://github.com/grey-lovelace/nixos-config>
+- <https://github.com/BenMcH/dotfiles/tree/main/home-manager/dot-config/home-manager>
 - <https://nixos-and-flakes.thiscute.world>
