@@ -14,4 +14,5 @@ indent_style = space
 indent_size = 2
 
 [*.nix]
-indent_style = space # https://github.com/NixOS/nixfmt/issues/77
+# https://github.com/NixOS/nixfmt/issues/76
+indent_style = space

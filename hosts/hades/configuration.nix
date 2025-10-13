@@ -173,6 +173,7 @@
         ]
       )
       go
+      opam
       jetbrains.webstorm
       jetbrains.rust-rover
       jetbrains.ruby-mine
@@ -558,6 +559,7 @@
     yq-go
     ripgrep
     ripgrep-all
+    bat
 
     jetbrains-mono
     openrazer-daemon
