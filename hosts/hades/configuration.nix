@@ -173,7 +173,6 @@
         ]
       )
       go
-      opam
       jetbrains.webstorm
       jetbrains.rust-rover
       jetbrains.ruby-mine
@@ -318,6 +317,11 @@
         extraPackages = epkgs: [
           epkgs.nix-mode
         ];
+      };
+
+      programs.opam = {
+        enable = true;
+        enableZshIntegration = true;
       };
 
       # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.vscode.enable
