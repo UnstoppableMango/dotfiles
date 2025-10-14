@@ -156,9 +156,6 @@
     packages = with pkgs; [
       vim
       micro
-      kitty
-      ghostty
-      k9s
       gnumake
       dprint
       buf
@@ -172,7 +169,6 @@
           # sdk_10_0
         ]
       )
-      go
       jetbrains.webstorm
       jetbrains.rust-rover
       jetbrains.ruby-mine
@@ -191,7 +187,6 @@
       tutanota-desktop
       slack
       signal-desktop
-      claude-code
       claude-monitor
     ];
   };
@@ -206,11 +201,9 @@
     { pkgs, lib, ... }:
     {
       home.packages = with pkgs; [
-        htop
         pay-respects
         neofetch
         seabird
-        gh
         github-desktop
         github-copilot-cli
 
@@ -232,6 +225,17 @@
       home.shell = {
         enableZshIntegration = true;
       };
+
+      programs.grep.enable = true;
+      programs.htop.enable = true;
+      programs.fzf.enable = true;
+      programs.jq.enable = true;
+      programs.less.enable = true;
+      programs.ripgrep.enable = true;
+      programs.ripgrep-all.enable = true;
+
+      programs.kitty.enable = true;
+      programs.ghostty.enable = true;
 
       # https://github.com/nix-community/home-manager/tree/master/modules/programs/zsh
       # shell = pkgs.zsh;
@@ -308,6 +312,11 @@
         };
       };
 
+      programs.micro.enable = true;
+      programs.helix.enable = true;
+      programs.zed-editor.enable = true;
+
+      programs.vim.enable = true;
       programs.neovim = {
         enable = true;
       };
@@ -319,9 +328,23 @@
         ];
       };
 
+      programs.claude-code = {
+        enable = true;
+      };
+
+      programs.k9s.enable = true;
+      programs.gh.enable = true;
+
       programs.opam = {
         enable = true;
         enableZshIntegration = true;
+      };
+
+      programs.gcc.enable = true;
+
+      programs.go = {
+        enable = true;
+        telemetry.mode = "off";
       };
 
       # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.vscode.enable
@@ -475,6 +498,9 @@
         };
       };
 
+      programs.lutris.enable = true;
+      programs.yt-dlp.enable = true;
+
       services.gpg-agent = {
         enable = true;
         enableSshSupport = true;
@@ -553,6 +579,11 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    gcc
+    clang
+    libllvm
+    llvmPackages_20.libllvm
+    llvmPackages_19.libllvm
     git
     nano
     micro
@@ -564,6 +595,7 @@
     ripgrep
     ripgrep-all
     bat
+    rsync
 
     jetbrains-mono
     openrazer-daemon
