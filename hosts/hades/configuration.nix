@@ -584,6 +584,8 @@
     libllvm
     llvmPackages_20.libllvm
     llvmPackages_19.libllvm
+    cmake
+    ninja
     git
     nano
     micro
