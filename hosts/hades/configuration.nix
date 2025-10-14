@@ -253,7 +253,9 @@
           enable = true;
           plugins = [
             "zsh-users/zsh-autosuggestions"
-            "TODO"
+            "mattmc3/ez-compinit"
+            "getantidote/use-omz"
+            "ohmyzsh/ohmyzsh path:lib"
           ];
         };
 
