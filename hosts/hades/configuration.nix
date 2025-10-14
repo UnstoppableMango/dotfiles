@@ -233,6 +233,10 @@
       # Let Home Manager install and manage itself
       programs.home-manager.enable = true;
 
+      home.sessionVariables = {
+        EDITOR = "nvim";
+      };
+
       home.shell = {
         enableZshIntegration = true;
       };
@@ -255,6 +259,14 @@
         enableCompletion = true;
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
+
+        antidote = {
+          enable = true;
+          plugins = [
+            "zsh-users/zsh-autosuggestions"
+            "TODO"
+          ];
+        };
 
         history = {
           expireDuplicatesFirst = true;
