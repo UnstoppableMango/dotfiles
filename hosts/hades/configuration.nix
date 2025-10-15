@@ -188,6 +188,12 @@
       slack
       signal-desktop
       claude-monitor
+
+      (wineWowPackages.full.override {
+        wineRelease = "staging";
+        mingwSupport = true;
+      })
+      winetricks
     ];
   };
 
