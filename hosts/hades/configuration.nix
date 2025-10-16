@@ -592,6 +592,7 @@
     llvmPackages_19.libllvm
     cmake
     ninja
+    rustup
     git
     nano
     micro
