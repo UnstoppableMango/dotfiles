@@ -399,6 +399,7 @@
               graphql.vscode-graphql
               graphql.vscode-graphql-syntax
               apollographql.vscode-apollo
+              myriad-dreamin.tinymist
 
               # TODO
               # mogeko.haskell-extension-pack
