@@ -593,6 +593,7 @@
     cmake
     ninja
     rustup
+    rbenv
     git
     nano
     micro
