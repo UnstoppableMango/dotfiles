@@ -590,6 +590,17 @@
 
   hardware.openrazer.enable = true;
 
+  hardware.nvidia = {
+    # Open drivers (NVreg_OpenRmEnableUnsupportedGpus=1)
+    open = true;
+
+    # nvidia-drm.modeset=1
+    modesetting.enable = true;
+
+    # NVreg_PreserveVideoMemoryAllocations=1
+    powerManagement.enable = true;
+  };
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
