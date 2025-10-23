@@ -35,9 +35,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Preserve video memory after suspend
-  boot.kernelParams = [ "nvidia.NVreg_PreserveVideoMemoryAllocations=1" ];
-
   networking.hostName = "hades"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;
@@ -597,6 +594,7 @@
     # nvidia-drm.modeset=1
     modesetting.enable = true;
 
+    # Preserve video memory after suspend
     # NVreg_PreserveVideoMemoryAllocations=1
     powerManagement.enable = true;
   };
