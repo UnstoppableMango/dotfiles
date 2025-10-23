@@ -169,15 +169,20 @@
           # sdk_10_0
         ]
       )
-      jetbrains.webstorm
-      jetbrains.rust-rover
-      jetbrains.ruby-mine
-      jetbrains.rider
-      jetbrains.idea-ultimate
-      jetbrains.pycharm-professional
-      jetbrains.goland
-      jetbrains.datagrip
-      jetbrains.clion
+
+      # Lofty goals lie below
+      # jetbrains.webstorm
+      # jetbrains.rust-rover
+      # jetbrains.ruby-mine
+      # jetbrains.rider
+      # (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.rider ["github-copilot"])
+      # jetbrains.idea-ultimate
+      # jetbrains.pycharm-professional
+      # jetbrains.goland
+      # jetbrains.datagrip
+      # jetbrains.clion
+      jetbrains-toolbox
+
       gitkraken
       bitwarden-desktop
       bitwarden-cli
