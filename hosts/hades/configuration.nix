@@ -525,6 +525,12 @@
       dconf = {
         enable = true;
         settings = {
+          "org/freedesktop/ibus/panel/emoji" = {
+            # Disable ctrl+shift+u unicode shortcut, conflicts with JetBrains keybinds
+            # https://superuser.com/questions/358749/how-to-disable-ctrlshiftu/1392682#1392682
+            unicode-hotkey = "@as []";
+          };
+
           # dconf dump / > tmp.dconf
           "org/gnome/shell" = {
             disable-user-extensions = false;
