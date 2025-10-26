@@ -31,13 +31,17 @@
     ];
   };
 
+  boot.initrd.kernelModules = [ "amdgpu" ];
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "hades"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;
+  networking = {
+    hostName = "hades";
+    # wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+    networkmanager.enable = true;
+  };
 
   # Set your time zone.
   time.timeZone = "America/Chicago";
@@ -73,6 +77,7 @@
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
+  services.xserver.videoDrivers = [ "amdgpu" ];
 
   # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
@@ -602,17 +607,17 @@
 
   hardware.openrazer.enable = true;
 
-  hardware.nvidia = {
-    # Open drivers (NVreg_OpenRmEnableUnsupportedGpus=1)
-    open = true;
+  # hardware.nvidia = {
+  #   # Open drivers (NVreg_OpenRmEnableUnsupportedGpus=1)
+  #   open = true;
 
-    # nvidia-drm.modeset=1
-    modesetting.enable = true;
+  #   # nvidia-drm.modeset=1
+  #   modesetting.enable = true;
 
-    # Preserve video memory after suspend
-    # NVreg_PreserveVideoMemoryAllocations=1
-    powerManagement.enable = true;
-  };
+  #   # Preserve video memory after suspend
+  #   # NVreg_PreserveVideoMemoryAllocations=1
+  #   powerManagement.enable = true;
+  # };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
