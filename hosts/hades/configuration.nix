@@ -230,9 +230,11 @@
         gnomeExtensions.appindicator
         gnomeExtensions.dash-to-dock
         gnomeExtensions.docker
-        gnomeExtensions.gsconnect
         gnomeExtensions.tweaks-in-system-menu
         gnomeExtensions.user-themes
+
+        gnomeExtensions.gsconnect
+        nautilus-python
       ];
 
       # Let Home Manager install and manage itself
