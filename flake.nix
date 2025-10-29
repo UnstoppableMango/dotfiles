@@ -27,7 +27,6 @@
         system = "x86_64-linux";
         modules = [
           nixos-hardware.nixosModules.asus-rog-strix-x570e
-          (nixos-hardware + "/common/gpu/nvidia/turing")
           nixos-hardware.nixosModules.common-pc-ssd
           home-manager.nixosModules.home-manager
           ./hosts/hades/configuration.nix
