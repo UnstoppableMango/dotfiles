@@ -253,6 +253,8 @@
       programs.kitty.enable = true;
       programs.ghostty.enable = true;
 
+      programs.brave.enable = true;
+
       # https://github.com/nix-community/home-manager/tree/master/modules/programs/zsh
       # shell = pkgs.zsh;
       programs.zsh = {
