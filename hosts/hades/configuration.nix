@@ -689,7 +689,7 @@
     vimix-icon-theme
     papirus-icon-theme
 
-    chrome-gnome-shell
+    gnome-browser-connector
     gnome-shell-extensions
     gnome-settings-daemon
     gnome-tweaks
