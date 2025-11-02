@@ -20,6 +20,7 @@
 
   imports = [
     ./hardware-configuration.nix
+    ../../shells/ssh.nix
   ];
 
   fileSystems = {
