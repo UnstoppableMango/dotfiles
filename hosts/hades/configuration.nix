@@ -424,6 +424,7 @@
               graphql.vscode-graphql-syntax
               apollographql.vscode-apollo
               myriad-dreamin.tinymist
+              bradlc.vscode-tailwindcss
 
               # TODO
               # mogeko.haskell-extension-pack
