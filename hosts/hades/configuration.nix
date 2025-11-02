@@ -505,6 +505,12 @@
                 version = "0.0.11";
                 sha256 = "sha256-UxvwGkefK/b6/sK8WcCis2MWRNkPH/hHAy2BY7GfW70=";
               }
+              {
+                name = "bun-vscode";
+                publisher = "oven";
+                version = "0.0.31";
+                sha256 = "sha256-KlsXU1UpkxaX1rI16CD0KMhe7aarv8A94ZZ0TxlI5Ns=";
+              }
             ];
 
           userSettings = {
