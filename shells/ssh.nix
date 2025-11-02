@@ -1,15 +1,20 @@
 # This expression was written by `cbrauchli` at https://discourse.nixos.org/t/disable-suspend-if-ssh-sessions-are-active/11655/4
 # with minor modifications by Dominic Mayhew
 
-{ config, options, lib, pkgs, ... }:
+{
+  config,
+  options,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   PID_PATH = "/tmp/ssh_sleep_block.pid";
   PID_PIPE = "pid_pipe";
 
   # Prevent sleeping on active SSH
-  sleep_script = pkgs.writeScript "infinite-sleep"
-  ''
+  sleep_script = pkgs.writeScript "infinite-sleep" ''
     #!/bin/sh
 
     echo $$ >${PID_PATH}
@@ -17,15 +22,13 @@ let
     sleep infinity
   '';
 
-  inhibit_script = pkgs.writeScript "inhibit_script"
-  ''
+  inhibit_script = pkgs.writeScript "inhibit_script" ''
     #!/bin/sh
 
     systemd-inhibit --what=sleep --why="Active SSH session" --mode=block ${sleep_script} 0>&- &> /tmp/inhibit.out &
   '';
 
-  ssh_script = pkgs.writeScript "ssh-session-handler"
-  ''
+  ssh_script = pkgs.writeScript "ssh-session-handler" ''
     #!/bin/sh
     #
     # This script runs when an ssh session opens/closes, and masks/unmasks
@@ -65,9 +68,9 @@ let
     esac
 
   '';
-in {
-  security.pam.services.sshd.text = pkgs.lib.mkDefault(
-    pkgs.lib.mkAfter
-    "# Prevent sleep on active SSH\nsession optional pam_exec.so quiet ${ssh_script}"
+in
+{
+  security.pam.services.sshd.text = pkgs.lib.mkDefault (
+    pkgs.lib.mkAfter "# Prevent sleep on active SSH\nsession optional pam_exec.so quiet ${ssh_script}"
   );
 }
