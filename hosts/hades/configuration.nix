@@ -685,6 +685,7 @@
     ripgrep-all
     bat
     rsync
+    tmux
 
     jetbrains-mono
     openrazer-daemon
