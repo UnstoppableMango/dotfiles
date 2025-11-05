@@ -672,6 +672,7 @@
     llvmPackages_19.libllvm
     cmake
     ninja
+    python3
     rustup
     rbenv
     git
