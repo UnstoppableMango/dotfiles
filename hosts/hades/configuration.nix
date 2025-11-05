@@ -223,6 +223,7 @@
         seabird
         github-desktop
         github-copilot-cli
+        mise
 
         nix-zsh-completions
         zsh-nix-shell
