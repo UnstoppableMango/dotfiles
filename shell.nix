@@ -6,11 +6,10 @@ pkgs.mkShellNoCC {
   packages = with pkgs; [
     dprint
     gnumake
-    nixfmt-rfc-style
-    nixfmt-tree
     shellcheck
     watchexec
   ];
 
+  DPRINT = pkgs.dprint + "/bin/dprint";
   WATCHEXEC = pkgs.watchexec + "/bin/watchexec";
 }
