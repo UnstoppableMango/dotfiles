@@ -3,19 +3,18 @@
   "nix.serverPath": "nixd",
   "nix.serverSettings": {
     "nixd": {
+      "nixpkgs": {
+		"expr": "import (builtins.getFlake (builtins.toString ./.)).inputs.nixpkgs { }"
+	  },
       "formatting": {
-        "command": [
-          "treefmt",
-          "--stdin",
-          "{file}"
-        ]
+        "command": ["nixfmt"]
       },
       "options": {
         "nixos": {
-          "expr": "(builtins.getFlake \"${workspaceFolder}\").nixosConfigurations.hades.options"
+          "expr": "(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.hades.options"
         },
         "home-manager": {
-          "expr": "(builtins.getFlake \"${workspaceFolder}\").homeConfigurations.erik.options"
+          "expr": "(builtins.getFlake (builtins.toString ./.)).homeConfigurations.erik.options"
         }
       }
     }

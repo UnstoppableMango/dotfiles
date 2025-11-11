@@ -8,8 +8,10 @@ pkgs.mkShellNoCC {
     gnumake
     nixd
     treefmt
+    nixfmt-rfc-style
     shellcheck
     watchexec
+    ldns
   ];
 
   DPRINT = pkgs.dprint + "/bin/dprint";

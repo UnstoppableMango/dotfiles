@@ -20,17 +20,23 @@
         flake-parts.follows = "flake-parts";
       };
     };
+    nixvim = {
+      url = "github:nix-community/nixvim";
+
+      # Refer to this if issues arise:
+      # https://nix-community.github.io/nixvim/#recent-breaking-changes
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     inputs@{
-      self,
       nixpkgs,
       flake-parts,
       treefmt-nix,
       nixos-hardware,
       home-manager,
-      nixd,
+      ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
@@ -39,22 +45,38 @@
         "x86_64-darwin"
         "aarch64-darwin"
       ];
-      imports = [ treefmt-nix.flakeModule ];
+      imports = [
+        treefmt-nix.flakeModule
+        home-manager.flakeModules.home-manager
+      ];
       perSystem =
         { pkgs, ... }:
         {
+          devShells.default = pkgs.callPackage ./shell.nix { inherit pkgs; };
+
           treefmt = {
             programs.nixfmt.enable = true;
             programs.nixfmt.package = pkgs.nixfmt-rfc-style;
-            programs.dprint.enable = true;
-            settings.formatter.dprint.settingsFile = "./.dprint.json";
-          };
 
-          devShells.default = pkgs.callPackage ./shell.nix { inherit pkgs; };
+            programs.dprint = {
+              enable = false; # Causing issues with flake checks
+              settings.plugins = (
+                pkgs.dprint-plugins.getPluginList (
+                  plugins: with plugins; [
+                    dprint-plugin-json
+                    dprint-plugin-markdown
+                    g-plane-markup_fmt
+                    g-plane-pretty_yaml
+                  ]
+                )
+              );
+            };
+          };
         };
       flake = {
-        nixosModules = {
-          vscode = import ./editors/vscode;
+        homeConfigurations."erik" = home-manager.lib.homeConfiguration {
+          pkgs = nixpkgs;
+          modules = [ ./home.nix ];
         };
 
         nixosConfigurations.hades = nixpkgs.lib.nixosSystem {

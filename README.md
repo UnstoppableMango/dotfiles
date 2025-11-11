@@ -1,26 +1,28 @@
 # UnstoppableMango's dotfiles
 
-My most recent obsession is [Nix](https://nixos.org).
+My most recent obsession is [Nix](https://nixos.org), and it has consumed my dotfiles.
 
-At the time of writing, all of the configuration is [in a single file](./hosts/hades/configuration.nix).
-I'll modularize it if the mood strikes.
+At the time of writing, all of my configuration is [in a single file](./hosts/hades/configuration.nix).
+The [flake](./flake.nix) is fairly fleshed out.
+I'll modularize things better when the mood strikes.
 
 ## Development
 
-```shell
-$ make
-nix build .#nixosConfigurations.hades.config.system.build.toplevel
-```
+Run flake checks
 
 ```shell
 $ make check
 nix flake check
 ```
 
+Update flake inputs
+
 ```shell
 $ make update
 nix flake update
 ```
+
+Run checks automatically while working
 
 ```shell
 $ make watch
@@ -35,6 +37,13 @@ $ make watch
 /path/to/watchexec -e nix nix flake check
 [Running: nix flake check]
 [Command was successful]
+```
+
+Build the toplevel
+
+```shell
+$ make
+nix build .#nixosConfigurations.hades.config.system.build.toplevel
 ```
 
 ## References and Links
