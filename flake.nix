@@ -13,16 +13,24 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixd = {
+      url = "github:nix-community/nixd";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+      };
+    };
   };
 
   outputs =
     inputs@{
+      self,
       nixpkgs,
       flake-parts,
       treefmt-nix,
       nixos-hardware,
       home-manager,
-      ...
+      nixd,
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
@@ -36,10 +44,12 @@
         { pkgs, ... }:
         {
           treefmt = {
-            projectRootFile = "flake.nix";
             programs.nixfmt.enable = true;
             programs.nixfmt.package = pkgs.nixfmt-rfc-style;
+            programs.dprint.enable = true;
+            settings.formatter.dprint.settingsFile = "./.dprint.json";
           };
+
           devShells.default = pkgs.callPackage ./shell.nix { inherit pkgs; };
         };
       flake = {
