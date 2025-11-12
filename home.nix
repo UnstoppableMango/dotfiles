@@ -1,26 +1,38 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs; [
-    pay-respects
-    neofetch
-    seabird
-    github-desktop
-    github-copilot-cli
-    mise
+  home.packages =
+    with pkgs;
+    [
+      pay-respects
+      neofetch
+      seabird
+      github-desktop
+      github-copilot-cli
+      mise
+      nixd
 
-    nix-zsh-completions
-    zsh-nix-shell
-    zsh-powerlevel10k
+      nix-zsh-completions
+      zsh-nix-shell
+      zsh-powerlevel10k
 
-    gnomeExtensions.appindicator
-    gnomeExtensions.dash-to-dock
-    gnomeExtensions.docker
-    gnomeExtensions.tweaks-in-system-menu
-    gnomeExtensions.user-themes
-
-    gnomeExtensions.gsconnect
-    nautilus-python
-  ];
+      # For gsconnect
+      nautilus-python
+    ]
+    ++ (with pkgs.gnomeExtensions; [
+      appindicator
+      dash-to-dock
+      docker
+      tweaks-in-system-menu
+      user-themes
+      gsconnect
+    ])
+    ++ (
+      with pkgs.dotnetCorePackages;
+      combinePackages [
+        sdk_9_0
+        sdk_10_0
+      ]
+    );
 
   # Let Home Manager install and manage itself
   programs.home-manager.enable = true;

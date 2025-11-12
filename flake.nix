@@ -13,20 +13,8 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixd = {
-      url = "github:nix-community/nixd";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-parts.follows = "flake-parts";
-      };
-    };
-    nixvim = {
-      url = "github:nix-community/nixvim";
-
-      # Refer to this if issues arise:
-      # https://nix-community.github.io/nixvim/#recent-breaking-changes
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixd.url = "github:nix-community/nixd";
+    nixvim.url = "github:nix-community/nixvim";
   };
 
   outputs =
