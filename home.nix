@@ -17,6 +17,15 @@
 
       # For gsconnect
       nautilus-python
+
+      (
+        with pkgs.dotnetCorePackages;
+        combinePackages [
+          sdk_9_0
+          sdk_10_0
+          dotnet_10.aspnetcore
+        ]
+      )
     ]
     ++ (with pkgs.gnomeExtensions; [
       appindicator
@@ -25,14 +34,7 @@
       tweaks-in-system-menu
       user-themes
       gsconnect
-    ])
-    ++ (
-      with pkgs.dotnetCorePackages;
-      combinePackages [
-        sdk_9_0
-        sdk_10_0
-      ]
-    );
+    ]);
 
   # Let Home Manager install and manage itself
   programs.home-manager.enable = true;
@@ -56,54 +58,7 @@
 
   # https://github.com/nix-community/home-manager/tree/master/modules/programs/zsh
   # shell = pkgs.zsh;
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
-
-    history = {
-      expireDuplicatesFirst = true;
-    };
-
-    initContent = "source ~/.p10k.zsh";
-    plugins = [
-      {
-        name = "powerlevel10k";
-        src = pkgs.zsh-powerlevel10k;
-        file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-      }
-    ];
-
-    oh-my-zsh = {
-      enable = true;
-      plugins = [
-        "sudo"
-        "ssh-agent"
-        "gpg-agent"
-
-        "git"
-        "nix-shell"
-        "direnv"
-
-        "nvm"
-        "npm"
-        "yarn"
-        "deno"
-        "bun"
-
-        "golang"
-        "dotnet"
-
-        "kubectl"
-        "docker"
-        "helm"
-      ];
-
-      # This is printing warnings... thought it was required?
-      # theme = "powerlevel10k/powerlevel10k";
-    };
-  };
+  programs.zsh = import ./shells/zsh/home-manager.nix { inherit pkgs; };
 
   programs.git = {
     enable = true;
