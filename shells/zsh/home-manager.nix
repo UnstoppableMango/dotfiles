@@ -1,3 +1,4 @@
+# https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zsh.enable
 { pkgs, ... }:
 {
   enable = true;
