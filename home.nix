@@ -10,6 +10,7 @@
       github-copilot-cli
       mise
       nixd
+      glow
 
       nix-zsh-completions
       zsh-nix-shell
