@@ -21,9 +21,9 @@ system:
 format fmt:
 	$(NIX) fmt
 
+.PHONY: flake.lock
 flake.lock: ${SRC}
 	$(NIX) flake update
-	@touch $@
 
 flake.nix:
 	$(NIX) flake init
