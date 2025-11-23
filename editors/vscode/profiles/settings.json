@@ -1,0 +1,31 @@
+{
+  "$schema": "vscode://schemas/settings/user",
+  "gitlens.ai.model": "gitkraken",
+  "gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
+  // https://github.com/alefragnani/vscode-project-manager/blob/master/README.md#available-settings
+  "projectManager.git.baseFolders": [
+    "~/src/github.com/UnstoppableMango",
+    "~/src/gitlab.com/unmango",
+    "~/src/github.com/pulumiverse"
+  ],
+  "projectManager.tags": [
+    "Personal",
+    "Work",
+    "FOSS"
+  ],
+  "redhat.telemetry.enabled": false,
+  "terminal.integrated.fontFamily": "MesloLGS NF",
+  "vs-kubernetes": {
+    "vs-kubernetes.crd-code-completion": "enabled"
+  },
+  "workbench.iconTheme": "vs-nomo-dark",
+  "[dockercompose]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  }
+}
