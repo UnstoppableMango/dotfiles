@@ -1,8 +1,10 @@
 {
   pkgs ? import <nixpkgs> { },
+  lib,
+  ...
 }:
 {
-  userSettings = ./settings.json;
+  userSettings = lib.importJson ./settings.json;
 
   extensions =
     with pkgs.vscode-extensions;

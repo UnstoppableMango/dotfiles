@@ -14,5 +14,5 @@
     enableUpdateCheck = false;
   };
 
-  profiles.Hades = import ./profiles/hades.nix { inherit pkgs; };
+  profiles.Hades = pkgs.callPackage ./profiles/hades.nix {};
 }
