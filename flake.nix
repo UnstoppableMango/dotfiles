@@ -4,7 +4,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixos-hardware.url = "github:nixos/nixos-hardware/master";
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -23,13 +22,7 @@
   };
 
   outputs =
-    inputs@{
-      nixpkgs,
-      flake-parts,
-      treefmt-nix,
-      home-manager,
-      ...
-    }:
+    inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       flake = {
         homeModules = {
@@ -38,8 +31,8 @@
           vscode = ./editors/vscode/home.nix;
           zsh = ./shells/zsh/home.nix;
         };
-        homeConfigurations."erik" = home-manager.lib.homeConfiguration {
-          pkgs = nixpkgs;
+        homeConfigurations."erik" = inputs.home-manager.lib.homeConfiguration {
+          pkgs = inputs.nixpkgs;
           modules = [ ./users/erik/home.nix ];
         };
       };
@@ -50,8 +43,8 @@
         "aarch64-darwin"
       ];
       imports = [
-        treefmt-nix.flakeModule
-        home-manager.flakeModules.home-manager
+        inputs.treefmt-nix.flakeModule
+        inputs.home-manager.flakeModules.home-manager
       ];
       perSystem =
         { pkgs, ... }:
