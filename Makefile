@@ -4,7 +4,7 @@ WATCHEXEC ?= watchexec
 SRC != find -path '*.nix' -printf '%P\n'
 
 build:
-	$(NIX) build .#nixosConfigurations.hades.config.system.build.toplevel
+	$(NIX) build .#homeConfigurations.erik
 
 check:
 	$(NIX) flake check

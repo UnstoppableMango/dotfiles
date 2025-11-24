@@ -27,6 +27,23 @@
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
+      flake = {
+        homeModules = {
+          dconf = ./desktops/gnome/dconf/home.nix;
+          erik = ./users/erik/home.nix;
+          vscode = ./editors/vscode/home.nix;
+          zsh = ./shells/zsh/home.nix;
+        };
+        homeConfigurations."erik" = home-manager.lib.homeConfiguration {
+          pkgs = nixpkgs;
+          modules = [
+            ./users/erik/home.nix
+            ./desktops/gnome/dconf/home.nix
+            ./editors/vscode/home.nix
+            ./shells/zsh/home.nix
+          ];
+        };
+      };
       systems = [
         "x86_64-linux"
         "aarch64-linux"
@@ -61,24 +78,5 @@
             };
           };
         };
-      flake = {
-        homeModules = {
-          erik = import ./users/erik/home.nix;
-        };
-        homeConfigurations."erik" = home-manager.lib.homeConfiguration {
-          pkgs = nixpkgs;
-          modules = [ ./users/erik/home.nix ];
-        };
-
-        nixosConfigurations.hades = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            nixos-hardware.nixosModules.asus-rog-strix-x570e
-            nixos-hardware.nixosModules.common-pc-ssd
-            home-manager.nixosModules.home-manager
-            ./hosts/hades/configuration.nix
-          ];
-        };
-      };
     };
 }
