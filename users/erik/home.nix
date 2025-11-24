@@ -1,5 +1,11 @@
 { pkgs, ... }:
 {
+  imports = [
+    ../../editors/vscode/home.nix
+    ../../shells/zsh/home.nix
+    ../../desktops/gnome/dconf/home.nix
+  ];
+
   home.packages =
     with pkgs;
     [
