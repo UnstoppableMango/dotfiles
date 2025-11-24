@@ -40,7 +40,7 @@
       perSystem =
         { pkgs, ... }:
         {
-          devShells.default = pkgs.callPackage ./shell.nix { inherit pkgs; };
+          devShells.default = pkgs.callPackage ./shell.nix { };
 
           treefmt = {
             programs.nixfmt.enable = true;
@@ -62,9 +62,12 @@
           };
         };
       flake = {
+        homeModules = {
+          erik = import ./users/erik/home.nix;
+        };
         homeConfigurations."erik" = home-manager.lib.homeConfiguration {
           pkgs = nixpkgs;
-          modules = [ ./home.nix ];
+          modules = [ ./users/erik/home.nix ];
         };
 
         nixosConfigurations.hades = nixpkgs.lib.nixosSystem {
