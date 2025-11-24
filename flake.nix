@@ -15,6 +15,11 @@
     };
     nixd.url = "github:nix-community/nixd";
     nixvim.url = "github:nix-community/nixvim";
+    ux = {
+      url = "github:unstoppablemango/ux";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+    };
   };
 
   outputs =
@@ -22,7 +27,6 @@
       nixpkgs,
       flake-parts,
       treefmt-nix,
-      nixos-hardware,
       home-manager,
       ...
     }:
@@ -36,12 +40,7 @@
         };
         homeConfigurations."erik" = home-manager.lib.homeConfiguration {
           pkgs = nixpkgs;
-          modules = [
-            ./users/erik/home.nix
-            ./desktops/gnome/dconf/home.nix
-            ./editors/vscode/home.nix
-            ./shells/zsh/home.nix
-          ];
+          modules = [ ./users/erik/home.nix ];
         };
       };
       systems = [
