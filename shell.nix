@@ -6,14 +6,14 @@ pkgs.mkShellNoCC {
   packages = with pkgs; [
     dprint
     gnumake
+    ldns
     nixd
-    treefmt
     nixfmt-rfc-style
     shellcheck
     watchexec
-    ldns
   ];
 
   DPRINT = pkgs.dprint + "/bin/dprint";
+  NIXFMT = pkgs.nixfmt-rfc-style + "/bin/nixfmt";
   WATCHEXEC = pkgs.watchexec + "/bin/watchexec";
 }
