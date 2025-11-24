@@ -1,8 +1,7 @@
 # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zsh.enable
 { pkgs, ... }:
 {
-  config = {
-
+  config.programs.zsh = {
     enable = true;
     enableCompletion = true;
     autosuggestion.enable = true;
