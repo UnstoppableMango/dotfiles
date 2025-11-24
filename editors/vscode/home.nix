@@ -28,7 +28,7 @@
             ms-vscode-remote.remote-ssh
             github.vscode-github-actions
             github.copilot
-            anthropic.claude-code
+            # anthropic.claude-code
             editorconfig.editorconfig
 
             redhat.vscode-yaml
