@@ -1,5 +1,5 @@
 # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.vscode.enable
-{ pkgs, ... }:
+{ ... }:
 {
   imports = [ ./profiles/hades.nix ];
   config = {
