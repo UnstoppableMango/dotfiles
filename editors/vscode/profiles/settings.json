@@ -2,7 +2,6 @@
   "$schema": "vscode://schemas/settings/user",
   "gitlens.ai.model": "gitkraken",
   "gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
-  // https://github.com/alefragnani/vscode-project-manager/blob/master/README.md#available-settings
   "projectManager.git.baseFolders": [
     "~/src/github.com/UnstoppableMango",
     "~/src/gitlab.com/unmango",
