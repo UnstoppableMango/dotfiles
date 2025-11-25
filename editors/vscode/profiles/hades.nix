@@ -17,7 +17,7 @@
         ms-vscode-remote.remote-ssh
         github.vscode-github-actions
         github.copilot
-        anthropic.claude-code
+        # anthropic.claude-code
         editorconfig.editorconfig
 
         redhat.vscode-yaml
@@ -28,7 +28,6 @@
         golang.go
         ms-dotnettools.csharp
         ms-dotnettools.csdevkit
-        ms-dotnettools.vscodeintellicode-csharp
         ms-dotnettools.vscode-dotnet-runtime
         ionide.ionide-fsharp
         rust-lang.rust-analyzer
