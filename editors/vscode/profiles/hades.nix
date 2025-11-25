@@ -4,7 +4,7 @@
 }:
 {
   config.programs.vscode.profiles.Hades = {
-    # userSettings = lib.importJson ./settings.json;
+    userSettings = ./settings.json;
 
     extensions =
       with pkgs.vscode-extensions;
