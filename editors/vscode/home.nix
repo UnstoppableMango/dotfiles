@@ -39,7 +39,6 @@
             golang.go
             ms-dotnettools.csharp
             ms-dotnettools.csdevkit
-            ms-dotnettools.vscodeintellicode-csharp
             ms-dotnettools.vscode-dotnet-runtime
             ionide.ionide-fsharp
             rust-lang.rust-analyzer
