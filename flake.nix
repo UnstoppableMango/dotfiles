@@ -14,6 +14,8 @@
     };
     nixd.url = "github:nix-community/nixd";
     nixvim.url = "github:nix-community/nixvim";
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
+    nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
     ux = {
       url = "github:unstoppablemango/ux";
       inputs.nixpkgs.follows = "nixpkgs";

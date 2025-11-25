@@ -1,7 +1,23 @@
 {
   "$schema": "vscode://schemas/settings/user",
+  "docker.lsp.telemetry": "off",
+  "dotnetAcquisitionExtension.enableTelemetry": false,
+  "editor.experimental.treeSitterTelemetry": false,
+  "editor.formatOnSave": true,
   "gitlens.ai.model": "gitkraken",
   "gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
+  "gitlens.telemetry.enabled": false,
+  "nix.enableLanguageServer": true,
+  "nix.serverPath": "nil",
+  "nix.serverSettings": {
+    "nil": {
+      "formatting": {
+        "command": [
+          "nixfmt"
+        ]
+      }
+    }
+  },
   "projectManager.git.baseFolders": [
     "~/src/github.com/UnstoppableMango",
     "~/src/gitlab.com/unmango",
@@ -13,6 +29,7 @@
     "FOSS"
   ],
   "redhat.telemetry.enabled": false,
+  "telemetry.telemetryLevel": "off",
   "terminal.integrated.fontFamily": "MesloLGS NF",
   "vs-kubernetes": {
     "vs-kubernetes.crd-code-completion": "enabled"
@@ -26,5 +43,11 @@
   },
   "[github-actions-workflow]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[json]": {
+	"editor.defaultFormatter": "dprint.dprint"
+  },
+  "[jsonc]": {
+	"editor.defaultFormatter": "dprint.dprint"
   }
 }

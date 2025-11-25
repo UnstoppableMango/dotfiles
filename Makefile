@@ -3,11 +3,11 @@ WATCHEXEC ?= watchexec
 
 SRC != find -path '*.nix' -printf '%P\n'
 
-build:
-	$(NIX) build .#homeConfigurations.erik
-
 check:
 	$(NIX) flake check
+
+build:
+	$(NIX) build .#homeConfigurations.erik
 
 watch:
 	$(WATCHEXEC) -e nix $(NIX) flake check
