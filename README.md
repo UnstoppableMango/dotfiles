@@ -1,12 +1,11 @@
 # UnstoppableMango's dotfiles
 
-My most recent obsession is [Nix](https://nixos.org), and it has consumed my dotfiles.
-
-At the time of writing, all of my configuration is [in a single file](./hosts/hades/configuration.nix).
-The [flake](./flake.nix) is fairly fleshed out.
-I'll modularize things better when the mood strikes.
+[Nix](https://nixos.org) has consumed my dotfiles.
+`main` is not stable, my NixOS configurations live over at <https://github.com/Unstoppablemango/nixos>.
 
 ## Development
+
+There are some `make` targets that can save you typing like, 5 keystrokes and my repos _need_ a Makefile.
 
 Run flake checks
 
@@ -39,16 +38,12 @@ $ make watch
 [Command was successful]
 ```
 
-Build the toplevel
-
-```shell
-$ make
-nix build .#nixosConfigurations.hades.config.system.build.toplevel
-```
-
 ## References and Links
 
 - <https://github.com/brenno263/nix-config>
 - <https://github.com/grey-lovelace/nixos-config>
 - <https://github.com/BenMcH/dotfiles/tree/main/home-manager/dot-config/home-manager>
 - <https://nixos-and-flakes.thiscute.world>
+- <https://github.com/nmasur/dotfiles>
+- <https://flake.parts/>
+- <https://nix-community.github.io/home-manager/index.xhtml>
