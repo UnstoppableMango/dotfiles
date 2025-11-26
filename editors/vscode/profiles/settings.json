@@ -1,5 +1,6 @@
 {
   "$schema": "vscode://schemas/settings/user",
+  "chat.mcp.gallery.enabled": true,
   "docker.lsp.telemetry": "off",
   "dotnetAcquisitionExtension.enableTelemetry": false,
   "editor.experimental.treeSitterTelemetry": false,
@@ -20,7 +21,7 @@
   },
   "projectManager.git.baseFolders": [
     "~/src/github.com/UnstoppableMango",
-    "~/src/gitlab.com/unmango",
+    "~/src/github.com/unmango",
     "~/src/github.com/pulumiverse"
   ],
   "projectManager.tags": [
