@@ -43,7 +43,10 @@
         };
         homeConfigurations."erik" = inputs.home-manager.lib.homeConfiguration {
           pkgs = inputs.nixpkgs;
-          modules = [ ./users/erik/home.nix ];
+          modules = [
+            inputs.nixvim.homeModules.nixvim
+            ./users/erik/home.nix
+          ];
         };
       };
       systems = [
