@@ -27,11 +27,12 @@
   };
 
   outputs =
-    inputs@{ flake-parts, ... }:
+    inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         inputs.treefmt-nix.flakeModule
         inputs.home-manager.flakeModules.home-manager
+        inputs.nixvim.flakeModules.default
       ];
 
       flake = {
@@ -41,14 +42,19 @@
           vscode = ./editors/vscode/home.nix;
           zsh = ./shells/zsh/home.nix;
         };
+
         homeConfigurations."erik" = inputs.home-manager.lib.homeConfiguration {
           pkgs = inputs.nixpkgs;
           modules = [
-            inputs.nixvim.homeModules.nixvim
             ./users/erik/home.nix
           ];
         };
+
+        nixvimModules = {
+          default = ./editors/nixvim/module.nix;
+        };
       };
+
       systems = [
         "x86_64-linux"
         "aarch64-linux"
@@ -56,8 +62,17 @@
         "aarch64-darwin"
       ];
       perSystem =
-        { pkgs, ... }:
+        { pkgs, system, ... }:
         {
+          nixvimConfigurations = {
+            default = inputs.nixvim.lib.evalNixvim {
+              inherit system;
+              modules = [
+                self.nixvimModules.default
+              ];
+            };
+          };
+
           devShells.default = pkgs.callPackage ./shell.nix { };
 
           treefmt = {
@@ -79,5 +94,10 @@
             };
           };
         };
+
+      nixvim = {
+        packages.enable = true;
+        checks.enable = true;
+      };
     };
 }

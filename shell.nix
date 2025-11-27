@@ -8,6 +8,7 @@ pkgs.mkShellNoCC {
     dprint
     git
     gnumake
+    home-manager
     ldns
     neovim
     nil
