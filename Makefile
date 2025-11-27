@@ -23,7 +23,8 @@ format fmt:
 
 flake.lock: ${SRC}
 	$(NIX) flake update
-	@touch $@
 
 flake.nix:
 	$(NIX) flake init
+
+.PHONY: flake.lock
