@@ -2,6 +2,7 @@
 {
   imports = [
     ../../editors/vscode/home.nix
+    ../../editors/zed/home.nix
     ../../shells/zsh/home.nix
     ../../desktops/gnome/dconf/home.nix
   ];

@@ -48,3 +48,4 @@ $ make watch
 - <https://flake.parts/>
 - <https://nix-community.github.io/home-manager/index.xhtml>
 - <https://github.com/nocoolnametom/nix-config>
+- <https://gitlab.com/Zaney/zaneyos>
