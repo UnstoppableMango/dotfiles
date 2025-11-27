@@ -1,4 +1,4 @@
-{ pkgs, nixvim, ... }:
+{ pkgs, ... }:
 {
   imports = [
     ../../editors/neovim/home.nix
@@ -6,7 +6,6 @@
     ../../editors/zed/home.nix
     ../../shells/zsh/home.nix
     ../../desktops/gnome/dconf/home.nix
-    nixvim
   ];
 
   home.packages =
