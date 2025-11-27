@@ -1,6 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, nixvim, ... }:
 {
   imports = [
+    nixvim.homeModules.nixvim
     ../../editors/neovim/home.nix
     ../../editors/nixvim/home.nix
     ../../editors/vscode/home.nix
