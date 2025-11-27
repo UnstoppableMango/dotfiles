@@ -39,6 +39,7 @@
         homeModules = {
           dconf = ./desktops/gnome/dconf/home.nix;
           erik = ./users/erik/home.nix;
+          neovim = ./editors/neovim/home.nix;
           nixvim = ./editors/nixvim/home.nix;
           vscode = ./editors/vscode/home.nix;
           zed = ./editors/zed/home.nix;

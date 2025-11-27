@@ -1,11 +1,9 @@
 { pkgs, ... }:
 {
   imports = [
-    ../../editors/neovim/home.nix
     ../../editors/vscode/home.nix
     ../../editors/zed/home.nix
     ../../shells/zsh/home.nix
-    ../../desktops/gnome/dconf/home.nix
   ];
 
   home.packages =
