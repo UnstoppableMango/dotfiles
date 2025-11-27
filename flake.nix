@@ -13,7 +13,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixd.url = "github:nix-community/nixd";
-    nixvim.url = "github:nix-community/nixvim";
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
     ux = {
@@ -26,6 +29,11 @@
   outputs =
     inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
+      imports = [
+        inputs.treefmt-nix.flakeModule
+        inputs.home-manager.flakeModules.home-manager
+      ];
+
       flake = {
         homeModules = {
           dconf = ./desktops/gnome/dconf/home.nix;
@@ -43,10 +51,6 @@
         "aarch64-linux"
         "x86_64-darwin"
         "aarch64-darwin"
-      ];
-      imports = [
-        inputs.treefmt-nix.flakeModule
-        inputs.home-manager.flakeModules.home-manager
       ];
       perSystem =
         { pkgs, ... }:

@@ -1,10 +1,12 @@
-{ pkgs, ... }:
+{ pkgs, nixvim, ... }:
 {
   imports = [
+    ../../editors/neovim/home.nix
     ../../editors/vscode/home.nix
     ../../editors/zed/home.nix
     ../../shells/zsh/home.nix
     ../../desktops/gnome/dconf/home.nix
+    nixvim
   ];
 
   home.packages =
@@ -101,13 +103,7 @@
 
   programs.micro.enable = true;
   programs.helix.enable = true;
-  programs.zed-editor.enable = true;
-
   programs.vim.enable = true;
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-  };
 
   programs.emacs = {
     enable = true;
@@ -116,10 +112,7 @@
     ];
   };
 
-  programs.claude-code = {
-    enable = true;
-  };
-
+  programs.claude-code.enable = true;
   programs.k9s.enable = true;
   programs.gh.enable = true;
 
