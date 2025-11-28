@@ -22,4 +22,9 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix flake check --all-systems
-      - run: nix run home-manager -- build --flake ${{ github.workspace }} -A user=erik
+
+      # Gotta be a better way to specify the user to build
+      - run: |
+          USER=erik nix run home-manager -- build \
+          --flake ${{ github.workspace }} \
+          --no-out-link
