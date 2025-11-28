@@ -10,8 +10,8 @@
       zstyle ':prezto:module:prompt' theme 'powerlevel10k'
     '';
 
-    extraModules = [];
-    pmodules = [];
+    extraModules = [ ];
+    pmodules = [ ];
     prompt.theme = "powerlevel10k";
   };
 }

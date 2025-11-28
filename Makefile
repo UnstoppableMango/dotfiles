@@ -1,5 +1,6 @@
-NIX       ?= nix
-WATCHEXEC ?= watchexec
+NIX         ?= nix
+HOMEMANAGER ?= home-manager
+WATCHEXEC   ?= watchexec
 
 SRC != find -path '*.nix' -printf '%P\n'
 
@@ -7,7 +8,7 @@ check:
 	$(NIX) flake check
 
 build:
-	$(NIX) build .#homeConfigurations.erik
+	$(HOMEMANAGER) build --flake ${CURDIR}
 
 watch:
 	$(WATCHEXEC) -e nix $(NIX) flake check

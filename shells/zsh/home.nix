@@ -1,7 +1,7 @@
 # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zsh.enable
 { pkgs, ... }:
 {
-  imports = [ ./prezto/home.nix ];
+  # imports = [ ./prezto/home.nix ];
 
   config.programs.zsh = {
     enable = true;

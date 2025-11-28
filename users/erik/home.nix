@@ -6,6 +6,11 @@
     ../../shells/zsh/home.nix
   ];
 
+  nixpkgs.config.allowUnfree = true;
+
+  home.username = "erik";
+  home.homeDirectory = "/home/erik";
+
   home.packages =
     with pkgs;
     [

@@ -9,7 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager?ref=release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixd.url = "github:nix-community/nixd";
@@ -46,13 +46,6 @@
           zsh = ./shells/zsh/home.nix;
         };
 
-        homeConfigurations."erik" = inputs.home-manager.lib.homeManagerConfiguration {
-          pkgs = inputs.nixpkgs;
-          modules = [
-            self.homeModules.erik
-          ];
-        };
-
         nixvimModules = {
           default = ./editors/nixvim/module.nix;
         };
@@ -72,6 +65,18 @@
               inherit system;
               modules = [
                 self.nixvimModules.default
+              ];
+            };
+          };
+
+          # https://github.com/nix-community/home-manager/discussions/7551
+          # https://github.com/nix-community/home-manager/issues/3075
+          # https://github.com/bobvanderlinden/nixos-config/blob/bdfd8d94def9dc36166ef5725589bf3d7ae2d233/flake.nix#L38-L46
+          legacyPackages = {
+            homeConfigurations."erik" = inputs.home-manager.lib.homeManagerConfiguration {
+              inherit pkgs;
+              modules = [
+                self.homeModules.erik
               ];
             };
           };
