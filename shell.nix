@@ -20,6 +20,7 @@ pkgs.mkShellNoCC {
 
   DPRINT = pkgs.dprint + "/bin/dprint";
   GIT = pkgs.git + "/bin/git";
+  HOMEMANAGER = pkgs.home-manager + "/bin/home-manager";
   NIXFMT = pkgs.nixfmt-rfc-style + "/bin/nixfmt";
   SHELLCHECK = pkgs.shellcheck + "/bin/shellcheck";
   WATCHEXEC = pkgs.watchexec + "/bin/watchexec";

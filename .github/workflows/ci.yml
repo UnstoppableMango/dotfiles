@@ -21,4 +21,10 @@ jobs:
           name: unstoppablemango
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix flake check --accept-flake-config
+      - run: nix flake check --all-systems
+
+      # Gotta be a better way to specify the user to build
+      - run: |
+          USER=erik nix run home-manager -- build \
+          --flake ${{ github.workspace }} \
+          --no-out-link
