@@ -46,10 +46,10 @@
           zsh = ./shells/zsh/home.nix;
         };
 
-        homeConfigurations."erik" = inputs.home-manager.lib.homeConfiguration {
+        homeConfigurations."erik" = inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = inputs.nixpkgs;
           modules = [
-            ./users/erik/home.nix
+            self.homeModules.erik
           ];
         };
 
