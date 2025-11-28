@@ -22,4 +22,4 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix flake check --all-systems
-      - run: nix run home-manager -- build --flake ${{ github.workspace }}
+      - run: nix run home-manager -- build --flake ${{ github.workspace }} -A user=erik
