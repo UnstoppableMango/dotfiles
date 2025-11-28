@@ -6,6 +6,7 @@
     ../../shells/zsh/home.nix
   ];
 
+  # https://github.com/nix-community/home-manager/issues/2954
   nixpkgs.config.allowUnfree = true;
 
   home.username = "erik";

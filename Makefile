@@ -15,8 +15,12 @@ watch:
 
 update: flake.lock
 
+home:
+	$(NIX) flake update --flake ${HOME}/.config/home-manager
+	$(HOMEMANAGER) switch --flake ${HOME}/.config/home-manager
+
 system:
-	sudo nix flake update --flake /etc/nixos
+	sudo $(NIX) flake update --flake /etc/nixos
 	sudo nixos-rebuild switch --flake /etc/nixos
 
 format fmt:
