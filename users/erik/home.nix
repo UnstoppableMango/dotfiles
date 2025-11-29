@@ -6,9 +6,6 @@
     ../../shells/zsh/home.nix
   ];
 
-  # https://github.com/nix-community/home-manager/issues/2954
-  nixpkgs.config.allowUnfree = true;
-
   home.username = "erik";
   home.homeDirectory = "/home/erik";
 
@@ -28,9 +25,6 @@
       zsh-nix-shell
       zsh-powerlevel10k
 
-      # For gsconnect
-      nautilus-python
-
       (
         with pkgs.dotnetCorePackages;
         combinePackages [
@@ -39,15 +33,7 @@
           dotnet_10.aspnetcore
         ]
       )
-    ]
-    ++ (with pkgs.gnomeExtensions; [
-      appindicator
-      dash-to-dock
-      docker
-      tweaks-in-system-menu
-      user-themes
-      gsconnect
-    ]);
+    ];
 
   # Let Home Manager install and manage itself
   programs.home-manager.enable = true;

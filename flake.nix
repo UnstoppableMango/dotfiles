@@ -54,6 +54,7 @@
         homeModules = {
           dconf = ./desktops/gnome/dconf/home.nix;
           erik = ./users/erik/home.nix;
+          gnome = ./desktops/gnome/home.nix;
           neovim = ./editors/neovim/home.nix;
           nixvim = ./editors/nixvim/home.nix;
           vscode = ./editors/vscode/home.nix;
@@ -98,6 +99,8 @@
               modules = [
                 inputs.nixvim.homeModules.nixvim
                 self.homeModules.erik
+                # https://github.com/nix-community/home-manager/issues/2954
+                { nixpkgs.config.allowUnfree = true; }
               ];
             };
           };
