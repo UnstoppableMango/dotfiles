@@ -66,7 +66,12 @@
         "aarch64-darwin"
       ];
       perSystem =
-        { inputs', pkgs, system, ... }:
+        {
+          inputs',
+          pkgs,
+          system,
+          ...
+        }:
         {
           nixvimConfigurations = {
             default = inputs.nixvim.lib.evalNixvim {
