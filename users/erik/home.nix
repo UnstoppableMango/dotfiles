@@ -1,9 +1,12 @@
 { pkgs, ... }:
 {
   imports = [
+    ../../browsers/brave/home.nix
     ../../editors/nixvim/home.nix
     ../../editors/zed/home.nix
     ../../shells/zsh/home.nix
+    ../../terminals/kitty/home.nix
+    ../../terminals/ghostty/home.nix
   ];
 
   home.username = "erik";
@@ -38,10 +41,6 @@
   # Let Home Manager install and manage itself
   programs.home-manager.enable = true;
 
-  home.shell = {
-    enableZshIntegration = true;
-  };
-
   programs.grep.enable = true;
   programs.htop.enable = true;
   programs.fzf.enable = true;
@@ -49,14 +48,6 @@
   programs.less.enable = true;
   programs.ripgrep.enable = true;
   programs.ripgrep-all.enable = true;
-
-  programs.kitty.enable = true;
-  programs.ghostty.enable = true;
-
-  programs.brave.enable = true;
-
-  # https://github.com/nix-community/home-manager/tree/master/modules/programs/zsh
-  # shell = pkgs.zsh;
 
   programs.git = {
     enable = true;

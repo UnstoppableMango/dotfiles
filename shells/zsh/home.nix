@@ -1,7 +1,10 @@
 # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zsh.enable
-{ pkgs, ... }:
 {
   imports = [ ./prezto/home.nix ];
+
+  home.shell = {
+    enableZshIntegration = true;
+  };
 
   programs.zsh = {
     enable = true;
