@@ -1,9 +1,9 @@
 # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zsh.enable
 { pkgs, ... }:
 {
-  # imports = [ ./prezto/home.nix ];
+  imports = [ ./prezto/home.nix ];
 
-  config.programs.zsh = {
+  programs.zsh = {
     enable = true;
     enableCompletion = true;
     autosuggestion.enable = true;
@@ -12,7 +12,5 @@
     history = {
       expireDuplicatesFirst = true;
     };
-
-    initContent = "source ~/.p10k.zsh";
   };
 }
