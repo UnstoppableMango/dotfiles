@@ -32,4 +32,7 @@ flake.lock: ${SRC}
 flake.nix:
 	$(NIX) flake init
 
+p10k: # This doesn't actually work in make, but its copy-pastable
+	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/shells/zsh/.p10k.zsh p10k configure
+
 .PHONY: flake.lock
