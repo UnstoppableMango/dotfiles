@@ -4,21 +4,29 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
+
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     nixd.url = "github:nix-community/nixd";
+
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
-    nix-vscode-extensions.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-vscode-extensions = {
+      url = "github:nix-community/nix-vscode-extensions";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     ux = {
       url = "github:unstoppablemango/ux";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -58,7 +66,7 @@
         "aarch64-darwin"
       ];
       perSystem =
-        { pkgs, system, ... }:
+        { inputs', pkgs, system, ... }:
         {
           nixvimConfigurations = {
             default = inputs.nixvim.lib.evalNixvim {
@@ -76,12 +84,34 @@
             homeConfigurations."erik" = inputs.home-manager.lib.homeManagerConfiguration {
               inherit pkgs;
               modules = [
+                inputs.nixvim.homeModules.nixvim
                 self.homeModules.erik
               ];
             };
           };
 
-          devShells.default = pkgs.callPackage ./shell.nix { };
+          devShells.default = pkgs.mkShellNoCC {
+            packages = with pkgs; [
+              direnv
+              dprint
+              git
+              gnumake
+              home-manager
+              ldns
+              nil
+              nixd
+              nixfmt-rfc-style
+              shellcheck
+              watchexec
+            ];
+
+            DPRINT = pkgs.dprint + "/bin/dprint";
+            GIT = pkgs.git + "/bin/git";
+            HOMEMANAGER = pkgs.home-manager + "/bin/home-manager";
+            NIXFMT = pkgs.nixfmt-rfc-style + "/bin/nixfmt";
+            SHELLCHECK = pkgs.shellcheck + "/bin/shellcheck";
+            WATCHEXEC = pkgs.watchexec + "/bin/watchexec";
+          };
 
           treefmt = {
             programs.nixfmt.enable = true;

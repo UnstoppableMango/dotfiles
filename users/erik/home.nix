@@ -1,7 +1,7 @@
 { pkgs, ... }:
 {
   imports = [
-    ../../editors/vscode/home.nix
+    ../../editors/nixvim/home.nix
     ../../editors/zed/home.nix
     ../../shells/zsh/home.nix
   ];
