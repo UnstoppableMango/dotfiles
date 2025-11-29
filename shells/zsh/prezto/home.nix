@@ -8,10 +8,6 @@
   programs.zsh.prezto = {
     enable = true;
     caseSensitive = true;
-    color = true;
-
-    extraModules = [ ];
-    pmodules = [ ];
     prompt.theme = "powerlevel10k";
   };
 }

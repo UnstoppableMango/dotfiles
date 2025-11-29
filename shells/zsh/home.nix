@@ -10,7 +10,11 @@
     syntaxHighlighting.enable = true;
 
     history = {
+      append = true;
       expireDuplicatesFirst = true;
+      findNoDups = true;
+      ignoreDups = true;
+      share = false;
     };
   };
 }
