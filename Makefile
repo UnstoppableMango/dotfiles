@@ -17,7 +17,7 @@ update: flake.lock
 
 home:
 	$(NIX) flake update --flake ${HOME}/.config/home-manager
-	$(HOMEMANAGER) switch --flake ${HOME}/.config/home-manager
+	$(HOMEMANAGER) switch --flake ${HOME}/.config/home-manager -b hm-backup
 
 system:
 	sudo $(NIX) flake update --flake /etc/nixos
