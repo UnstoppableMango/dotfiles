@@ -33,6 +33,8 @@
       inputs.flake-parts.follows = "flake-parts";
     };
 
+    # https://wiki.nixos.org/wiki/Zed
+    # https://github.com/zed-industries/zed/blob/main/flake.nix
     zed = {
       url = "github:zed-industries/zed";
       inputs.nixpkgs.follows = "nixpkgs";
