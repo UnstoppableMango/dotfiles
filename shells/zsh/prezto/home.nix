@@ -10,10 +10,6 @@
     caseSensitive = true;
     color = true;
 
-    extraConfig = ''
-      zstyle ':prezto:module:prompt' theme 'powerlevel10k'
-    '';
-
     extraModules = [ ];
     pmodules = [ ];
     prompt.theme = "powerlevel10k";
