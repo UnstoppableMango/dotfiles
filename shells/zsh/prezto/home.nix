@@ -5,9 +5,15 @@
   };
 
   # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zsh.prezto
-  programs.zsh.prezto = {
-    enable = true;
-    caseSensitive = true;
-    prompt.theme = "powerlevel10k";
+  programs.zsh = {
+    initContent = ''
+      source ~/.p10k.zsh
+    '';
+
+    prezto = {
+      enable = true;
+      caseSensitive = true;
+      prompt.theme = "powerlevel10k";
+    };
   };
 }
