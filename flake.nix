@@ -48,6 +48,25 @@
         inputs.treefmt-nix.flakeModule
         inputs.home-manager.flakeModules.home-manager
         inputs.nixvim.flakeModules.default
+
+        inputs.flake-parts.flakeModules.modules
+        ./browsers/brave
+        ./desktops/gnome
+        ./editors/emacs
+        ./editors/neovim
+        ./editors/vscode
+        ./editors/zed
+        ./shells/zsh
+        ./terminals/ghostty
+        ./terminals/kitty
+        ./toolchain/c
+        ./toolchain/dotnet
+        ./toolchain/git
+        ./toolchain/go
+        ./toolchain/k8s
+        ./toolchain/nix
+        ./toolchain/ocaml
+        ./users/erik
       ];
 
       flake = {
