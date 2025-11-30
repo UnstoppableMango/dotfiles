@@ -5,7 +5,6 @@
     defaultEditor = true;
 
     opts.number = true;
-    opts.relativeNumber = false;
 
     editorconfig.enable = true;
     withNodeJs = true;
