@@ -1,7 +1,7 @@
 # UnstoppableMango's dotfiles
 
 [Nix](https://nixos.org) has consumed my dotfiles.
-`main` is not stable, my NixOS configurations live over at <https://github.com/Unstoppablemango/nixos>.
+`main` is not stable, my NixOS configurations live over at [UnstoppableMango/nixos](https://github.com/Unstoppablemango/nixos).
 
 ## Development
 
