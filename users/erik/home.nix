@@ -12,6 +12,7 @@
     ../../toolchain/dotnet/home.nix
     ../../toolchain/git/home.nix
     ../../toolchain/go/home.nix
+    ../../toolchain/k8s/home.nix
     ../../toolchain/nix/home.nix
     ../../toolchain/ocaml/home.nix
   ];
@@ -20,6 +21,7 @@
   home.homeDirectory = "/home/erik";
 
   home.packages = with pkgs; [
+    buf
     pay-respects
     neofetch
     github-copilot-cli
@@ -42,9 +44,7 @@
   programs.vim.enable = true;
   programs.micro.enable = true;
   programs.helix.enable = true;
-
   programs.claude-code.enable = true;
-  programs.k9s.enable = true;
 
   programs.yt-dlp.enable = true;
 
