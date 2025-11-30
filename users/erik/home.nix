@@ -12,31 +12,29 @@
   home.username = "erik";
   home.homeDirectory = "/home/erik";
 
-  home.packages =
-    with pkgs;
-    [
-      pay-respects
-      neofetch
-      seabird
-      github-desktop
-      github-copilot-cli
-      mise
-      nixd
-      glow
+  home.packages = with pkgs; [
+    pay-respects
+    neofetch
+    seabird
+    github-desktop
+    github-copilot-cli
+    mise
+    nixd
+    glow
 
-      nix-zsh-completions
-      zsh-nix-shell
-      zsh-powerlevel10k
+    nix-zsh-completions
+    zsh-nix-shell
+    zsh-powerlevel10k
 
-      (
-        with pkgs.dotnetCorePackages;
-        combinePackages [
-          sdk_9_0
-          sdk_10_0
-          dotnet_10.aspnetcore
-        ]
-      )
-    ];
+    (
+      with pkgs.dotnetCorePackages;
+      combinePackages [
+        sdk_9_0
+        sdk_10_0
+        dotnet_10.aspnetcore
+      ]
+    )
+  ];
 
   # Let Home Manager install and manage itself
   programs.home-manager.enable = true;
