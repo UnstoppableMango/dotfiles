@@ -48,6 +48,7 @@
         inputs.treefmt-nix.flakeModule
         inputs.home-manager.flakeModules.home-manager
         inputs.nixvim.flakeModules.default
+        inputs.flake-parts.flakeModules.modules
       ];
 
       flake = {
@@ -67,6 +68,8 @@
         nixvimModules = {
           default = ./editors/neovim/module.nix;
         };
+
+        modules.flakeModules.erik = ./users/erik;
       };
 
       systems = [
