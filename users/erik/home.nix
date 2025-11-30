@@ -3,7 +3,7 @@
   imports = [
     ../../browsers/brave/home.nix
     ../../editors/emacs/home.nix
-    ../../editors/nixvim/home.nix
+    ../../editors/neovim/home.nix
     ../../editors/zed/home.nix
     ../../shells/zsh/home.nix
     ../../terminals/kitty/home.nix

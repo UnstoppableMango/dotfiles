@@ -52,18 +52,20 @@
 
       flake = {
         homeModules = {
-          dconf = ./desktops/gnome/dconf/home.nix;
-          erik = ./users/erik/home.nix;
+          brave = ./browsers/brave/home.nix;
           gnome = ./desktops/gnome/home.nix;
+          emacs = ./editors/emacs/home.nix;
           neovim = ./editors/neovim/home.nix;
-          nixvim = ./editors/nixvim/home.nix;
           vscode = ./editors/vscode/home.nix;
           zed = ./editors/zed/home.nix;
           zsh = ./shells/zsh/home.nix;
+          ghostty = ./terminals/ghostty/home.nix;
+          kitty = ./terminals/kitty/home.nix;
+          erik = ./users/erik/home.nix;
         };
 
         nixvimModules = {
-          default = ./editors/nixvim/module.nix;
+          default = ./editors/neovim/module.nix;
         };
       };
 
