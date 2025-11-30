@@ -167,11 +167,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1764361670,
-        "narHash": "sha256-jgWzgpIaHbL3USIq0gihZeuy1lLf2YSfwvWEwnfAJUw=",
+        "lastModified": 1764510518,
+        "narHash": "sha256-hDFkciyjhjMLRC/qXCREWX1dgq8kopiuJdwXdfVlJuQ=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "780be8ef503a28939cf9dc7996b48ffb1a3e04c6",
+        "rev": "83053e1d337f33e0b48250588006e4b9df2f0d9d",
         "type": "github"
       },
       "original": {
@@ -530,11 +530,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1764469082,
-        "narHash": "sha256-X8sx4Oyb47fXxmLZTpY8K8u6rWM0qNUyx816sKaRzgg=",
+        "lastModified": 1764519080,
+        "narHash": "sha256-G92PHBJkuRLno1Ibsr1X0DUjGBFVE8hnbHNQXRuq6eM=",
         "owner": "zed-industries",
         "repo": "zed",
-        "rev": "007904465378d3f28def22c041d75e81722205b9",
+        "rev": "ca6e64d45180f0c7c6d77fd8f5e97941ba78ef95",
         "type": "github"
       },
       "original": {
