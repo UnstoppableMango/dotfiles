@@ -3,10 +3,16 @@
   programs.nixvim = {
     enable = true;
     defaultEditor = true;
+
+    opts.number = true;
+    opts.relativeNumber = false;
+
     editorconfig.enable = true;
     withNodeJs = true;
     withPython3 = true;
-    colorschemes.vscode.enable = true;
+
+    colorschemes.github-theme.enable = true;
+    colorschemes.vscode.enable = false;
 
     inherit (import ./module.nix) plugins;
   };
