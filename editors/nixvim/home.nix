@@ -10,6 +10,7 @@
     withNodeJs = true;
     withPython3 = true;
 
+    colorscheme = "github_dark";
     colorschemes.github-theme.enable = true;
     colorschemes.vscode.enable = false;
 

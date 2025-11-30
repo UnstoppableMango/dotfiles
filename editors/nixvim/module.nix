@@ -1,12 +1,13 @@
 {
   plugins = {
+    bufferline.enable = true;
     claude-code.enable = false;
     direnv.enable = true;
 
     # https://github.com/MoaidHathot/dotnet.nvim/
     dotnet.enable = false;
     # https://github.com/GustavEikaas/easy-dotnet.nvim/
-    easy-dotnet.enable = false;
+    easy-dotnet.enable = true;
 
     haskell-scope-highlighting.enable = false;
     haskell-tools.enable = false;
