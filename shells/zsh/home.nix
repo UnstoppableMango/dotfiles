@@ -1,4 +1,4 @@
-# https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zsh.enable
+{ pkgs, ... }:
 {
   imports = [ ./prezto/home.nix ];
 
@@ -6,6 +6,13 @@
     enableZshIntegration = true;
   };
 
+  home.packages = with pkgs; [
+    nix-zsh-completions
+    zsh-nix-shell
+    zsh-powerlevel10k
+  ];
+
+  # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zsh.enable
   programs.zsh = {
     enable = true;
     enableCompletion = true;
