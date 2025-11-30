@@ -2,11 +2,18 @@
 {
   imports = [
     ../../browsers/brave/home.nix
+    ../../editors/emacs/home.nix
     ../../editors/nixvim/home.nix
     ../../editors/zed/home.nix
     ../../shells/zsh/home.nix
     ../../terminals/kitty/home.nix
     ../../terminals/ghostty/home.nix
+    ../../toolchain/c/home.nix
+    ../../toolchain/dotnet/home.nix
+    ../../toolchain/git/home.nix
+    ../../toolchain/go/home.nix
+    ../../toolchain/nix/home.nix
+    ../../toolchain/ocaml/home.nix
   ];
 
   home.username = "erik";
@@ -15,25 +22,9 @@
   home.packages = with pkgs; [
     pay-respects
     neofetch
-    seabird
-    github-desktop
     github-copilot-cli
     mise
-    nixd
     glow
-
-    nix-zsh-completions
-    zsh-nix-shell
-    zsh-powerlevel10k
-
-    (
-      with pkgs.dotnetCorePackages;
-      combinePackages [
-        sdk_9_0
-        sdk_10_0
-        dotnet_10.aspnetcore
-      ]
-    )
   ];
 
   # Let Home Manager install and manage itself
@@ -44,69 +35,17 @@
   programs.fzf.enable = true;
   programs.jq.enable = true;
   programs.less.enable = true;
+
   programs.ripgrep.enable = true;
   programs.ripgrep-all.enable = true;
 
-  programs.git = {
-    enable = true;
-    lfs.enable = true;
-
-    # From GitHub desktop:
-    # warning: error running /nix/store/6jjz4n9w3y9c5d55n86s0sa6cfa5dkg6-github-desktop-3.4.13/opt/resources/app/git/libexec/git-core/git 'config' '--includes' '--global' '--replace-all' 'filter.lfs.process' 'git-lfs filter-process': 'error: could not lock config file /home/erik/.config/git/config: Read-only file system' 'exit status 255'. Run `git lfs install --force` to reset Git configuration.
-    settings = {
-      user = {
-        name = "UnstoppableMango";
-        email = "erik.rasmussen@unmango.dev";
-      };
-
-      push.autoSetupRemote = true;
-    };
-    signing = {
-      format = "openpgp";
-      key = "264283BBFDC491BC";
-      signByDefault = true;
-    };
-  };
-
-  # Still fiddling with these
-  # https://github.com/git/git/blob/master/contrib/diff-highlight/README
-  programs.diff-highlight = {
-    enable = true;
-    enableGitIntegration = true;
-  };
-  # https://github.com/so-fancy/diff-so-fancy
-  # programs.diff-so-fancy.enable = true;
-  # https://github.com/Wilfred/difftastic
-  # programs.difftastic.enable = true;
-
+  programs.vim.enable = true;
   programs.micro.enable = true;
   programs.helix.enable = true;
-  programs.vim.enable = true;
-
-  programs.emacs = {
-    enable = true;
-    extraPackages = epkgs: [
-      epkgs.nix-mode
-    ];
-  };
 
   programs.claude-code.enable = true;
   programs.k9s.enable = true;
-  programs.gh.enable = true;
 
-  programs.opam = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-
-  programs.gcc.enable = true;
-
-  programs.go = {
-    enable = true;
-    telemetry.mode = "off";
-  };
-
-  programs.lutris.enable = true;
   programs.yt-dlp.enable = true;
 
   services.gpg-agent = {
