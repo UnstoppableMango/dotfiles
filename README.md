@@ -49,3 +49,11 @@ $ make watch
 - <https://nix-community.github.io/home-manager/index.xhtml>
 - <https://github.com/nocoolnametom/nix-config>
 - <https://gitlab.com/Zaney/zaneyos>
+
+### Dendritic Pattern
+
+- <https://discourse.nixos.org/t/dendrix-dendritic-nix-configurations-distribution/65853>
+- <https://github.com/vic/dendrix>
+- <https://github.com/mightyiam/dendritic>
+- <https://vic.github.io/dendrix/Dendritic.html>
+- <https://github.com/mightyiam/infra/commit/b45e9e13759017fe18950ccc3b6deee2347e9175>

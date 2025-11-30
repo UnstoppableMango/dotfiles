@@ -69,7 +69,7 @@
           default = ./editors/neovim/module.nix;
         };
 
-        modules.flakeModules.erik = ./users/erik;
+        modules.flake.erik = ./users/erik;
       };
 
       systems = [
