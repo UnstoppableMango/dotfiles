@@ -52,5 +52,8 @@
   },
   "[jsonc]": {
     "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
   }
 }
