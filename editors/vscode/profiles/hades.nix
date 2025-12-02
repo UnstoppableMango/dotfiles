@@ -5,6 +5,7 @@
 }:
 {
   config.programs.vscode.profiles.Hades = {
+    # https://github.com/microsoft/vscode-dotnettools/issues/2266#issuecomment-3571804122
     userSettings = lib.importJSON ./hades.json;
 
     extensions =
