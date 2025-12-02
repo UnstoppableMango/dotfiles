@@ -5,6 +5,7 @@
   "dotnetAcquisitionExtension.enableTelemetry": false,
   "editor.experimental.treeSitterTelemetry": false,
   "editor.formatOnSave": true,
+  "FSharp.suggestGitignore": false,
   "gitlens.ai.model": "gitkraken",
   "gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
   "gitlens.telemetry.enabled": false,
