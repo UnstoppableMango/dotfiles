@@ -1,3 +1,3 @@
 {
-  flake.modules.homeManager.hades = ./home.nix;
+  flake.modules.homeManager.hades = ./hades.nix;
 }
