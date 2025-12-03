@@ -22,11 +22,12 @@
 
   home.packages = with pkgs; [
     buf
-    pay-respects
-    neofetch
+    crc
     github-copilot-cli
-    mise
     glow
+    mise
+    neofetch
+    pay-respects
   ];
 
   # Let Home Manager install and manage itself
