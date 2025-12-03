@@ -23,6 +23,7 @@
     home.packages = with pkgs; [
       buf
       crc
+      cursor-cli
       github-copilot-cli
       glow
       mise
