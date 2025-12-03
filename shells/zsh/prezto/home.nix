@@ -14,6 +14,9 @@
       enable = true;
       caseSensitive = true;
       prompt.theme = "powerlevel10k";
+
+      # https://github.com/sorin-ionescu/prezto/issues/205#issuecomment-314538861
+      utility.safeOps = false;
     };
   };
 }
