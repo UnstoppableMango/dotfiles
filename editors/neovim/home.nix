@@ -34,6 +34,7 @@
     };
 
     lsp = {
+      inlayHints.enable = true;
       servers = {
         bashls.enable = true;
         bicep.enable = true;
