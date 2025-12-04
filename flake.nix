@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    systems.url = "github:nix-systems/default";
 
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
@@ -44,6 +45,8 @@
   outputs =
     inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = import inputs.systems;
+
       imports = [
         inputs.treefmt-nix.flakeModule
         inputs.home-manager.flakeModules.home-manager
@@ -65,35 +68,12 @@
           erik = ./users/erik/home.nix;
         };
 
-        nixvimModules = {
-          default = ./editors/neovim/module.nix;
-        };
-
         modules.flake.erik = ./users/erik;
       };
 
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
       perSystem =
+        { pkgs, ... }:
         {
-          pkgs,
-          system,
-          ...
-        }:
-        {
-          nixvimConfigurations = {
-            default = inputs.nixvim.lib.evalNixvim {
-              inherit system;
-              modules = [
-                self.nixvimModules.default
-              ];
-            };
-          };
-
           # https://github.com/nix-community/home-manager/discussions/7551
           # https://github.com/nix-community/home-manager/issues/3075
           # https://github.com/bobvanderlinden/nixos-config/blob/bdfd8d94def9dc36166ef5725589bf3d7ae2d233/flake.nix#L38-L46
