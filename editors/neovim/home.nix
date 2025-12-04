@@ -30,73 +30,86 @@
       haskell-scope-highlighting.enable = false;
       haskell-tools.enable = false;
       helm.enable = false;
+      lspconfig.enable = true;
+    };
 
-      lsp = {
-        enable = true;
-        servers = {
-          angularls.enable = true;
-          bashls.enable = true;
-          bicep.enable = false; # TODO: Add package
-          buf_ls.enable = true;
-          clangd.enable = true;
-          cmake.enable = true;
-          copilot.enable = true;
-          css_variables.enable = false; # TODO: Add package
-          dhall_lsp_server.enable = true;
-          docker_compose_language_service.enable = true;
-          docker_language_server.enable = true;
-          dprint.enable = true;
-          elixirls.enable = true;
-          eslint.enable = true;
-          fsautocomplete.enable = true;
-          gh_actions_ls.enable = false; # TODO: Add package
-          gopls.enable = true;
-          graphql.enable = false; # TODO: Add package
-          helm_ls.enable = true;
-          java_language_server.enable = true;
-          jqls.enable = true;
-          jsonls.enable = true;
-          just.enable = true;
-          lua_ls.enable = true;
-          nginx_language_server.enable = true;
-          ocamllsp.enable = true;
-          postgres_lsp.enable = true;
-          ruby_lsp.enable = true;
-          sqls.enable = true;
-          svelte.enable = true;
-          systemd_ls.enable = true;
-          tailwindcss.enable = true;
-          terraformls.enable = false;
-          tofu_ls.enable = true;
-          ts_ls.enable = false;
-          tsgo.enable = true;
-          typst_lsp.enable = false; # TODO: Add package
-          vimls.enable = true;
-          yamlls.enable = true;
-          zls.enable = true;
+    lsp = {
+      servers = {
+        bashls.enable = true;
+        bicep.enable = true;
+        buf_ls.enable = true;
+        clangd.enable = true;
+        cmake.enable = true;
+        copilot.enable = false; # TODO: Unfree
+        dhall_lsp_server.enable = true;
+        dprint.enable = true;
+        elixirls.enable = true;
+        fsautocomplete.enable = true;
+        gh_actions_ls.enable = true;
+        graphql.enable = true;
+        helm_ls.enable = true;
+        java_language_server.enable = true;
+        jqls.enable = true;
+        jsonls.enable = true;
+        just.enable = true;
+        lua_ls.enable = true;
+        nginx_language_server.enable = true;
+        ocamllsp.enable = true;
+        ruby_lsp.enable = true;
+        systemd_ls.enable = true;
+        vimls.enable = true;
+        yamlls.enable = true;
+        zls.enable = true;
 
-          hls = {
-            enable = true;
-            installGhc = true;
-          };
+        # Typst
+        tinymist.enable = false;
+        typst_lsp.enable = true;
 
-          # Nix
-          nil_ls.enable = true;
-          nixd.enable = false;
+        # Web
+        html.enable = true;
+        htmx.enable = true;
+        css_variables.enable = true;
+        tailwindcss.enable = true;
+        angularls.enable = true;
+        svelte.enable = true;
+        eslint.enable = true;
 
-          # .NET
-          roslyn_ls.enable = true;
-          csharp_ls.enable = false;
-          omnisharp.enable = false;
+        # Go
+        golangci_lint_ls.enable = true;
+        gopls.enable = true;
 
-          # Rust
-          rls.enable = false;
-          rust_analyzer = {
-            enable = true;
-            installRustc = true;
-            installCargo = true;
-          };
-        };
+        # Docker
+        docker_compose_language_service.enable = true;
+        docker_language_server.enable = true;
+
+        # Terraform
+        terraformls.enable = false;
+        tofu_ls.enable = true;
+
+        # TypeScript
+        ts_ls.enable = false;
+        tsgo.enable = true;
+
+        # SQL
+        sqls.enable = true;
+        postgres_lsp.enable = true;
+
+        # Haskell
+        ghcide.enable = false;
+        hls.enable = true;
+
+        # Nix
+        nil_ls.enable = true;
+        nixd.enable = false;
+
+        # .NET
+        roslyn_ls.enable = true;
+        csharp_ls.enable = false;
+        omnisharp.enable = false;
+
+        # Rust
+        rls.enable = false;
+        rust_analyzer.enable = true;
       };
     };
   };
