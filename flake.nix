@@ -87,6 +87,15 @@
                 { nixpkgs.config.allowUnfree = true; }
               ];
             };
+
+            homeConfigurations."erasmussen" = inputs.home-manager.lib.homeManagerConfiguration {
+              inherit pkgs;
+              modules = [
+                inputs.nixvim.homeModules.nixvim
+                self.homeModules.erik
+                { nixpkgs.config.allowUnfree = true; }
+              ];
+            };
           };
 
           devShells.default = pkgs.mkShellNoCC {
