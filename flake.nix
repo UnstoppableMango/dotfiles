@@ -43,7 +43,7 @@
   };
 
   outputs =
-    inputs@{ self, flake-parts, ... }:
+    inputs@{ flake-parts, self, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
 
@@ -51,7 +51,7 @@
         inputs.flake-parts.flakeModules.modules
         inputs.treefmt-nix.flakeModule
         inputs.home-manager.flakeModules.home-manager
-        inputs.nixvim.flakeModule
+        inputs.nixvim.flakeModules.default
 
         ./browsers
         ./desktops
@@ -72,23 +72,21 @@
           # https://github.com/nix-community/home-manager/discussions/7551
           # https://github.com/nix-community/home-manager/issues/3075
           # https://github.com/bobvanderlinden/nixos-config/blob/bdfd8d94def9dc36166ef5725589bf3d7ae2d233/flake.nix#L38-L46
-          legacyPackages = {
-            homeConfigurations."erik" = inputs.home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [
-                inputs.nixvim.homeModules.nixvim
-                self.modules.homeManager.erik
-              ];
+          legacyPackages.homeConfigurations =
+            with inputs.home-manager.lib;
+            let
+              cfg = homeManagerConfiguration {
+                inherit pkgs;
+                modules = [
+                  inputs.nixvim.homeModules.nixvim
+                  self.modules.homeManager.erik
+                ];
+              };
+            in
+            {
+              "erik" = cfg;
+              "erasmussen" = cfg;
             };
-
-            homeConfigurations."erasmussen" = inputs.home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [
-                inputs.nixvim.homeModules.nixvim
-                self.modules.homeManager.erik
-              ];
-            };
-          };
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
