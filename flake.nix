@@ -43,32 +43,27 @@
   };
 
   outputs =
-    inputs@{ self, flake-parts, ... }:
+    inputs@{ flake-parts, self, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
 
       imports = [
+        inputs.flake-parts.flakeModules.modules
         inputs.treefmt-nix.flakeModule
         inputs.home-manager.flakeModules.home-manager
         inputs.nixvim.flakeModules.default
-        inputs.flake-parts.flakeModules.modules
+
+        ./browsers
+        ./desktops
+        ./editors
+        ./shells
+        ./terminals
+        ./toolchain
+        ./users
       ];
 
-      flake = {
-        homeModules = {
-          brave = ./browsers/brave/home.nix;
-          gnome = ./desktops/gnome/home.nix;
-          emacs = ./editors/emacs/home.nix;
-          neovim = ./editors/neovim/home.nix;
-          vscode = ./editors/vscode/home.nix;
-          zed = ./editors/zed/home.nix;
-          zsh = ./shells/zsh/home.nix;
-          ghostty = ./terminals/ghostty/home.nix;
-          kitty = ./terminals/kitty/home.nix;
-          erik = ./users/erik/home.nix;
-        };
-
-        modules.flake.erik = ./users/erik;
+      flake.modules = {
+        flake.erik = ./users/erik;
       };
 
       perSystem =
@@ -77,26 +72,21 @@
           # https://github.com/nix-community/home-manager/discussions/7551
           # https://github.com/nix-community/home-manager/issues/3075
           # https://github.com/bobvanderlinden/nixos-config/blob/bdfd8d94def9dc36166ef5725589bf3d7ae2d233/flake.nix#L38-L46
-          legacyPackages = {
-            homeConfigurations."erik" = inputs.home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [
-                inputs.nixvim.homeModules.nixvim
-                self.homeModules.erik
-                # https://github.com/nix-community/home-manager/issues/2954
-                { nixpkgs.config.allowUnfree = true; }
-              ];
+          legacyPackages.homeConfigurations =
+            with inputs.home-manager.lib;
+            let
+              cfg = homeManagerConfiguration {
+                inherit pkgs;
+                modules = [
+                  inputs.nixvim.homeModules.nixvim
+                  self.modules.homeManager.erik
+                ];
+              };
+            in
+            {
+              "erik" = cfg;
+              "erasmussen" = cfg;
             };
-
-            homeConfigurations."erasmussen" = inputs.home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [
-                inputs.nixvim.homeModules.nixvim
-                self.homeModules.erik
-                { nixpkgs.config.allowUnfree = true; }
-              ];
-            };
-          };
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [

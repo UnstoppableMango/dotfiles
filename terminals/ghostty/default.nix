@@ -1,3 +1,5 @@
 {
-  flake.modules.homeManager.ghostty = ./home.nix;
+  flake.modules.homeManager.ghostty = {
+    programs.ghostty.enable = true;
+  };
 }

@@ -1,3 +1,5 @@
 {
-  flake.modules.homeManager.c = ./home.nix;
+  flake.modules.homeManager.c = {
+    programs.gcc.enable = true;
+  };
 }
