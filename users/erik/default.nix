@@ -1,3 +1,6 @@
+let
+  username = "erik";
+in
 {
   imports = [
     ../../editors/neovim
@@ -11,20 +14,15 @@
     ../../toolchain/ocaml
   ];
 
-  flake.modules.homeManager.erik =
+  flake.modules.homeManager.${username} =
     { pkgs, ... }:
     {
-      # https://github.com/nix-community/home-manager/issues/2954
-      nixpkgs.config.allowUnfree = true;
-
-      home.username = "erik";
-      home.homeDirectory = "/home/erik";
+      home.username = "${username}";
+      home.homeDirectory = "/home/${username}";
 
       home.packages = with pkgs; [
         buf
         crc
-        cursor-cli
-        github-copilot-cli
         glow
         mise
         neofetch
@@ -46,7 +44,6 @@
       programs.vim.enable = true;
       programs.micro.enable = true;
       programs.helix.enable = true;
-      programs.claude-code.enable = true;
 
       programs.yt-dlp.enable = true;
 

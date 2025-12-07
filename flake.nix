@@ -63,7 +63,33 @@
       ];
 
       flake.modules = {
-        flake.erik = ./users/erik;
+        flake = {
+          brave = ./browsers/brave;
+          c = ./toolchain/c;
+          dotnet = ./toolchain/dotnet;
+          editors = ./editors;
+          emacs = ./editors/emacs;
+          erik = ./users/erik;
+          ghostty = ./terminals/ghostty;
+          git = ./toolchain/git;
+          gnome = ./desktops/gnome;
+          go = ./toolchain/go;
+          kitty = ./terminals/kitty;
+          k8s = ./toolchain/k8s;
+          nix = ./toolchain/nix;
+          ocaml = ./toolchain/ocaml;
+          pgp = ./toolchain/pgp;
+          terminals = ./terminals;
+          toolchain = ./toolchain;
+          vscode = ./editors/vscode;
+          zed = ./editors/zed;
+          zsh = ./shells/zsh;
+        };
+      };
+
+      nixvim = {
+        packages.enable = true;
+        checks.enable = true;
       };
 
       perSystem =
@@ -130,10 +156,5 @@
             };
           };
         };
-
-      nixvim = {
-        packages.enable = true;
-        checks.enable = true;
-      };
     };
 }
