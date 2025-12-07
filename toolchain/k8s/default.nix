@@ -1,3 +1,5 @@
 {
-  flake.modules.homeManager.k8s = ./home.nix;
+  flake.modules.homeManager.k8s = {
+    programs.k9s.enable = true;
+  };
 }

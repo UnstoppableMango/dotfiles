@@ -1,3 +1,5 @@
 {
-  flake.modules.homeManager.brave = ./home.nix;
+  flake.modules.homeManager.brave = {
+    programs.brave.enable = true;
+  };
 }

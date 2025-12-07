@@ -1,12 +1,7 @@
 {
   imports = [
-    ../../browsers/brave
-    ../../editors/emacs
     ../../editors/neovim
-    ../../editors/zed
     ../../shells/zsh
-    ../../terminals/kitty
-    ../../terminals/ghostty
     ../../toolchain/c
     ../../toolchain/dotnet
     ../../toolchain/git
@@ -16,52 +11,52 @@
     ../../toolchain/ocaml
   ];
 
-  flake.modules.homeManager.erik = pkgs: {
-    home.username = "erik";
-    home.homeDirectory = "/home/erik";
+  flake.modules.homeManager.erik =
+    { pkgs, ... }:
+    {
+      # https://github.com/nix-community/home-manager/issues/2954
+      nixpkgs.config.allowUnfree = true;
 
-    home.packages = with pkgs; [
-      buf
-      crc
-      cursor-cli
-      github-copilot-cli
-      glow
-      mise
-      neofetch
-      pay-respects
-    ];
+      home.username = "erik";
+      home.homeDirectory = "/home/erik";
 
-    # Let Home Manager install and manage itself
-    programs.home-manager.enable = true;
+      home.packages = with pkgs; [
+        buf
+        crc
+        cursor-cli
+        github-copilot-cli
+        glow
+        mise
+        neofetch
+        pay-respects
+      ];
 
-    programs.grep.enable = true;
-    programs.htop.enable = true;
-    programs.fzf.enable = true;
-    programs.jq.enable = true;
-    programs.less.enable = true;
+      # Let Home Manager install and manage itself
+      programs.home-manager.enable = true;
 
-    programs.ripgrep.enable = true;
-    programs.ripgrep-all.enable = true;
+      programs.grep.enable = true;
+      programs.htop.enable = true;
+      programs.fzf.enable = true;
+      programs.jq.enable = true;
+      programs.less.enable = true;
 
-    programs.vim.enable = true;
-    programs.micro.enable = true;
-    programs.helix.enable = true;
-    programs.claude-code.enable = true;
+      programs.ripgrep.enable = true;
+      programs.ripgrep-all.enable = true;
 
-    programs.yt-dlp.enable = true;
+      programs.vim.enable = true;
+      programs.micro.enable = true;
+      programs.helix.enable = true;
+      programs.claude-code.enable = true;
 
-    services.gpg-agent = {
-      enable = true;
-      enableSshSupport = true;
+      programs.yt-dlp.enable = true;
+
+      # This value determines the Home Manager release that your configuration is
+      # compatible with. This helps avoid breakage when a new Home Manager release
+      # introduces backwards incompatible changes.
+      #
+      # You should not change this value, even if you update Home Manager. If you do
+      # want to update the value, then make sure to first check the Home Manager
+      # release notes.
+      home.stateVersion = "25.05"; # Please read the comment before changing.
     };
-
-    # This value determines the Home Manager release that your configuration is
-    # compatible with. This helps avoid breakage when a new Home Manager release
-    # introduces backwards incompatible changes.
-    #
-    # You should not change this value, even if you update Home Manager. If you do
-    # want to update the value, then make sure to first check the Home Manager
-    # release notes.
-    home.stateVersion = "25.05"; # Please read the comment before changing.
-  };
 }

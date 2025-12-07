@@ -1,3 +1,5 @@
 {
-  flake.modules.homeManager.kitty = ./home.nix;
+  flake.modules.homeManager.kitty = {
+    programs.kitty.enable = true;
+  };
 }

@@ -1,3 +1,8 @@
 {
-  flake.modules.homeManager.go = ./home.nix;
+  flake.modules.homeManager.go = {
+    programs.go = {
+      enable = true;
+      telemetry.mode = "off";
+    };
+  };
 }

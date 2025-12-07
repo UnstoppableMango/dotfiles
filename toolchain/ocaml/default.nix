@@ -1,3 +1,8 @@
 {
-  flake.modules.homeManager.ocaml = ./home.nix;
+  flake.modules.homeManager.ocaml = {
+    programs.opam = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+  };
 }

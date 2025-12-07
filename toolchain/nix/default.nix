@@ -1,3 +1,10 @@
 {
-  flake.modules.homeManager.nix = ./home.nix;
+  flake.modules.homeManager.nix =
+    { pkgs, ... }:
+    {
+      home.packages = with pkgs; [
+        nil
+        nixd
+      ];
+    };
 }

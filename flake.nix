@@ -48,27 +48,22 @@
       systems = import inputs.systems;
 
       imports = [
+        inputs.flake-parts.flakeModules.modules
         inputs.treefmt-nix.flakeModule
         inputs.home-manager.flakeModules.home-manager
-        inputs.nixvim.flakeModules.default
-        inputs.flake-parts.flakeModules.modules
+        inputs.nixvim.flakeModule
+
+        ./browsers
+        ./desktops
+        ./editors
+        ./shells
+        ./terminals
+        ./toolchain
+        ./users
       ];
 
-      flake = {
-        homeModules = {
-          brave = ./browsers/brave/home.nix;
-          gnome = ./desktops/gnome/home.nix;
-          emacs = ./editors/emacs/home.nix;
-          neovim = ./editors/neovim/home.nix;
-          vscode = ./editors/vscode/home.nix;
-          zed = ./editors/zed/home.nix;
-          zsh = ./shells/zsh/home.nix;
-          ghostty = ./terminals/ghostty/home.nix;
-          kitty = ./terminals/kitty/home.nix;
-          erik = ./users/erik/home.nix;
-        };
-
-        modules.flake.erik = ./users/erik;
+      flake.modules = {
+        flake.erik = ./users/erik;
       };
 
       perSystem =
@@ -82,9 +77,7 @@
               inherit pkgs;
               modules = [
                 inputs.nixvim.homeModules.nixvim
-                self.homeModules.erik
-                # https://github.com/nix-community/home-manager/issues/2954
-                { nixpkgs.config.allowUnfree = true; }
+                self.modules.homeManager.erik
               ];
             };
 
@@ -92,8 +85,7 @@
               inherit pkgs;
               modules = [
                 inputs.nixvim.homeModules.nixvim
-                self.homeModules.erik
-                { nixpkgs.config.allowUnfree = true; }
+                self.modules.homeManager.erik
               ];
             };
           };

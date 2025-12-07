@@ -1,5 +1,21 @@
 {
-  imports = [ ./profiles ];
+  imports = [ ./profiles/hades ];
 
-  flake.modules.homeManager.vscode = ./home.nix;
+  flake.modules.homeManager.vscode = {
+    # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.vscode.enable
+    programs.vscode = {
+      enable = true;
+      haskell = {
+        enable = true;
+
+        # TODO: https://nix-community.github.io/home-manager/options.xhtml#opt-programs.vscode.haskell.hie.executablePath
+        hie.enable = false;
+      };
+
+      profiles.default = {
+        enableExtensionUpdateCheck = false;
+        enableUpdateCheck = false;
+      };
+    };
+  };
 }
