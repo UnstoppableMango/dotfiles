@@ -1,5 +1,5 @@
 {
-  flake.modules.homeManager.zsh.prezto = {
+  flake.modules.homeManager.prezto = {
     home.file = {
       ".p10k.zsh".source = ../.p10k.zsh;
     };

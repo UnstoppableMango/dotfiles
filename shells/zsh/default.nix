@@ -1,9 +1,12 @@
+{ self, ... }:
 {
   imports = [ ./prezto ];
 
   flake.modules.homeManager.zsh =
     { pkgs, ... }:
     {
+      imports = [ self.modules.homeManager.prezto ];
+
       home.shell = {
         enableZshIntegration = true;
       };

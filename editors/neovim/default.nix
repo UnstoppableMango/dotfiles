@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modeModules.neovim = self.modules.homeManager.neovim;
   flake.modules.homeManager.neovim = {
     programs.nixvim = {
       enable = true;

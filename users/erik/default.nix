@@ -1,3 +1,4 @@
+{ self, ... }:
 let
   username = "erik";
 in
@@ -17,6 +18,18 @@ in
   flake.modules.homeManager.${username} =
     { pkgs, ... }:
     {
+      imports = with self.modules.homeManager; [
+        neovim
+        zsh
+        c
+        dotnet
+        git
+        go
+        k8s
+        nix
+        ocaml
+      ];
+
       home.username = "${username}";
       home.homeDirectory = "/home/${username}";
 

@@ -1,9 +1,12 @@
+{ self, ... }:
 {
   imports = [ ./dconf ];
 
   flake.modules.homeManager.gnome =
     { pkgs, ... }:
     {
+      imports = [ self.modules.homeManager.dconf ];
+
       home.packages =
         with pkgs;
         [
