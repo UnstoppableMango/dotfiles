@@ -45,7 +45,7 @@
         "sql"
         "ssh-config"
         "svelte"
-        "terrafrorm"
+        "terraform"
         "tmux"
         "typst"
         "xml"
