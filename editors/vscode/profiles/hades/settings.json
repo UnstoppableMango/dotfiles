@@ -2,6 +2,7 @@
   "$schema": "vscode://schemas/settings/user",
   "chat.mcp.gallery.enabled": true,
   "docker.lsp.telemetry": "off",
+  "docker.extension.enableComposeLanguageServer": true,
   "dotnet.defaultSolution": "disable",
   "dotnetAcquisitionExtension.enableTelemetry": false,
   "editor.experimental.treeSitterTelemetry": false,
@@ -41,6 +42,12 @@
   },
   "workbench.iconTheme": "vs-nomo-dark",
   "workbench.panel.defaultLocation": "right",
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/docker/vscode-extension/6a88caada42b57090df7ce91ec2a6561b422afe1/misc/empty.json": [
+      "compose*y*ml",
+      "docker-compose*y*ml"
+    ]
+  },
   "[dockercompose]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
