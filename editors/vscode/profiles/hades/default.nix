@@ -21,6 +21,7 @@
             ms-vscode-remote.remote-ssh
             github.vscode-github-actions
             github.copilot
+            hashicorp.terraform
             # anthropic.claude-code
             editorconfig.editorconfig
 
