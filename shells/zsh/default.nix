@@ -24,6 +24,16 @@
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
 
+        shellAliases = {
+          gadd = "git add .";
+          gcm = "git commit --message";
+          p = "pulumi";
+          pp = "pulumi preview";
+          ppd = "pulumi preview --diff";
+          pd = "pulumi destroy";
+          pup = "pulumi up --yes --force";
+        };
+
         history = {
           append = true;
           expireDuplicatesFirst = true;

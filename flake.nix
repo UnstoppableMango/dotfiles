@@ -122,6 +122,7 @@
             overlays = [
               inputs.bun2nix.overlays.default
               inputs.gomod2nix.overlays.default
+              inputs.nix-vscode-extensions.overlays.default
             ];
           };
 
