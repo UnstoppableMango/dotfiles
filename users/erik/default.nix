@@ -56,7 +56,6 @@ in
 
       programs.vim.enable = true;
       programs.micro.enable = true;
-      programs.helix.enable = true;
 
       programs.yt-dlp.enable = true;
 

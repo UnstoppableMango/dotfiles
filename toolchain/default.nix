@@ -1,5 +1,6 @@
 {
   imports = [
+    ./ai
     ./c
     ./dotnet
     ./git

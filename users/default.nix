@@ -1,6 +1,3 @@
 {
-  imports = [
-    ./erik
-    ./erik/unfree.nix
-  ];
+  imports = [ ./erik ];
 }
