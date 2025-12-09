@@ -28,6 +28,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    bun2nix = {
+      url = "github:nix-community/bun2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    gomod2nix = {
+      url = "github:nix-community/gomod2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     ux = {
       url = "github:unstoppablemango/ux";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -61,29 +71,33 @@
         ./users
       ];
 
-      flake.modules = {
-        flake = {
-          brave = ./browsers/brave;
-          c = ./toolchain/c;
-          dotnet = ./toolchain/dotnet;
-          editors = ./editors;
-          emacs = ./editors/emacs;
-          erik = ./users/erik;
-          ghostty = ./terminals/ghostty;
-          git = ./toolchain/git;
-          gnome = ./desktops/gnome;
-          go = ./toolchain/go;
-          kitty = ./terminals/kitty;
-          k8s = ./toolchain/k8s;
-          nix = ./toolchain/nix;
-          ocaml = ./toolchain/ocaml;
-          pgp = ./toolchain/pgp;
-          terminals = ./terminals;
-          toolchain = ./toolchain;
-          vscode = ./editors/vscode;
-          zed = ./editors/zed;
-          zsh = ./shells/zsh;
-        };
+      flake.modules.flake = {
+        ai = ./toolchain/ai;
+        brave = ./browsers/brave;
+        browsers = ./browsers;
+        c = ./toolchain/c;
+        claude = ./toolchain/ai/claude;
+        copilot = ./toolchain/ai/copilot;
+        cursor = ./toolchain/ai/cursor;
+        dotnet = ./toolchain/dotnet;
+        editors = ./editors;
+        emacs = ./editors/emacs;
+        erik = ./users/erik;
+        ghostty = ./terminals/ghostty;
+        git = ./toolchain/git;
+        gnome = ./desktops/gnome;
+        go = ./toolchain/go;
+        helix = ./editors/helix;
+        kitty = ./terminals/kitty;
+        k8s = ./toolchain/k8s;
+        nix = ./toolchain/nix;
+        ocaml = ./toolchain/ocaml;
+        pgp = ./toolchain/pgp;
+        terminals = ./terminals;
+        toolchain = ./toolchain;
+        vscode = ./editors/vscode;
+        zed = ./editors/zed;
+        zsh = ./shells/zsh;
       };
 
       nixvim = {
@@ -92,8 +106,16 @@
       };
 
       perSystem =
-        { pkgs, ... }:
+        { pkgs, system, ... }:
         {
+          _module.args.pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = [
+              inputs.bun2nix.overlays.default
+              inputs.gomod2nix.overlays.default
+            ];
+          };
+
           # https://github.com/nix-community/home-manager/discussions/7551
           # https://github.com/nix-community/home-manager/issues/3075
           # https://github.com/bobvanderlinden/nixos-config/blob/bdfd8d94def9dc36166ef5725589bf3d7ae2d233/flake.nix#L38-L46
