@@ -80,6 +80,27 @@
         ./users
       ];
 
+      flake.overlays =
+        let
+          bun2nix = inputs.bun2nix.overlays.default;
+          gomod2nix = inputs.gomod2nix.overlays.default;
+          vscodeExtensions = inputs.nix-vscode-extensions.overlays.default;
+
+          default = inputs.nixpkgs.lib.composeManyExtensions [
+            bun2nix
+            gomod2nix
+            vscodeExtensions
+          ];
+        in
+        {
+          inherit
+            default
+            bun2nix
+            gomod2nix
+            vscodeExtensions
+            ;
+        };
+
       flake.modules.flake = {
         ai = ./toolchain/ai;
         brave = ./browsers/brave;
@@ -119,11 +140,7 @@
         {
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
-            overlays = [
-              inputs.bun2nix.overlays.default
-              inputs.gomod2nix.overlays.default
-              inputs.nix-vscode-extensions.overlays.default
-            ];
+            overlays = [ self.overlays.default ];
           };
 
           # https://github.com/nix-community/home-manager/discussions/7551
