@@ -136,13 +136,8 @@
       };
 
       perSystem =
-        { pkgs, system, ... }:
+        { pkgs, ... }:
         {
-          _module.args.pkgs = import inputs.nixpkgs {
-            inherit system;
-            overlays = [ self.overlays.default ];
-          };
-
           # https://github.com/nix-community/home-manager/discussions/7551
           # https://github.com/nix-community/home-manager/issues/3075
           # https://github.com/bobvanderlinden/nixos-config/blob/bdfd8d94def9dc36166ef5725589bf3d7ae2d233/flake.nix#L38-L46

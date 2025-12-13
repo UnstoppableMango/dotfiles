@@ -1,3 +1,4 @@
+{ self, ... }:
 {
   flake.modules.homeManager.vscode-hades =
     {
@@ -6,6 +7,8 @@
       ...
     }:
     {
+      nixpkgs.overlays = [ self.overlays.vscodeExtensions ];
+
       programs.vscode.profiles.Hades = {
         # https://github.com/microsoft/vscode-dotnettools/issues/2266#issuecomment-3571804122
         userSettings = lib.importJSON ./settings.json;
@@ -52,7 +55,7 @@
           ms-azuretools.vscode-containers
           tim-koehler.helm-intellisense
           foxundermoon.shell-format
-          JetBrains.resharper-code
+          jetbrains.resharper-code
           oven.bun-vscode
         ];
       };
