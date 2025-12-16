@@ -1,4 +1,3 @@
-{ self, ... }:
 {
   flake.modules.homeManager.vscode-hades =
     {
@@ -7,56 +6,55 @@
       ...
     }:
     {
-      nixpkgs.overlays = [ self.overlays.vscodeExtensions ];
-
       programs.vscode.profiles.Hades = {
         # https://github.com/microsoft/vscode-dotnettools/issues/2266#issuecomment-3571804122
         userSettings = lib.importJSON ./settings.json;
 
         extensions = with pkgs.vscode-marketplace; [
-          mkhl.direnv
-          yzhang.markdown-all-in-one
+          alefragnani.project-manager
+          anthropic.claude-code
+          apollographql.vscode-apollo
+          be5invis.vscode-icontheme-nomo-dark
+          bradlc.vscode-tailwindcss
+          bufbuild.vscode-buf
           dbaeumer.vscode-eslint
+          docker.docker
+          dprint.dprint
           eamodio.gitlens
-          ms-vscode-remote.remote-containers
-          ms-vscode-remote.remote-ssh
+          editorconfig.editorconfig
+          foxundermoon.shell-format
           github.vscode-github-actions
           github.copilot
-          anthropic.claude-code
-          hashicorp.terraform
-          editorconfig.editorconfig
-          redhat.vscode-yaml
-          tamasfe.even-better-toml
-          jnoortheen.nix-ide
-          ziglang.vscode-zig
-          zxh404.vscode-proto3
           golang.go
+          graphql.vscode-graphql
+          graphql.vscode-graphql-syntax
+          hashicorp.terraform
+          haskell.haskell
+          ionide.ionide-fake
+          ionide.ionide-fsharp
+          jetbrains.resharper-code
+          jnoortheen.nix-ide
+          microsoft-aspire.aspire-vscode
+          mkhl.direnv
+          ms-azuretools.vscode-containers
           ms-dotnettools.csharp
           ms-dotnettools.csdevkit
           ms-dotnettools.vscode-dotnet-runtime
-          ionide.ionide-fsharp
-          rust-lang.rust-analyzer
-          ocamllabs.ocaml-platform
-          graphql.vscode-graphql
-          graphql.vscode-graphql-syntax
-          apollographql.vscode-apollo
-          myriad-dreamin.tinymist
-          bradlc.vscode-tailwindcss
-          haskell.haskell
           ms-kubernetes-tools.vscode-kubernetes-tools
-          be5invis.vscode-icontheme-nomo-dark
-          ionide.ionide-fake
-          docker.docker
-          weaveworks.vscode-gitops-tools
-          alefragnani.project-manager
-          bufbuild.vscode-buf
-          dprint.dprint
-          timonwong.shellcheck
-          ms-azuretools.vscode-containers
-          tim-koehler.helm-intellisense
-          foxundermoon.shell-format
-          jetbrains.resharper-code
+          ms-vscode-remote.remote-containers
+          ms-vscode-remote.remote-ssh
+          myriad-dreamin.tinymist
+          ocamllabs.ocaml-platform
           oven.bun-vscode
+          redhat.vscode-yaml
+          rust-lang.rust-analyzer
+          tamasfe.even-better-toml
+          timonwong.shellcheck
+          tim-koehler.helm-intellisense
+          weaveworks.vscode-gitops-tools
+          yzhang.markdown-all-in-one
+          ziglang.vscode-zig
+          zxh404.vscode-proto3
         ];
       };
     };

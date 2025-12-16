@@ -149,6 +149,11 @@
                 modules = [
                   inputs.nixvim.homeModules.nixvim
                   self.modules.homeManager.erik
+                  {
+                    nixpkgs.overlays = [
+                      self.overlays.default
+                    ];
+                  }
                 ];
               };
             in
