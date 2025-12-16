@@ -32,6 +32,7 @@
           ppd = "pulumi preview --diff";
           pd = "pulumi destroy";
           pup = "pulumi up --yes --force";
+          k = "kubectl";
         };
 
         history = {
