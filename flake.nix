@@ -23,6 +23,11 @@
 
     nixd.url = "github:nix-community/nixd";
 
+    nil = {
+      url = "github:oxalica/nil";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -53,8 +58,6 @@
       inputs.flake-parts.follows = "flake-parts";
     };
 
-    # https://wiki.nixos.org/wiki/Zed
-    # https://github.com/zed-industries/zed/blob/main/flake.nix
     zed = {
       url = "github:zed-industries/zed";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -84,12 +87,16 @@
         let
           bun2nix = inputs.bun2nix.overlays.default;
           gomod2nix = inputs.gomod2nix.overlays.default;
+          nil = inputs.nil.overlays.default;
           vscodeExtensions = inputs.nix-vscode-extensions.overlays.default;
+          zed = inputs.zed.overlays.default;
 
           default = inputs.nixpkgs.lib.composeManyExtensions [
             bun2nix
             gomod2nix
+            nil
             vscodeExtensions
+            zed
           ];
         in
         {
@@ -97,7 +104,9 @@
             default
             bun2nix
             gomod2nix
+            nil
             vscodeExtensions
+            zed
             ;
         };
 
@@ -144,6 +153,7 @@
           legacyPackages.homeConfigurations =
             with inputs.home-manager.lib;
             let
+              # Yuck, WIP
               cfg = homeManagerConfiguration {
                 inherit pkgs;
                 modules = [

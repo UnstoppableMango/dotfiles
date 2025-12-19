@@ -1,5 +1,5 @@
 {
-  flake.modules.homeManager.zed = {
+  flake.modules.homeManager.zed = pkgs: {
     # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zed-editor.enable
     programs.zed-editor = {
       enable = true;
@@ -50,6 +50,19 @@
         "typst"
         "xml"
         "zig"
+
+        # Themes
+        "adwaita"
+        "adwaita-pastel"
+        "tailwind-theme"
+        "vercel-theme"
+        "vscode-dark-modern"
+        "vscode-dark-plus"
+        "vscode-dark-polished"
+      ];
+
+      extraPackages = with pkgs; [
+        nil
       ];
     };
   };
