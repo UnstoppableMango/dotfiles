@@ -379,11 +379,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1766065187,
-        "narHash": "sha256-1d6+VDO26pJzibS5xtANeD6C0e39W07xO4GUPsIwTpk=",
+        "lastModified": 1766148816,
+        "narHash": "sha256-rcyaKzrFhkMHCQlC/dm5dR3vwIAGvUXOXoEZRIPGo0I=",
         "owner": "nix-community",
         "repo": "nixvim",
-        "rev": "2a1f48e701bb11297432864ba4cadee3b886eba3",
+        "rev": "0ef5923c84d74ff03914940190a8ab167c2db724",
         "type": "github"
       },
       "original": {
@@ -573,11 +573,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1766119660,
-        "narHash": "sha256-4fiqgyWC7tmFKw4f572RSClh4VYF2aaRBhrT1jBvqMA=",
+        "lastModified": 1766158276,
+        "narHash": "sha256-sdpoXRqyt3w5gKvC6m+kDn66sL9EU5O1RkMyPBzkCFA=",
         "owner": "zed-industries",
         "repo": "zed",
-        "rev": "0531035b86a7a035b1b661c62cc9436a2e1b5394",
+        "rev": "8001877df2104f86ee236f9c813e2405346e716f",
         "type": "github"
       },
       "original": {
