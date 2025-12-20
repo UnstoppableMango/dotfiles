@@ -30,7 +30,7 @@
 
     nixvim = {
       url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
 
     nix-vscode-extensions = {
@@ -59,7 +59,12 @@
     };
 
     zed = {
-      url = "github:zed-industries/zed";
+      url = "github:zed-industries/zed?ref=v0.217.3";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    mynix = {
+      url = "github:UnstoppableMango/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
