@@ -2,6 +2,7 @@
   imports = [
     ./ai
     ./c
+    ,/crypto
     ./dotnet
     ./git
     ./go
