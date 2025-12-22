@@ -31,7 +31,7 @@
           pp = "pulumi preview";
           ppd = "pulumi preview --diff";
           pd = "pulumi destroy";
-          pup = "pulumi up --yes --force";
+          pup = "pulumi up --yes --skip-preview";
           k = "kubectl";
         };
 
