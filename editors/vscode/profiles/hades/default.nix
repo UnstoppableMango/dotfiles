@@ -20,6 +20,7 @@
           dbaeumer.vscode-eslint
           docker.docker
           dprint.dprint
+          drblury.protobuf-vsc
           eamodio.gitlens
           editorconfig.editorconfig
           foxundermoon.shell-format
