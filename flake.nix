@@ -66,6 +66,10 @@
     mynix = {
       url = "github:UnstoppableMango/nix";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.gomod2nix.follows = "gomod2nix";
+      inputs.nil.follows = "nil";
+      inputs.treefmt-nix.follows = "treefmt-nix";
     };
   };
 
@@ -101,7 +105,7 @@
             gomod2nix
             nil
             vscodeExtensions
-            zed
+            # zed
           ];
         in
         {
