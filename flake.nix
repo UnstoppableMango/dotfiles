@@ -14,6 +14,7 @@
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
 
     home-manager = {
@@ -40,10 +41,13 @@
 
     bun2nix = {
       url = "github:nix-community/bun2nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
-      inputs.systems.follows = "systems";
-      inputs.treefmt-nix.follows = "treefmt-nix";
+
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        systems.follows = "systems";
+        treefmt-nix.follows = "treefmt-nix";
+      };
     };
 
     gomod2nix = {
@@ -54,8 +58,12 @@
 
     ux = {
       url = "github:unstoppablemango/ux";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
+
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        systems.follows = "systems";
+      };
     };
 
     zed = {
@@ -65,11 +73,14 @@
 
     mynix = {
       url = "github:UnstoppableMango/nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
-      inputs.gomod2nix.follows = "gomod2nix";
-      inputs.nil.follows = "nil";
-      inputs.treefmt-nix.follows = "treefmt-nix";
+
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        gomod2nix.follows = "gomod2nix";
+        nil.follows = "nil";
+        treefmt-nix.follows = "treefmt-nix";
+      };
     };
   };
 
