@@ -14,7 +14,6 @@
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
     };
 
     home-manager = {
@@ -22,7 +21,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixd.url = "github:nix-community/nixd";
+    nixd = {
+      url = "github:nix-community/nixd";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+    };
 
     nil = {
       url = "github:oxalica/nil";
