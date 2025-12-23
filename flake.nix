@@ -78,7 +78,7 @@
     };
 
     zed = {
-      url = "github:zed-industries/zed?ref=v0.217.3";
+      url = "github:zed-industries/zed?ref=v0.217.2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -100,11 +100,11 @@
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
 
-      imports = [
-        inputs.flake-parts.flakeModules.modules
-        inputs.treefmt-nix.flakeModule
-        inputs.home-manager.flakeModules.home-manager
-        inputs.nixvim.flakeModules.default
+      imports = with inputs; [
+        flake-parts.flakeModules.modules
+        treefmt-nix.flakeModule
+        home-manager.flakeModules.home-manager
+        nixvim.flakeModules.default
 
         ./browsers
         ./desktops

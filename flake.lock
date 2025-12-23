@@ -563,11 +563,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1766456853,
-        "narHash": "sha256-nUA+bFQAZtjMGhloA1v1g1uUIkMl8oxSaHmfXw6sAhc=",
+        "lastModified": 1766461072,
+        "narHash": "sha256-+05bqvjlBXbEu+WRcZt1cFJIvSMuCsLSHW4A1MIVVPA=",
         "owner": "unstoppablemango",
         "repo": "ux",
-        "rev": "cb8ababd353b5e8b9b2e75954c6faa5453c6b666",
+        "rev": "c315598978b066714d44afe0ada112a3b2ba7025",
         "type": "github"
       },
       "original": {
@@ -586,16 +586,16 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1766079686,
-        "narHash": "sha256-flUkt39vttnF1HjzxLQ4pizFqxHxlIkaV+mb/GtxphU=",
+        "lastModified": 1766000657,
+        "narHash": "sha256-b0yufup4YdNWjjdIG5u66QiuBhbuQoaTkq7LBYExPvg=",
         "owner": "zed-industries",
         "repo": "zed",
-        "rev": "80433cb239e868271457ac376673a5f75bc4adb1",
+        "rev": "3d2e6ee76b4d9a932248242506611985cae6b0a8",
         "type": "github"
       },
       "original": {
         "owner": "zed-industries",
-        "ref": "v0.217.3",
+        "ref": "v0.217.2",
         "repo": "zed",
         "type": "github"
       }
