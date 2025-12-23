@@ -129,7 +129,7 @@
             nil
             nix-direnv
             vscodeExtensions
-            # zed
+            zed
           ];
         in
         {
