@@ -110,9 +110,10 @@
       imports = with inputs; [
         flake-parts.flakeModules.modules
         treefmt-nix.flakeModule
-        home-manager.flakeModules.home-manager
+        home-manager.flakeModules.default
         nixvim.flakeModules.default
 
+        ./home-submodule.nix
         ./browsers
         ./desktops
         ./editors
