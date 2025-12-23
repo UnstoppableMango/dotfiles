@@ -43,6 +43,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-direnv = {
+      url = "github:nix-community/nix-direnv";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+    };
+
     bun2nix = {
       url = "github:nix-community/bun2nix";
 
@@ -112,6 +119,7 @@
           bun2nix = inputs.bun2nix.overlays.default;
           gomod2nix = inputs.gomod2nix.overlays.default;
           nil = inputs.nil.overlays.default;
+          nix-direnv = inputs.nix-direnv.overlays.default;
           vscodeExtensions = inputs.nix-vscode-extensions.overlays.default;
           zed = inputs.zed.overlays.default;
 
@@ -119,6 +127,7 @@
             bun2nix
             gomod2nix
             nil
+            nix-direnv
             vscodeExtensions
             # zed
           ];

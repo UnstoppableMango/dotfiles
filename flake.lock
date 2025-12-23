@@ -264,6 +264,32 @@
         "type": "github"
       }
     },
+    "nix-direnv": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "treefmt-nix": [
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1766284967,
+        "narHash": "sha256-V+BksjiJxH8g5E7/2lk7K6caSNHd64xxVEE2T2QowUM=",
+        "owner": "nix-community",
+        "repo": "nix-direnv",
+        "rev": "417c421db4f7240a10f301215aa5850e4de8e2a2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nix-direnv",
+        "type": "github"
+      }
+    },
     "nix-vscode-extensions": {
       "inputs": {
         "nixpkgs": [
@@ -389,6 +415,7 @@
         "home-manager": "home-manager",
         "mynix": "mynix",
         "nil": "nil",
+        "nix-direnv": "nix-direnv",
         "nix-vscode-extensions": "nix-vscode-extensions",
         "nixd": "nixd",
         "nixpkgs": "nixpkgs",
