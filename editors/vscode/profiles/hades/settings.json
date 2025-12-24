@@ -10,9 +10,14 @@
   "explorer.confirmDelete": false,
   "explorer.autoReveal": false,
   "FSharp.suggestGitignore": false,
+  "FSharp.showExplorerOnStartup": false,
+  "FSharp.autoRevealInExplorer": "sameAsFileExplorer",
   "gitlens.ai.model": "gitkraken",
   "gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
   "gitlens.telemetry.enabled": false,
+  "gitlens.showWhatsNewAfterUpgrades": false,
+  "gitlens.advanced.skipOnboarding": true,
+  "go.showWelcome": false,
   "nix.enableLanguageServer": true,
   "nix.serverPath": "nil",
   "nix.serverSettings": {
@@ -43,10 +48,7 @@
   "workbench.iconTheme": "vs-nomo-dark",
   "workbench.panel.defaultLocation": "right",
   "yaml.schemas": {
-    "https://raw.githubusercontent.com/docker/vscode-extension/6a88caada42b57090df7ce91ec2a6561b422afe1/misc/empty.json": [
-      "compose*y*ml",
-      "docker-compose*y*ml"
-    ]
+    "https://raw.githubusercontent.com/docker/vscode-extension/6a88caada42b57090df7ce91ec2a6561b422afe1/misc/empty.json": "*compose*y*ml"
   },
   "[dockercompose]": {
     "editor.insertSpaces": true,
