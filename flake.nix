@@ -129,7 +129,10 @@
             nil
             nix-direnv
             vscodeExtensions
-            zed
+
+            # Stupid goddamn bullshit
+            # error: could not find `cargo-about` in registry `crates-io` with version `=0.8.2`
+            # zed
           ];
         in
         {
