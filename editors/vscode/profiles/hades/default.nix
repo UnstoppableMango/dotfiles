@@ -55,7 +55,6 @@
           weaveworks.vscode-gitops-tools
           yzhang.markdown-all-in-one
           ziglang.vscode-zig
-          zxh404.vscode-proto3
         ];
       };
     };
