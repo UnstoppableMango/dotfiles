@@ -50,6 +50,13 @@
       inputs.treefmt-nix.follows = "treefmt-nix";
     };
 
+    nix-init = {
+      url = "github:nix-community/nix-init";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+    };
+
     bun2nix = {
       url = "github:nix-community/bun2nix";
 
