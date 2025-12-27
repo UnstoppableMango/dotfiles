@@ -212,7 +212,6 @@
             in
             {
               "erik" = cfg;
-              "erasmussen" = cfg;
             };
 
           devShells.default = pkgs.mkShellNoCC {
