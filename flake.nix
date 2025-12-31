@@ -118,6 +118,7 @@
         ./editors
         ./shells
         ./terminals
+        ./toolchain
         ./users
       ];
 

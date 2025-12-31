@@ -3,18 +3,6 @@ let
   username = "erik";
 in
 {
-  imports = [
-    ../../editors/neovim
-    ../../shells/zsh
-    ../../toolchain/c
-    ../../toolchain/dotnet
-    ../../toolchain/git
-    ../../toolchain/go
-    ../../toolchain/k8s
-    ../../toolchain/nix
-    ../../toolchain/ocaml
-  ];
-
   flake.modules.homeManager.${username} =
     { pkgs, ... }:
     {
@@ -30,46 +18,51 @@ in
         ocaml
       ];
 
-      home.username = "${username}";
-      home.homeDirectory = "/home/${username}";
+      home = {
+        inherit username;
 
-      home.packages = with pkgs; [
-        buf
-        crc
-        glow
-        mise
-        neofetch
-        pay-respects
-      ];
+        homeDirectory = "/home/${username}";
 
-      # Let Home Manager install and manage itself
-      programs.home-manager.enable = true;
+        packages = with pkgs; [
+          buf
+          crc
+          glow
+          mise
+          neofetch
+          pay-respects
+        ];
+      };
 
-      programs.grep.enable = true;
-      programs.htop.enable = true;
-      programs.fzf.enable = true;
-      programs.jq.enable = true;
-      programs.less.enable = true;
+      programs = {
+        # Let Home Manager install and manage itself
+        home-manager.enable = true;
 
-      programs.ripgrep.enable = true;
-      programs.ripgrep-all.enable = true;
+        grep.enable = true;
+        htop.enable = true;
+        fzf.enable = true;
+        jq.enable = true;
+        less.enable = true;
 
-      programs.vim.enable = true;
-      programs.micro.enable = true;
+        ripgrep.enable = true;
+        ripgrep-all.enable = true;
 
-      programs.yt-dlp.enable = true;
+        vim.enable = true;
+        micro.enable = true;
 
-      programs.direnv = {
-        enable = true;
-        enableBashIntegration = true;
-        enableZshIntegration = true;
-        nix-direnv.enable = true;
+        yt-dlp.enable = true;
 
-        # Tempted... we'll see if it keeps annoying me
-        silent = false;
+        direnv = {
+          enable = true;
+          enableBashIntegration = true;
+          enableZshIntegration = true;
+          nix-direnv.enable = true;
 
-        # Pulumi repos use mise
-        mise.enable = true;
+          # Tempted... we'll see if it keeps annoying me
+          silent = false;
+
+          # Pulumi repos use mise
+          mise.enable = true;
+        };
       };
 
       # This value determines the Home Manager release that your configuration is
