@@ -59,6 +59,31 @@
           "vercel-theme"
           "vscode-dark-modern"
           "vscode-dark-polished"
+
+          # Icon Themes
+          "catppuccin-icons"
+          "material-icon-theme"
+          "vscode-icons"
+          "colored-zed-icons-theme"
+          "jetbrains-new-ui-icons"
+          "vscode-great-icons"
+          "serendipity"
+          "min-theme"
+          "symbols"
+          "bearded-icon-theme"
+          "charmed-icons"
+          "jetbrains-icons"
+          "phosphor-icons-theme"
+          "openmoji-icons"
+          "monospace-icon-theme"
+          "modern-icons"
+          "chawyehsu-vscode-icons"
+          "seti-icons"
+          "puppet"
+          "icons-modern-material"
+          "ton"
+          "clean-vscode-icons"
+          "fantasticons-icons-theme"
         ];
 
         extraPackages = with pkgs; [
