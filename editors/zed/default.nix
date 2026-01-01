@@ -42,6 +42,7 @@
           "ocaml"
           "opentofu"
           "postgres-language-server"
+          "proto"
           "purescript"
           "ruby"
           "sql"
@@ -54,12 +55,9 @@
           "zig"
 
           # Themes
-          "adwaita"
-          "adwaita-pastel"
           "tailwind-theme"
           "vercel-theme"
           "vscode-dark-modern"
-          "vscode-dark-plus"
           "vscode-dark-polished"
         ];
 
