@@ -2,7 +2,7 @@
   description = "UnstoppableMango's dotfiles";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
 
@@ -224,6 +224,8 @@
               home-manager
               ldns
               nil
+              # For the cache fallback behaviour in 2.32
+              nixVersions.latest
               nixd
               nixfmt-rfc-style
               shellcheck
