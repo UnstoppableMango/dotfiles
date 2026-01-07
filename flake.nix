@@ -59,7 +59,6 @@
 
     bun2nix = {
       url = "github:nix-community/bun2nix";
-
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
@@ -74,9 +73,18 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
+    devctl = {
+      url = "github:unmango/devctl";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        systems.follows = "systems";
+        treefmt-nix.follows = "treefmt-nix";
+      };
+    };
+
     ux = {
       url = "github:unstoppablemango/ux";
-
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
@@ -92,7 +100,6 @@
 
     mynix = {
       url = "github:UnstoppableMango/nix";
-
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
