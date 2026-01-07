@@ -133,6 +133,7 @@
       flake.overlays =
         let
           bun2nix = inputs.bun2nix.overlays.default;
+          devctl = inputs.devctl.overlays.default;
           gomod2nix = inputs.gomod2nix.overlays.default;
           nil = inputs.nil.overlays.default;
           nix-direnv = inputs.nix-direnv.overlays.default;
@@ -141,6 +142,7 @@
 
           default = inputs.nixpkgs.lib.composeManyExtensions [
             bun2nix
+            devctl
             gomod2nix
             nil
             nix-direnv
@@ -155,6 +157,7 @@
           inherit
             default
             bun2nix
+            devctl
             gomod2nix
             nil
             vscodeExtensions
