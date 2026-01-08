@@ -238,7 +238,7 @@
               # For the cache fallback behaviour in 2.32
               nixVersions.latest
               nixd
-              nixfmt-rfc-style
+              nixfmt
               shellcheck
               watchexec
             ];
@@ -246,15 +246,13 @@
             DPRINT = pkgs.dprint + "/bin/dprint";
             GIT = pkgs.git + "/bin/git";
             HOMEMANAGER = pkgs.home-manager + "/bin/home-manager";
-            NIXFMT = pkgs.nixfmt-rfc-style + "/bin/nixfmt";
+            NIXFMT = pkgs.nixfmt + "/bin/nixfmt";
             SHELLCHECK = pkgs.shellcheck + "/bin/shellcheck";
             WATCHEXEC = pkgs.watchexec + "/bin/watchexec";
           };
 
           treefmt = {
             programs.nixfmt.enable = true;
-            programs.nixfmt.package = pkgs.nixfmt-rfc-style;
-
             programs.dprint = {
               enable = false; # Causing issues with flake checks
               settings.plugins = (
