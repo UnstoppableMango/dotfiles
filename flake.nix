@@ -78,6 +78,7 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
+        gomod2nix.follows = "gomod2nix";
         systems.follows = "systems";
         treefmt-nix.follows = "treefmt-nix";
       };
