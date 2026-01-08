@@ -30,6 +30,7 @@ in
           mise
           neofetch
           pay-respects
+          vhs
         ];
       };
 
