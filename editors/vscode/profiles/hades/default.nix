@@ -31,6 +31,7 @@
           graphql.vscode-graphql-syntax
           hashicorp.terraform
           haskell.haskell
+          humao.rest-client
           ionide.ionide-fake
           ionide.ionide-fsharp
           jetbrains.resharper-code
