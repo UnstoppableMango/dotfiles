@@ -8,7 +8,7 @@
   flake.modules.homeManager.gnome =
     { pkgs, ... }:
     {
-      imports = with config.modules.homeManager; [
+      imports = with config.flake.modules.homeManager; [
         dconf
         gsconnect
       ];
