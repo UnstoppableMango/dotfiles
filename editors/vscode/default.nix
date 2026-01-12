@@ -1,9 +1,9 @@
-{ self, ... }:
+{ config, ... }:
 {
   imports = [ ./profiles/hades ];
 
   flake.modules.homeManager.vscode = {
-    imports = [ self.modules.homeManager.vscode-hades ];
+    imports = with config.modules.homeManager; [ vscode-hades ];
 
     # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.vscode.enable
     programs.vscode = {

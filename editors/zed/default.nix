@@ -50,6 +50,7 @@
           "svelte"
           "terraform"
           "tmux"
+          "toml"
           "typst"
           "xml"
           "zig"

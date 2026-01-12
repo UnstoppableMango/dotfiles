@@ -5,7 +5,7 @@
 
 ## Development
 
-There are some `make` targets that can save you typing like, 5 keystrokes and my repos _need_ a Makefile.
+There are some `make` targets that can save you typing like, 5 keystrokes and, naturally, my repos _need_ a Makefile.
 
 Run flake checks
 
@@ -19,6 +19,14 @@ Update flake inputs
 ```shell
 $ make update
 nix flake update
+```
+
+Usual command
+
+```shell
+$ make check build
+nix flake check
+home-manager build --flake $PWD
 ```
 
 Run checks automatically while working
