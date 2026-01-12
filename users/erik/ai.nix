@@ -3,8 +3,6 @@ let
   module =
     { pkgs, ... }:
     {
-      nixpkgs.config.allowUnfree = true;
-
       programs.claude-code.enable = true;
       home.packages = with pkgs; [
         github-copilot-cli
