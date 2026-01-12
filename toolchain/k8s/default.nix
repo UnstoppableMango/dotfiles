@@ -6,7 +6,7 @@
       home.packages = with pkgs; [
         crc
         fluxcd
-        helm
+        kubernetes-helm
         kubectl
       ];
     };

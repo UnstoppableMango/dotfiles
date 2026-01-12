@@ -20,8 +20,7 @@ in
       home = {
         inherit username;
 
-        # I forget right now
-        # homeDirectory = "/home/${username}";
+        homeDirectory = "/Users/${username}";
 
         packages = with pkgs; [
           buf
