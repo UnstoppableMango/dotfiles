@@ -6,6 +6,7 @@
         nil
         nixd
         nix-init
+        nurl
       ];
     };
 }

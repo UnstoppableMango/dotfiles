@@ -1,14 +1,24 @@
+{ config, ... }:
 {
   imports = [
-    ./ai
     ./c
-    ./crypto
     ./dotnet
     ./git
     ./go
     ./k8s
     ./nix
     ./ocaml
-    ./pgp
   ];
+
+  flake.modules.homeManager.toolchain = {
+    imports = with config.flake.modules.homeManager; [
+      c
+      dotnet
+      git
+      go
+      k8s
+      nix
+      ocaml
+    ];
+  };
 }

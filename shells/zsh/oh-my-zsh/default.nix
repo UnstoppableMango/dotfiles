@@ -1,5 +1,5 @@
 {
-  flake.modules.homeManager.zsh.oh-my-zsh = {
+  flake.modules.homeManager.oh-my-zsh = {
     programs.zsh = {
       enable = true;
       oh-my-zsh = {

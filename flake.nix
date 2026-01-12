@@ -118,9 +118,9 @@
 
       imports = with inputs; [
         flake-parts.flakeModules.modules
-        treefmt-nix.flakeModule
         home-manager.flakeModules.home-manager
         nixvim.flakeModules.default
+        treefmt-nix.flakeModule
 
         ./browsers
         ./desktops
@@ -131,68 +131,31 @@
         ./users
       ];
 
-      flake.overlays =
-        let
-          bun2nix = inputs.bun2nix.overlays.default;
-          devctl = inputs.devctl.overlays.default;
-          gomod2nix = inputs.gomod2nix.overlays.default;
-          nil = inputs.nil.overlays.default;
-          nix-direnv = inputs.nix-direnv.overlays.default;
-          vscodeExtensions = inputs.nix-vscode-extensions.overlays.default;
-          zed = inputs.zed.overlays.default;
+      flake.overlays.default = inputs.nixpkgs.lib.composeManyExtensions (
+        with inputs;
+        [
+          bun2nix.overlays.default
+          devctl.overlays.default
+          gomod2nix.overlays.default
+          nil.overlays.default
+          nix-direnv.overlays.default
+          inputs.nix-vscode-extensions.overlays.default
 
-          default = inputs.nixpkgs.lib.composeManyExtensions [
-            bun2nix
-            devctl
-            gomod2nix
-            nil
-            nix-direnv
-            vscodeExtensions
-
-            # Stupid goddamn bullshit
-            # error: could not find `cargo-about` in registry `crates-io` with version `=0.8.2`
-            # zed
-          ];
-        in
-        {
-          inherit
-            default
-            bun2nix
-            devctl
-            gomod2nix
-            nil
-            vscodeExtensions
-            zed
-            ;
-        };
+          # Stupid goddamn bullshit
+          # error: could not find `cargo-about` in registry `crates-io` with version `=0.8.2`
+          # zed.overlays.default
+        ]
+      );
 
       flake.modules.flake = {
-        ai = ./toolchain/ai;
-        brave = ./browsers/brave;
         browsers = ./browsers;
-        c = ./toolchain/c;
-        claude = ./toolchain/ai/claude;
-        copilot = ./toolchain/ai/copilot;
-        cursor = ./toolchain/ai/cursor;
-        dotnet = ./toolchain/dotnet;
+        desktops = ./desktops;
         editors = ./editors;
-        emacs = ./editors/emacs;
         erik = ./users/erik;
-        ghostty = ./terminals/ghostty;
-        git = ./toolchain/git;
-        gnome = ./desktops/gnome;
-        go = ./toolchain/go;
-        helix = ./editors/helix;
-        kitty = ./terminals/kitty;
-        k8s = ./toolchain/k8s;
-        nix = ./toolchain/nix;
-        ocaml = ./toolchain/ocaml;
-        pgp = ./toolchain/pgp;
+        erasmussen = ./users/erasmussen;
+        shells = ./shells;
         terminals = ./terminals;
         toolchain = ./toolchain;
-        vscode = ./editors/vscode;
-        zed = ./editors/zed;
-        zsh = ./shells/zsh;
       };
 
       nixvim = {
@@ -207,24 +170,19 @@
           # https://github.com/nix-community/home-manager/issues/3075
           # https://github.com/bobvanderlinden/nixos-config/blob/bdfd8d94def9dc36166ef5725589bf3d7ae2d233/flake.nix#L38-L46
           legacyPackages.homeConfigurations =
-            with inputs.home-manager.lib;
             let
-              # Yuck, WIP
-              cfg = homeManagerConfiguration {
-                inherit pkgs;
-                modules = [
-                  inputs.nixvim.homeModules.nixvim
-                  self.modules.homeManager.erik
-                  {
-                    nixpkgs.overlays = [
-                      self.overlays.default
-                    ];
-                  }
-                ];
-              };
+              inherit (inputs.home-manager) lib;
             in
             {
-              "erik" = cfg;
+              erik = lib.homeManagerConfiguration {
+                inherit pkgs;
+                modules = [ self.modules.homeManager.erik ];
+              };
+
+              erasmussen = lib.homeManagerConfiguration {
+                inherit pkgs;
+                modules = [ self.modules.homeManager.erasmussen ];
+              };
             };
 
           devShells.default = pkgs.mkShellNoCC {

@@ -1,25 +1,24 @@
-{ self, ... }:
+{ config, ... }:
 {
-  imports = [ ./dconf ];
+  imports = [
+    ./dconf
+    ./gsconnect
+  ];
 
   flake.modules.homeManager.gnome =
     { pkgs, ... }:
     {
-      imports = [ self.modules.homeManager.dconf ];
+      imports = with config.modules.homeManager; [
+        dconf
+        gsconnect
+      ];
 
-      home.packages =
-        with pkgs;
-        [
-          # For gsconnect
-          nautilus-python
-        ]
-        ++ (with pkgs.gnomeExtensions; [
-          appindicator
-          dash-to-dock
-          docker
-          tweaks-in-system-menu
-          user-themes
-          gsconnect
-        ]);
+      home.packages = with pkgs.gnomeExtensions; [
+        appindicator
+        dash-to-dock
+        docker
+        tweaks-in-system-menu
+        user-themes
+      ];
     };
 }

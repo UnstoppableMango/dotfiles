@@ -1,13 +1,8 @@
 { inputs, config, ... }:
 let
-  username = "erik";
+  username = "erasmussen";
 in
 {
-  imports = [
-    ./ai.nix
-    ./gpg-agent.nix
-  ];
-
   flake.modules.homeManager.${username} =
     { pkgs, ... }:
     {
@@ -25,14 +20,12 @@ in
       home = {
         inherit username;
 
-        homeDirectory = "/home/${username}";
+        # I forget right now
+        # homeDirectory = "/home/${username}";
 
         packages = with pkgs; [
           buf
           glow
-          mise
-          neofetch
-          openssl
           pay-respects
           vhs
         ];
@@ -54,19 +47,11 @@ in
         vim.enable = true;
         micro.enable = true;
 
-        yt-dlp.enable = true;
-
         direnv = {
           enable = true;
           enableBashIntegration = true;
           enableZshIntegration = true;
           nix-direnv.enable = true;
-
-          # Tempted... we'll see if it keeps annoying me
-          silent = false;
-
-          # Pulumi repos use mise
-          mise.enable = true;
         };
       };
 
@@ -77,6 +62,6 @@ in
       # You should not change this value, even if you update Home Manager. If you do
       # want to update the value, then make sure to first check the Home Manager
       # release notes.
-      home.stateVersion = "25.05"; # Please read the comment before changing.
+      home.stateVersion = "26.05"; # Please read the comment before changing.
     };
 }
