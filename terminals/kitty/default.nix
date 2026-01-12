@@ -3,7 +3,7 @@
     programs.kitty = {
       enable = true;
       enableGitIntegration = true;
-      extraConfig = ./kitty.conf; # WIP
+      extraConfig = import ./kitty.conf; # WIP
     };
   };
 }
