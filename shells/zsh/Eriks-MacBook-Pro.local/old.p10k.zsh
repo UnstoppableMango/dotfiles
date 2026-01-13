@@ -1,0 +1,1 @@
+/Users/erasmussen/.dotfiles/p10k.zsh
