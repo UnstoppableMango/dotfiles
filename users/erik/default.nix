@@ -5,7 +5,7 @@ in
 {
   imports = [
     ./ai.nix
-    ./gpg-agent.nix
+    ./gnupg.nix
   ];
 
   flake.modules.homeManager.${username} =
