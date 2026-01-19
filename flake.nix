@@ -113,6 +113,23 @@
 
   outputs =
     inputs@{ flake-parts, self, ... }:
+    let
+      overlay = inputs.nixpkgs.lib.composeManyExtensions (
+        with inputs;
+        [
+          bun2nix.overlays.default
+          devctl.overlays.default
+          gomod2nix.overlays.default
+          nil.overlays.default
+          nix-direnv.overlays.default
+          inputs.nix-vscode-extensions.overlays.default
+
+          # Stupid goddamn bullshit
+          # error: could not find `cargo-about` in registry `crates-io` with version `=0.8.2`
+          # zed.overlays.default
+        ]
+      );
+    in
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
 
@@ -131,21 +148,7 @@
         ./users
       ];
 
-      flake.overlays.default = inputs.nixpkgs.lib.composeManyExtensions (
-        with inputs;
-        [
-          bun2nix.overlays.default
-          devctl.overlays.default
-          gomod2nix.overlays.default
-          nil.overlays.default
-          nix-direnv.overlays.default
-          inputs.nix-vscode-extensions.overlays.default
-
-          # Stupid goddamn bullshit
-          # error: could not find `cargo-about` in registry `crates-io` with version `=0.8.2`
-          # zed.overlays.default
-        ]
-      );
+      flake.overlays.default = overlay;
 
       flake.modules.flake = {
         browsers = ./browsers;
@@ -181,7 +184,10 @@
 
               erasmussen = lib.homeManagerConfiguration {
                 inherit pkgs;
-                modules = [ self.modules.homeManager.erasmussen ];
+                modules = [
+                  self.modules.homeManager.erasmussen
+                  { nixpkgs.overlays = [ overlay ]; }
+                ];
               };
             };
 

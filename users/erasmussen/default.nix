@@ -13,10 +13,6 @@ in
         zsh
       ];
 
-      nixpkgs.overlays = [
-        config.flake.overlays.default
-      ];
-
       home = {
         inherit username;
 
