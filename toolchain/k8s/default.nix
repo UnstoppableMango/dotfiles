@@ -19,6 +19,7 @@
             krew
             kubernetes-helm
             kubectl
+            kubectl-rook-ceph
           ]
           ++ (lib.lists.optionals config.openshift.enable (
             with pkgs;
