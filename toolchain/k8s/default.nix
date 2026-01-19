@@ -16,6 +16,7 @@
           with pkgs;
           [
             fluxcd
+            krew
             kubernetes-helm
             kubectl
           ]
