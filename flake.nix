@@ -187,6 +187,7 @@
                 modules = [
                   self.modules.homeManager.erasmussen
                   { nixpkgs.overlays = [ overlay ]; }
+                  { nixpkgs.config.allowUnfree = true; }
                 ];
               };
             };

@@ -8,6 +8,7 @@ in
     {
       imports = with config.flake.modules.homeManager; [
         inputs.nixvim.homeModules.nixvim
+        ai
         neovim
         toolchain
         zsh
@@ -25,6 +26,8 @@ in
           vhs
         ];
       };
+
+      ai.enable = true;
 
       programs = {
         # Let Home Manager install and manage itself
