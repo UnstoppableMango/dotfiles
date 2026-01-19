@@ -1,11 +1,19 @@
 { config, ... }:
+let
+  homeModules = config.flake.modules.homeManager;
+in
 {
   imports = [ ./prezto ];
 
   flake.modules.homeManager.zsh =
-    { pkgs, ... }:
     {
-      imports = with config.flake.modules.homeManager; [ prezto ];
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
+    {
+      imports = with homeModules; [ prezto ];
 
       home.shell = {
         enableZshIntegration = true;
@@ -24,6 +32,12 @@
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
 
+        initContent = lib.mkIf config.openshift.enable (
+          lib.mkAfter ''
+            eval $(crc podman-env)
+          ''
+        );
+
         shellAliases = {
           gadd = "git add .";
           gcm = "git commit --message";
@@ -40,7 +54,7 @@
           expireDuplicatesFirst = true;
           findNoDups = true;
           ignoreDups = true;
-          share = false;
+          share = true;
         };
       };
     };

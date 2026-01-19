@@ -28,6 +28,7 @@ in
       };
 
       ai.enable = true;
+      openshift.enable = true;
 
       programs = {
         # Let Home Manager install and manage itself
