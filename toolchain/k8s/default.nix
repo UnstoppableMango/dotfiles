@@ -26,6 +26,14 @@
               openshift
             ]
           ));
+
+        programs.zsh = lib.mkIf config.programs.zsh.enable {
+          initContent = lib.mkIf config.openshift.enable (
+            lib.mkAfter ''
+              eval $(crc podman-env)
+            ''
+          );
+        };
       };
     };
 }

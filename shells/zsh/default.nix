@@ -32,12 +32,6 @@ in
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
 
-        initContent = lib.mkIf config.openshift.enable (
-          lib.mkAfter ''
-            eval $(crc podman-env)
-          ''
-        );
-
         shellAliases = {
           gadd = "git add .";
           gcm = "git commit --message";
