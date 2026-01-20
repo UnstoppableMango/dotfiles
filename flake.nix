@@ -120,9 +120,10 @@
           bun2nix.overlays.default
           devctl.overlays.default
           gomod2nix.overlays.default
+          mynix.overlays.default
           nil.overlays.default
           nix-direnv.overlays.default
-          inputs.nix-vscode-extensions.overlays.default
+          nix-vscode-extensions.overlays.default
 
           # Stupid goddamn bullshit
           # error: could not find `cargo-about` in registry `crates-io` with version `=0.8.2`

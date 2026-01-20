@@ -1,5 +1,5 @@
-{
-  flake.modules.homeManager.k8s =
+let
+  k8s =
     {
       config,
       pkgs,
@@ -16,7 +16,6 @@
           with pkgs;
           [
             fluxcd
-            krew
             kubernetes-helm
             kubectl
             kubectl-rook-ceph
@@ -38,4 +37,29 @@
         };
       };
     };
+
+  krew =
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
+    {
+      home.packages = [ pkgs.krew ];
+      programs.zsh = lib.mkIf config.programs.zsh.enable {
+        initContent = ''
+          export PATH="''\${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+        '';
+      };
+    };
+in
+{
+  flake.homeModules = {
+    inherit k8s krew;
+  };
+
+  flake.modules.homeManager = {
+    inherit k8s krew;
+  };
 }
