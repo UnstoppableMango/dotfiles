@@ -195,6 +195,7 @@
                 modules = [
                   homeModules.erasmussen
                   common
+                  { ai.enable = true; }
                 ];
               };
             };
