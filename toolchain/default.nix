@@ -16,9 +16,11 @@
       dotnet
       git
       go
+      krew
       k8s
       nix
       ocaml
+      openshift
     ];
   };
 }

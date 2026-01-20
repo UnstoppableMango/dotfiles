@@ -1,41 +1,17 @@
 let
   k8s =
+    { pkgs, ... }:
     {
-      config,
-      pkgs,
-      lib,
-      ...
-    }:
-    {
-      options.openshift.enable = lib.mkEnableOption "OpenShift";
+      programs.k9s.enable = true;
 
-      config = {
-        programs.k9s.enable = true;
-
-        home.packages =
-          with pkgs;
-          [
-            fluxcd
-            kubernetes-helm
-            kubectl
-            kubectl-rook-ceph
-          ]
-          ++ (lib.lists.optionals config.openshift.enable (
-            with pkgs;
-            [
-              crc
-              openshift
-            ]
-          ));
-
-        programs.zsh = lib.mkIf config.programs.zsh.enable {
-          initContent = lib.mkIf config.openshift.enable (
-            lib.mkAfter ''
-              eval $(crc podman-env)
-            ''
-          );
-        };
-      };
+      home.packages = with pkgs; [
+        fluxcd
+        kubernetes-helm
+        kubectl
+        kubectl-get-all
+        kubectl-get-resources
+        kubectl-rook-ceph
+      ];
     };
 
   krew =
@@ -53,13 +29,37 @@ let
         '';
       };
     };
+
+  openshift =
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
+    {
+      options.openshift.enable = lib.mkEnableOption "OpenShift";
+
+      config = lib.mkIf config.openshift.enable {
+        home.packages = [
+          pkgs.crc
+          pkgs.openshift
+        ];
+
+        programs.zsh = lib.mkIf config.programs.zsh.enable {
+          initContent = lib.mkAfter ''
+            eval $(crc podman-env)
+          '';
+        };
+      };
+    };
 in
 {
   flake.homeModules = {
-    inherit k8s krew;
+    inherit k8s krew openshift;
   };
 
   flake.modules.homeManager = {
-    inherit k8s krew;
+    inherit k8s krew openshift;
   };
 }
