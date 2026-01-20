@@ -187,6 +187,7 @@
                 modules = [
                   homeModules.erik
                   common
+                  { ai.enable = true; }
                 ];
               };
 
@@ -195,7 +196,6 @@
                 modules = [
                   homeModules.erasmussen
                   common
-                  { ai.enable = true; }
                 ];
               };
             };
