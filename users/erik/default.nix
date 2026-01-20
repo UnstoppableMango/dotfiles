@@ -1,25 +1,20 @@
 { inputs, config, ... }:
 let
   username = "erik";
+  homeModules = config.flake.modules.homeManager;
 in
 {
-  imports = [
-    ./ai.nix
-    ./gnupg.nix
-  ];
-
   flake.modules.homeManager.${username} =
     { pkgs, ... }:
     {
-      imports = with config.flake.modules.homeManager; [
+      imports = with homeModules; [
         inputs.nixvim.homeModules.nixvim
         neovim
         toolchain
         zsh
-      ];
 
-      nixpkgs.overlays = [
-        config.flake.overlays.default
+        ./ai.nix
+        ./gnupg.nix
       ];
 
       home = {

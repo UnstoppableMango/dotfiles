@@ -8,7 +8,6 @@ in
     {
       imports = with config.flake.modules.homeManager; [
         inputs.nixvim.homeModules.nixvim
-        ai
         neovim
         toolchain
         zsh
@@ -21,13 +20,14 @@ in
 
         packages = with pkgs; [
           buf
+          cursor-cli
+          github-copilot-cli
           glow
           pay-respects
           vhs
         ];
       };
 
-      ai.enable = true;
       openshift.enable = true;
 
       programs = {
@@ -52,6 +52,8 @@ in
           enableZshIntegration = true;
           nix-direnv.enable = true;
         };
+
+        claude-code.enable = true;
       };
 
       # This value determines the Home Manager release that your configuration is

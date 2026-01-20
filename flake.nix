@@ -175,19 +175,26 @@
           legacyPackages.homeConfigurations =
             let
               inherit (inputs.home-manager) lib;
+              homeModules = self.modules.homeManager;
+              common.imports = [
+                { nixpkgs.overlays = [ overlay ]; }
+                { nixpkgs.config.allowUnfree = true; }
+              ];
             in
             {
               erik = lib.homeManagerConfiguration {
                 inherit pkgs;
-                modules = [ self.modules.homeManager.erik ];
+                modules = [
+                  homeModules.erik
+                  common
+                ];
               };
 
               erasmussen = lib.homeManagerConfiguration {
                 inherit pkgs;
                 modules = [
-                  self.modules.homeManager.erasmussen
-                  { nixpkgs.overlays = [ overlay ]; }
-                  { nixpkgs.config.allowUnfree = true; }
+                  homeModules.erasmussen
+                  common
                 ];
               };
             };
