@@ -35,7 +35,9 @@
 
     nixvim = {
       url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
+      inputs.systems.follows = "systems";
     };
 
     nix-vscode-extensions = {
@@ -54,6 +56,7 @@
       url = "github:nix-community/nix-init";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
+      inputs.nurl.inputs.nixpkgs.follows = "nixpkgs";
       inputs.treefmt-nix.follows = "treefmt-nix";
     };
 
@@ -89,6 +92,7 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
+        gomod2nix.follows = "gomod2nix";
         systems.follows = "systems";
         treefmt-nix.follows = "treefmt-nix";
       };
@@ -107,6 +111,7 @@
         gomod2nix.follows = "gomod2nix";
         nil.follows = "nil";
         treefmt-nix.follows = "treefmt-nix";
+        systems.follows = "systems";
       };
     };
   };
