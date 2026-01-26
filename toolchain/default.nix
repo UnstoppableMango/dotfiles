@@ -5,7 +5,8 @@
     ./dotnet
     ./git
     ./go
-    ./k8s
+    ./javascript
+    ./kubernetes
     ./nix
     ./ocaml
   ];
@@ -16,8 +17,9 @@
       dotnet
       git
       go
+      javascript
       krew
-      k8s
+      kubernetes
       nix
       ocaml
       openshift

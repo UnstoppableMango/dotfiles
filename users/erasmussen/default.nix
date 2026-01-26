@@ -21,6 +21,7 @@ in
         packages = with pkgs; [
           buf
           cursor-cli
+          fnm
           github-copilot-cli
           glow
           pay-respects

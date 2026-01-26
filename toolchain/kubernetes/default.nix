@@ -1,5 +1,5 @@
 let
-  k8s =
+  kubernetes =
     { pkgs, ... }:
     {
       programs.k9s.enable = true;
@@ -56,10 +56,10 @@ let
 in
 {
   flake.homeModules = {
-    inherit k8s krew openshift;
+    inherit kubernetes krew openshift;
   };
 
   flake.modules.homeManager = {
-    inherit k8s krew openshift;
+    inherit kubernetes krew openshift;
   };
 }
