@@ -18,12 +18,11 @@ let
     {
       config,
       pkgs,
-      lib,
       ...
     }:
     {
       home.packages = [ pkgs.krew ];
-      programs.zsh = lib.mkIf config.programs.zsh.enable {
+      programs.zsh = {
         initContent = ''
           export PATH="''\${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
         '';
@@ -46,8 +45,8 @@ let
           pkgs.openshift
         ];
 
-        programs.zsh = lib.mkIf config.programs.zsh.enable {
-          initContent = lib.mkAfter ''
+        programs.zsh = {
+          initContent = ''
             eval $(crc podman-env)
           '';
         };
