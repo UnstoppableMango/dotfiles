@@ -7,7 +7,7 @@
       ];
 
       programs.zsh.initContent = ''
-        eval "$(${pkgs.fnm} env --use-on-cd --shell zsh)"
+        eval "$(${pkgs.fnm}/bin/fnm env --use-on-cd --shell zsh)"
       '';
     };
 }
