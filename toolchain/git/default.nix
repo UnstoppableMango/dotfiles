@@ -26,6 +26,7 @@
           ".direnv/"
           ".envrc"
           ".idea/**/discord.xml"
+          ".worktree/"
         ];
       };
 
