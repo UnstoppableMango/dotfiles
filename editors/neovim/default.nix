@@ -59,7 +59,7 @@
           nginx_language_server.enable = true;
           ocamllsp.enable = true;
           ruby_lsp.enable = true;
-          systemd_ls.enable = true;
+          systemd_lsp.enable = true;
           vimls.enable = true;
           yamlls.enable = true;
           zls.enable = true;
