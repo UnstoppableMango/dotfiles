@@ -15,11 +15,7 @@ let
     };
 
   krew =
-    {
-      config,
-      pkgs,
-      ...
-    }:
+    { pkgs, ... }:
     {
       home.packages = [ pkgs.krew ];
       programs.zsh = {
