@@ -62,7 +62,7 @@
           systemd_lsp.enable = true;
           vimls.enable = true;
           yamlls.enable = true;
-          zls.enable = true;
+          # zls.enable = true; # Broken atm
 
           # Typst
           tinymist.enable = false;
