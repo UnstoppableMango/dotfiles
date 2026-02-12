@@ -1,0 +1,71 @@
+{
+  "$schema": "vscode://schemas/settings/user",
+  "chat.mcp.gallery.enabled": true,
+  "docker.lsp.telemetry": "off",
+  "docker.extension.enableComposeLanguageServer": true,
+  "dotnet.defaultSolution": "disable",
+  "dotnetAcquisitionExtension.enableTelemetry": false,
+  "editor.experimental.treeSitterTelemetry": false,
+  "editor.formatOnSave": true,
+  "explorer.confirmDelete": false,
+  "explorer.autoReveal": false,
+  "FSharp.suggestGitignore": false,
+  "FSharp.showExplorerOnStartup": false,
+  "FSharp.autoRevealInExplorer": "sameAsFileExplorer",
+  "gitlens.ai.model": "gitkraken",
+  "gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
+  "gitlens.telemetry.enabled": false,
+  "gitlens.showWhatsNewAfterUpgrades": false,
+  "gitlens.advanced.skipOnboarding": true,
+  "go.showWelcome": false,
+  "nix.enableLanguageServer": true,
+  "nix.serverPath": "nil",
+  "nix.serverSettings": {
+    "nil": {
+      "formatting": {
+        "command": [
+          "nixfmt"
+        ]
+      }
+    }
+  },
+  "projectManager.git.baseFolders": [
+    "~/src/github.com/UnstoppableMango",
+    "~/src/github.com/unmango",
+    "~/src/github.com/pulumiverse"
+  ],
+  "projectManager.tags": [
+    "Personal",
+    "Work",
+    "FOSS"
+  ],
+  "redhat.telemetry.enabled": false,
+  "telemetry.telemetryLevel": "off",
+  "terminal.integrated.fontFamily": "MesloLGS NF",
+  "vs-kubernetes": {
+    "vs-kubernetes.crd-code-completion": "enabled"
+  },
+  "workbench.iconTheme": "vs-nomo-dark",
+  "workbench.panel.defaultLocation": "right",
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/docker/vscode-extension/6a88caada42b57090df7ce91ec2a6561b422afe1/misc/empty.json": "*compose*y*ml"
+  },
+  "[dockercompose]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  }
+}
