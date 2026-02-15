@@ -2,6 +2,7 @@
 {
   imports = [
     ./c
+    ./containers
     ./dotnet
     ./git
     ./go
@@ -14,6 +15,7 @@
   flake.modules.homeManager.toolchain = {
     imports = with config.flake.modules.homeManager; [
       c
+      containers
       dotnet
       git
       go
