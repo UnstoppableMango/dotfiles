@@ -10,6 +10,7 @@ in
         inputs.nixvim.homeModules.nixvim
         neovim
         toolchain
+        vscode
         zsh
       ];
 
