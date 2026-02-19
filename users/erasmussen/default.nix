@@ -26,6 +26,7 @@ in
           github-copilot-cli
           glow
           pay-respects
+          spotify
           vhs
         ];
       };

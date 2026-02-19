@@ -45,6 +45,7 @@
   "vs-kubernetes": {
     "vs-kubernetes.crd-code-completion": "enabled"
   },
+  "window.nativeTabs": true,
   "workbench.iconTheme": "vs-nomo-dark",
   "workbench.panel.defaultLocation": "right",
   "yaml.schemas": {
