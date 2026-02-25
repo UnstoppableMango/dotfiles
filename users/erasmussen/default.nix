@@ -27,6 +27,7 @@ in
           github-copilot-cli
           glow
           pay-respects
+          pwgen
           spotify
           vhs
         ];
