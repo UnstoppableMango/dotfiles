@@ -20,6 +20,7 @@ in
         homeDirectory = "/Users/${username}";
 
         packages = with pkgs; [
+          bat
           buf
           cursor-cli
           fnm
