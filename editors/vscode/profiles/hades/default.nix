@@ -40,7 +40,8 @@
           mkhl.direnv
           ms-azuretools.vscode-containers
           ms-dotnettools.csharp
-          ms-dotnettools.csdevkit
+          # blah blah blah, doesn't match anything in file 'dist/extension.js'
+          # ms-dotnettools.csdevkit
           ms-dotnettools.vscode-dotnet-runtime
           ms-kubernetes-tools.vscode-kubernetes-tools
           ms-vscode-remote.remote-containers
