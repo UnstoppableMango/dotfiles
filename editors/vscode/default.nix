@@ -19,6 +19,7 @@
         enableExtensionUpdateCheck = false;
         enableUpdateCheck = false;
 
+        # TODO: This doesn't count as the "default" profile for app-level settings
         userSettings = {
           "docker.extension.enableComposeLanguageServer" = true;
           "telemetry.telemetryLevel" = "off";
