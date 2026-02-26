@@ -18,6 +18,12 @@
       profiles.default = {
         enableExtensionUpdateCheck = false;
         enableUpdateCheck = false;
+
+        userSettings = {
+          "docker.extension.enableComposeLanguageServer" = true;
+          "telemetry.telemetryLevel" = "off";
+          "window.nativeTabs" = true;
+        };
       };
     };
   };
