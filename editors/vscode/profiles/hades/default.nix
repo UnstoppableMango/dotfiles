@@ -25,7 +25,7 @@
           editorconfig.editorconfig
           foxundermoon.shell-format
           github.vscode-github-actions
-          github.copilot
+          github.copilot-chat
           golang.go
           graphql.vscode-graphql
           graphql.vscode-graphql-syntax
