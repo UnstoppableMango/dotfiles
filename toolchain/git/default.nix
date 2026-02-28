@@ -17,6 +17,13 @@
             email = "erik.rasmussen@unmango.dev";
           };
 
+          alias = {
+            co = "checkout";
+            ff = "merge --ff-only";
+            last = "log -1 HEAD";
+            unstage = "reset HEAD --";
+          };
+
           push.autoSetupRemote = true;
         };
 
