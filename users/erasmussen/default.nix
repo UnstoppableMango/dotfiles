@@ -27,6 +27,7 @@ in
           cursor-cli
           fnm
           github-copilot-cli
+          gitkraken
           glow
           pay-respects
           pwgen
