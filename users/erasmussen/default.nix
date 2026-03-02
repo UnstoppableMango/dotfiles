@@ -12,6 +12,8 @@ in
         toolchain
         vscode
         zsh
+
+        ./gnupg.nix
       ];
 
       home = {
