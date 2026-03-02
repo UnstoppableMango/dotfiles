@@ -64,6 +64,12 @@ in
         claude-code.enable = true;
       };
 
+      programs.git = {
+        settings = {
+          signingkey = "E4BD93BB75AEC2AC";
+        };
+      };
+
       # This value determines the Home Manager release that your configuration is
       # compatible with. This helps avoid breakage when a new Home Manager release
       # introduces backwards incompatible changes.

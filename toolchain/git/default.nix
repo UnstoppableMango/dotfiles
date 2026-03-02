@@ -17,6 +17,10 @@
             email = "erik.rasmussen@unmango.dev";
           };
 
+          commit = {
+            gpgsign = true;
+          };
+
           alias = {
             co = "checkout";
             ff = "merge --ff-only";
