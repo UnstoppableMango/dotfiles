@@ -66,7 +66,9 @@ in
 
       programs.git = {
         settings = {
-          signingkey = "E4BD93BB75AEC2AC";
+          user = {
+            signingkey = "E4BD93BB75AEC2AC";
+          };
         };
       };
 
