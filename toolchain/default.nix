@@ -10,6 +10,7 @@
     ./kubernetes
     ./nix
     ./ocaml
+    ./python
   ];
 
   flake.modules.homeManager.toolchain = {
@@ -25,6 +26,7 @@
       nix
       ocaml
       openshift
+      python
     ];
   };
 }
