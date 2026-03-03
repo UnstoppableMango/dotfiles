@@ -21,6 +21,10 @@ in
 
         homeDirectory = "/Users/${username}";
 
+        sessionPath = [
+          "$HOME/.local/bin"
+        ];
+
         packages = with pkgs; [
           bat
           buf
