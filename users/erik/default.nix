@@ -26,7 +26,9 @@ in
           buf
           glow
           mise
-          neofetch
+          # :(
+          # neofetch
+          fastfetch
           openssl
           pay-respects
           vhs
