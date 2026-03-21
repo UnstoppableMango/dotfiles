@@ -37,7 +37,7 @@ The flake uses `flake-parts` with these categorical module directories imported 
 
 Overlays from multiple inputs (bun2nix, devctl, gomod2nix, mynix, nil, nix-direnv, nix-vscode-extensions) are composed in `flake.nix` and applied to nixpkgs.
 
-The dev shell (entered via `direnv allow` / `nix develop`) provides: direnv, dprint, git, gnumake, home-manager, nil, nixd, nixfmt, shellcheck, watchexec.
+The dev shell (entered via `direnv allow` / `nix develop`) includes tools such as: direnv, dprint, git, gnumake, home-manager, nil, nixd, nixfmt, shellcheck, watchexec.
 
 ## Formatting
 
