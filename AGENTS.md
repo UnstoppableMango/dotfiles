@@ -12,12 +12,15 @@ All development tasks go through `make`:
 
 ```sh
 make check          # nix flake check (validate syntax/config)
-make build          # build home-manager configuration
+make build          # build home-manager from local flake (validates changes)
 make fmt            # format code (nix fmt)
 make watch          # run checks on file changes (uses watchexec)
-make home           # update flake and switch home-manager for current user
+make home           # update flake and switch home-manager at ~/.config/home-manager
+make system         # update flake and rebuild NixOS at /etc/nixos (requires sudo)
 make update         # update flake inputs only
 ```
+
+Note: `make build` validates the local flake (`$PWD`), while `make home` operates on `~/.config/home-manager` (the installed config, typically a symlink to this repo).
 
 Environment variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC` (all have defaults).
 
