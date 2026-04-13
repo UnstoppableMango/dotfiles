@@ -208,6 +208,7 @@
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
+              age
               direnv
               dprint
               git
@@ -220,6 +221,7 @@
               nixd
               nixfmt
               shellcheck
+              ssh-to-age
               watchexec
             ];
 
