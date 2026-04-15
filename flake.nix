@@ -174,6 +174,9 @@
 
       perSystem =
         { pkgs, ... }:
+        let
+          portableShell = import ./shells/bash { lib = pkgs.lib; };
+        in
         {
           # https://github.com/nix-community/home-manager/discussions/7551
           # https://github.com/nix-community/home-manager/issues/3075
@@ -205,6 +208,10 @@
                 ];
               };
             };
+
+          packages.erasmussen-portable-bashrc = pkgs.writeText "erasmussen-portable-bashrc" (
+            portableShell.mkPortableBashRc { }
+          );
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [

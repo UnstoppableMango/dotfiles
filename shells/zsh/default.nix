@@ -7,11 +7,13 @@ in
 
   flake.modules.homeManager.zsh =
     {
-      config,
       pkgs,
       lib,
       ...
     }:
+    let
+      portableShell = import ../bash { inherit lib; };
+    in
     {
       imports = with homeModules; [ prezto ];
 
@@ -32,16 +34,7 @@ in
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
 
-        shellAliases = {
-          gadd = "git add .";
-          gcm = "git commit --message";
-          p = "pulumi";
-          pp = "pulumi preview";
-          ppd = "pulumi preview --diff";
-          pd = "pulumi destroy";
-          pup = "pulumi up --yes --skip-preview";
-          k = "kubectl";
-        };
+        shellAliases = portableShell.shellAliases;
 
         history = {
           append = true;

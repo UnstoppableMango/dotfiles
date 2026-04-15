@@ -29,6 +29,13 @@ nix flake check
 home-manager build --flake $PWD
 ```
 
+Build a portable bash rc for unsupported machines
+
+```shell
+$ nix build .#erasmussen-portable-bashrc
+$ bash --rcfile ./result
+```
+
 Run checks automatically while working
 
 ```shell
