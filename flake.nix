@@ -209,6 +209,7 @@
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
               age
+              bashInteractive
               direnv
               dprint
               git
