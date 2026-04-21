@@ -2,8 +2,6 @@ let
   kubernetes =
     { pkgs, ... }:
     {
-      programs.k9s.enable = true;
-
       home.packages = with pkgs; [
         fluxcd
         kubernetes-helm
@@ -50,6 +48,8 @@ let
     };
 in
 {
+  imports = [ ./k9s ];
+
   flake.homeModules = {
     inherit kubernetes krew openshift;
   };

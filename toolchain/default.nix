@@ -21,6 +21,7 @@
       git
       go
       javascript
+      k9s
       krew
       kubernetes
       nix
