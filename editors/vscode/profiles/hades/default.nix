@@ -1,6 +1,7 @@
 { inputs, lib, ... }:
 let
-  inherit (inputs.nix-vscode-extensions.packages) vscode-marketplace;
+  # inherit (inputs.nix-vscode-extensions.packages) vscode-marketplace;
+  inherit (inputs.nix-vscode-extensions.extensions.x86_64-linux) vscode-marketplace;
 in
 {
   programs.vscode.profiles.Hades = {
