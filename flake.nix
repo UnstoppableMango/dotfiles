@@ -60,16 +60,6 @@
       inputs.treefmt-nix.follows = "treefmt-nix";
     };
 
-    bun2nix = {
-      url = "github:nix-community/bun2nix";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-parts.follows = "flake-parts";
-        systems.follows = "systems";
-        treefmt-nix.follows = "treefmt-nix";
-      };
-    };
-
     gomod2nix = {
       url = "github:nix-community/gomod2nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -122,10 +112,7 @@
       overlay = inputs.nixpkgs.lib.composeManyExtensions (
         with inputs;
         [
-          bun2nix.overlays.default
           devctl.overlays.default
-          gomod2nix.overlays.default
-          mynix.overlays.default
           nil.overlays.default
           nix-direnv.overlays.default
           nix-vscode-extensions.overlays.default
@@ -145,8 +132,6 @@
         nixvim.flakeModules.default
         treefmt-nix.flakeModule
 
-        ./browsers
-        ./desktops
         ./editors
         ./shells
         ./terminals
@@ -157,10 +142,7 @@
       flake.overlays.default = overlay;
 
       flake.modules.flake = {
-        browsers = ./browsers;
-        desktops = ./desktops;
         editors = ./editors;
-        erik = ./users/erik;
         erasmussen = ./users/erasmussen;
         shells = ./shells;
         terminals = ./terminals;
@@ -181,7 +163,6 @@
           legacyPackages.homeConfigurations =
             let
               inherit (inputs.home-manager) lib;
-              homeModules = self.modules.homeManager;
               common.imports = [
                 { nixpkgs.overlays = [ overlay ]; }
                 { nixpkgs.config.allowUnfree = true; }
@@ -191,16 +172,16 @@
               erik = lib.homeManagerConfiguration {
                 inherit pkgs;
                 modules = [
-                  homeModules.erik
+                  ./users/erik
                   common
-                  { ai.enable = true; }
+                  { dotfiles.ai.enable = true; }
                 ];
               };
 
               erasmussen = lib.homeManagerConfiguration {
                 inherit pkgs;
                 modules = [
-                  homeModules.erasmussen
+                  self.modules.homeManager.erasmussen
                   common
                 ];
               };
