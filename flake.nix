@@ -146,9 +146,6 @@
               nixvim.homeModules.nixvim
               direnv-instant.homeModules.direnv-instant
             ];
-
-            nixpkgs.overlays = [ overlay ];
-            nixpkgs.config.allowUnfree = true;
           };
 
           erik.imports = [
@@ -182,16 +179,27 @@
           legacyPackages.homeConfigurations =
             let
               inherit (inputs.home-manager) lib;
+
+              common = {
+                nixpkgs.overlays = [ overlay ];
+                nixpkgs.config.allowUnfree = true;
+              };
             in
             {
               erik = lib.homeManagerConfiguration {
                 inherit pkgs;
-                modules = [ self.homeModules.erik ];
+                modules = [
+                  self.homeModules.erik
+                  common
+                ];
               };
 
               erasmussen = lib.homeManagerConfiguration {
                 inherit pkgs;
-                modules = [ self.homeModules.erasmussen ];
+                modules = [
+                  self.homeModules.erasmussen
+                  common
+                ];
               };
             };
 
