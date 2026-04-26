@@ -1,5 +1,6 @@
+{ lib, config, ... }:
 {
-  flake.modules.homeManager.prezto = {
+  config = lib.mkIf config.dotfiles.zsh.enable {
     home.file = {
       ".p10k.zsh".source = ../.p10k.zsh;
     };

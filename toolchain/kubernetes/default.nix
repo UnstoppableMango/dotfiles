@@ -1,60 +1,32 @@
-let
-  kubernetes =
-    { pkgs, ... }:
-    {
-      home.packages = with pkgs; [
-        fluxcd
-        kubernetes-helm
-        kubectl
-        kubectl-get-all
-        kubectl-get-resources
-        kubectl-rook-ceph
-      ];
-    };
-
-  krew =
-    { pkgs, ... }:
-    {
-      home.packages = [ pkgs.krew ];
-      programs.zsh = {
-        initContent = ''
-          export PATH="''\${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-        '';
-      };
-    };
-
-  openshift =
-    {
-      config,
-      pkgs,
-      lib,
-      ...
-    }:
-    {
-      options.openshift.enable = lib.mkEnableOption "OpenShift";
-
-      config = lib.mkIf config.openshift.enable {
-        home.packages = [
-          pkgs.crc
-          pkgs.openshift
-        ];
-
-        programs.zsh = {
-          initContent = ''
-            eval $(crc podman-env)
-          '';
-        };
-      };
-    };
-in
 {
-  imports = [ ./k9s ];
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+{
+  imports = [
+    ./k9s
+    ./openshift
+  ];
 
-  flake.homeModules = {
-    inherit kubernetes krew openshift;
-  };
+  options.dotfiles.kubernetes.enable = lib.mkEnableOption "Kubernetes Toolchain";
 
-  flake.modules.homeManager = {
-    inherit kubernetes krew openshift;
+  config = lib.mkIf config.dotfiles.kubernetes.enable {
+    home.packages = with pkgs; [
+      fluxcd
+      krew
+      kubernetes-helm
+      kubectl
+      kubectl-get-all
+      kubectl-get-resources
+      kubectl-rook-ceph
+    ];
+
+    programs.zsh = {
+      initContent = ''
+        export PATH="''\${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+      '';
+    };
   };
 }

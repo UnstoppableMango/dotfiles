@@ -8,6 +8,7 @@
   "editor.formatOnSave": true,
   "explorer.confirmDelete": false,
   "explorer.autoReveal": false,
+  "extensions.ignoreRecommendations": true,
   "FSharp.suggestGitignore": false,
   "FSharp.showExplorerOnStartup": false,
   "FSharp.autoRevealInExplorer": "sameAsFileExplorer",

@@ -1,9 +1,12 @@
+{ lib, config, ... }:
 {
-  flake.modules.homeManager.emacs = {
+  options.dotfiles.emacs.enable = lib.mkEnableOption "emacs";
+
+  config = lib.mkIf config.dotfiles.emacs.enable {
     programs.emacs = {
       enable = true;
-      extraPackages = epkgs: [
-        epkgs.nix-mode
+      extraPackages = pkgs: [
+        pkgs.nix-mode
       ];
     };
   };

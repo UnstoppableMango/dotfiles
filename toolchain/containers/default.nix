@@ -1,35 +1,20 @@
 {
-  flake.modules.homeManager.containers =
-    { pkgs, ... }:
-    {
-      home.packages = with pkgs; [
-        docker
-        podman
-        podman-compose
-        podman-tui
-        buildah
-      ];
-    };
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+{
+  options.dotfiles.containers.enable = lib.mkEnableOption "container Toolchain";
 
-  flake.modules.nixos.containers =
-    { pkgs, ... }:
-    {
-      virtualisation = {
-        docker = {
-          enable = true;
-          storageDriver = "btrfs";
-
-          daemon.settings = {
-            userland-proxy = false;
-          };
-
-          rootless = {
-            enable = true;
-            setSocketVariable = true;
-          };
-        };
-
-        podman.enable = true;
-      };
-    };
+  config = lib.mkIf config.dotfiles.containers.enable {
+    home.packages = with pkgs; [
+      buildah
+      docker
+      podman
+      podman-compose
+      podman-tui
+      skopeo
+    ];
+  };
 }

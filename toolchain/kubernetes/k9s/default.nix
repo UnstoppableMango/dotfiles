@@ -1,5 +1,6 @@
+{ lib, config, ... }:
 {
-  flake.modules.homeManager.k9s = _: {
+  config = lib.mkIf config.dotfiles.kubernetes.enable {
     programs.k9s = {
       enable = true;
       settings.k9s.ui.skin = "pink";
@@ -20,7 +21,7 @@
           };
           menu = {
             fgColor = "#ffe6e8";
-            keyColor = "#1csd99";
+            keyColor = "#1cad99";
             numKeyColor = "#ee2677";
           };
           crumbs = {
