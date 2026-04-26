@@ -139,12 +139,25 @@
       flake = {
         overlays.dotfiles = overlay;
         overlays.default = overlay;
-        homeModules.dotfiles = {
-          imports = with inputs; [
-            nixvim.homeModules.nixvim
-            direnv-instant.homeModules.direnv-instant
-            { nixpkgs.overlays = [ overlay ]; }
-            { nixpkgs.config.allowUnfree = true; }
+
+        homeModules = {
+          dotfiles = {
+            imports = with inputs; [
+              nixvim.homeModules.nixvim
+              direnv-instant.homeModules.direnv-instant
+              { nixpkgs.overlays = [ overlay ]; }
+              { nixpkgs.config.allowUnfree = true; }
+            ];
+          };
+
+          erik.imports = [
+            self.homeModules.dotfiles
+            ./users/erik
+          ];
+
+          erasmussen.imports = [
+            self.homeModules.dotfiles
+            ./users/erasmussen
           ];
         };
       };
@@ -167,18 +180,12 @@
             {
               erik = lib.homeManagerConfiguration {
                 inherit pkgs;
-                modules = [
-                  self.homeModules.dotfiles
-                  ./users/erik
-                ];
+                modules = [ self.homeModules.erik ];
               };
 
               erasmussen = lib.homeManagerConfiguration {
                 inherit pkgs;
-                modules = [
-                  self.homeModules.dotfiles
-                  ./users/erasmussen
-                ];
+                modules = [ self.homeModules.erasmussen ];
               };
             };
 
