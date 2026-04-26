@@ -141,23 +141,54 @@
         overlays.default = overlay;
 
         homeModules = {
-          dotfiles = {
-            imports = with inputs; [
-              nixvim.homeModules.nixvim
-              direnv-instant.homeModules.direnv-instant
-            ];
-          };
-
-          erik.imports = [
-            self.homeModules.dotfiles
+          erik.imports = with inputs; [
+            nixvim.homeModules.nixvim
+            direnv-instant.homeModules.direnv-instant
             ./users/erik
           ];
 
-          erasmussen.imports = [
-            self.homeModules.dotfiles
+          erasmussen.imports = with inputs; [
+            nixvim.homeModules.nixvim
+            direnv-instant.homeModules.direnv-instant
             ./users/erasmussen
           ];
         };
+
+        homeConfigurations =
+          let
+            inherit (inputs.home-manager.lib) homeManagerConfiguration;
+            inherit (inputs.nixpkgs) legacyPackages;
+
+            common = {
+              nixpkgs.overlays = [ overlay ];
+              nixpkgs.config.allowUnfree = true;
+            };
+          in
+          {
+            "erik@darter" = homeManagerConfiguration {
+              pkgs = legacyPackages.x86_64-linux;
+              modules = [
+                self.homeModules.erik
+                common
+              ];
+            };
+
+            "erik@hades" = homeManagerConfiguration {
+              pkgs = legacyPackages.x86_64-linux;
+              modules = [
+                self.homeModules.erik
+                common
+              ];
+            };
+
+            "erasmussen@MacBook-Pro" = homeManagerConfiguration {
+              pkgs = legacyPackages.aarch64-darwin;
+              modules = [
+                self.homeModules.erasmussen
+                common
+              ];
+            };
+          };
 
         nixosModules = {
           erik.home-manager.users.erik.imports = [ self.homeModules.erik ];
@@ -173,36 +204,6 @@
       perSystem =
         { pkgs, ... }:
         {
-          # https://github.com/nix-community/home-manager/discussions/7551
-          # https://github.com/nix-community/home-manager/issues/3075
-          # https://github.com/bobvanderlinden/nixos-config/blob/bdfd8d94def9dc36166ef5725589bf3d7ae2d233/flake.nix#L38-L46
-          legacyPackages.homeConfigurations =
-            let
-              inherit (inputs.home-manager) lib;
-
-              common = {
-                nixpkgs.overlays = [ overlay ];
-                nixpkgs.config.allowUnfree = true;
-              };
-            in
-            {
-              erik = lib.homeManagerConfiguration {
-                inherit pkgs;
-                modules = [
-                  self.homeModules.erik
-                  common
-                ];
-              };
-
-              erasmussen = lib.homeManagerConfiguration {
-                inherit pkgs;
-                modules = [
-                  self.homeModules.erasmussen
-                  common
-                ];
-              };
-            };
-
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
               age
