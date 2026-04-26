@@ -161,6 +161,14 @@
             ./users/erasmussen
           ];
         };
+
+        nixosModules = {
+          dotfiles = {
+            home-manager.imports = [ self.homeModules.dotfiles ];
+          };
+
+          default = self.nixosModules.dotfiles;
+        };
       };
 
       nixvim = {
