@@ -46,6 +46,7 @@ in
     helix.enable = true;
     zed.enable = true;
     neovim.enable = true;
+    vscode.enable = true;
     zsh.enable = true;
     ghostty.enable = true;
     kitty.enable = true;
