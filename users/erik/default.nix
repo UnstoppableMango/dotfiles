@@ -32,10 +32,12 @@ in
   };
 
   dotfiles = {
+    ai.enable = true;
     brave.enable = true;
     emacs.enable = true;
     gnome.enable = true;
     helix.enable = true;
+    zed.enable = true;
     neovim.enable = true;
     zsh.enable = true;
     ghostty.enable = true;

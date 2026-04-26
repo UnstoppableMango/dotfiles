@@ -5,8 +5,7 @@ in
 {
   imports = [
     ../../shells/zsh
-    ../../editors/neovim
-    ../../editors/vscode
+    ../../editors
     ../../terminals
     ../../toolchain
 
@@ -42,6 +41,7 @@ in
     zsh.enable = true;
     ghostty.enable = true;
     kitty.enable = true;
+    zed.enable = true;
     c.enable = true;
     containers.enable = true;
     dotnet.enable = true;
