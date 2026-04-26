@@ -45,6 +45,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    direnv-instant.url = "github:Mic92/direnv-instant";
+
     nix-direnv = {
       url = "github:nix-community/nix-direnv";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -150,7 +152,9 @@
           legacyPackages.homeConfigurations =
             let
               inherit (inputs.home-manager) lib;
-              common.imports = [
+              common.imports = with inputs; [
+                nixvim.homeModules.nixvim
+                direnv-instant.homeModules.direnv-instant
                 { nixpkgs.overlays = [ overlay ]; }
                 { nixpkgs.config.allowUnfree = true; }
               ];
@@ -159,7 +163,6 @@
               erik = lib.homeManagerConfiguration {
                 inherit pkgs;
                 modules = [
-                  inputs.nixvim.homeModules.nixvim
                   ./users/erik
                   common
                 ];
@@ -168,7 +171,6 @@
               erasmussen = lib.homeManagerConfiguration {
                 inherit pkgs;
                 modules = [
-                  inputs.nixvim.homeModules.nixvim
                   ./users/erasmussen
                   common
                 ];

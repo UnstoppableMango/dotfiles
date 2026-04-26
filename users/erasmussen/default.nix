@@ -76,6 +76,8 @@ in
       nix-direnv.enable = true;
     };
 
+    direnv-instant.enable = true;
+
     claude-code.enable = true;
   };
 
