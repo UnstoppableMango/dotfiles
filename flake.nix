@@ -141,17 +141,8 @@
         overlays.default = overlay;
 
         homeModules = {
-          erik.imports = with inputs; [
-            nixvim.homeModules.nixvim
-            direnv-instant.homeModules.direnv-instant
-            ./users/erik
-          ];
-
-          erasmussen.imports = with inputs; [
-            nixvim.homeModules.nixvim
-            direnv-instant.homeModules.direnv-instant
-            ./users/erasmussen
-          ];
+          erik.imports = [ ./users/erik ];
+          erasmussen.imports = [ ./users/erasmussen ];
         };
 
         homeConfigurations =

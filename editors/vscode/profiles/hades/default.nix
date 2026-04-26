@@ -1,10 +1,13 @@
-{ pkgs, lib, ... }:
+{ inputs, lib, ... }:
+let
+  inherit (inputs.nix-vscode-extensions.packages) vscode-marketplace;
+in
 {
   programs.vscode.profiles.Hades = {
     # https://github.com/microsoft/vscode-dotnettools/issues/2266#issuecomment-3571804122
     userSettings = lib.importJSON ./settings.json;
 
-    extensions = with pkgs.vscode-marketplace; [
+    extensions = with vscode-marketplace; [
       alefragnani.project-manager
       anthropic.claude-code
       apollographql.vscode-apollo

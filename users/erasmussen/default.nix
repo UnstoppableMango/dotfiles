@@ -1,9 +1,16 @@
-{ pkgs, ... }:
+{
+  inputs,
+  pkgs,
+  config,
+  ...
+}:
 let
   username = "erasmussen";
 in
 {
-  imports = [
+  imports = with inputs; [
+    direnv-instant.homeModules.direnv-instant
+
     ../../shells/zsh
     ../../editors
     ../../terminals
@@ -76,7 +83,12 @@ in
       nix-direnv.enable = true;
     };
 
-    direnv-instant.enable = true;
+    direnv-instant = {
+      enable = true;
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableKittyIntegration = config.dotfiles.kitty.enable;
+    };
 
     claude-code.enable = true;
   };
