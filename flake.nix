@@ -136,7 +136,18 @@
         treefmt-nix.flakeModule
       ];
 
-      flake.overlays.default = overlay;
+      flake = {
+        overlays.dotfiles = overlay;
+        overlays.default = overlay;
+        homeModules.dotfiles = {
+          imports = with inputs; [
+            nixvim.homeModules.nixvim
+            direnv-instant.homeModules.direnv-instant
+            { nixpkgs.overlays = [ overlay ]; }
+            { nixpkgs.config.allowUnfree = true; }
+          ];
+        };
+      };
 
       nixvim = {
         packages.enable = true;
@@ -152,27 +163,21 @@
           legacyPackages.homeConfigurations =
             let
               inherit (inputs.home-manager) lib;
-              common.imports = with inputs; [
-                nixvim.homeModules.nixvim
-                direnv-instant.homeModules.direnv-instant
-                { nixpkgs.overlays = [ overlay ]; }
-                { nixpkgs.config.allowUnfree = true; }
-              ];
             in
             {
               erik = lib.homeManagerConfiguration {
                 inherit pkgs;
                 modules = [
+                  self.homeModules.dotfiles
                   ./users/erik
-                  common
                 ];
               };
 
               erasmussen = lib.homeManagerConfiguration {
                 inherit pkgs;
                 modules = [
+                  self.homeModules.dotfiles
                   ./users/erasmussen
-                  common
                 ];
               };
             };
