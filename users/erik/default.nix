@@ -6,6 +6,11 @@ in
   imports = [
     ../../browsers
     ../../desktops
+    ../../editors
+    ../../shells
+    ../../terminals
+    ../../toolchain
+
     ./ai.nix
     ./gnupg.nix
   ];
@@ -18,8 +23,7 @@ in
       buf
       glow
       mise
-      # :(
-      # neofetch
+      nano
       fastfetch
       openssl
       pay-respects
@@ -29,7 +33,22 @@ in
 
   dotfiles = {
     brave.enable = true;
+    emacs.enable = true;
     gnome.enable = true;
+    helix.enable = true;
+    neovim.enable = true;
+    zsh.enable = true;
+    ghostty.enable = true;
+    kitty.enable = true;
+    c.enable = true;
+    containers.enable = true;
+    dotnet.enable = true;
+    go.enable = true;
+    javascript.enable = true;
+    kubernetes.enable = true;
+    openshift.enable = true;
+    ocaml.enable = true;
+    python.enable = true;
   };
 
   programs = {

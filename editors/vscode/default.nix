@@ -1,10 +1,10 @@
-{ config, ... }:
+{ lib, config, ... }:
 {
   imports = [ ./profiles/hades ];
 
-  flake.modules.homeManager.vscode = {
-    imports = with config.flake.modules.homeManager; [ vscode-hades ];
+  options.dotfiles.vscode.enable = lib.mkEnableOption "VSCode";
 
+  config = lib.mkIf config.dotfiles.vscode.enable {
     # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.vscode.enable
     programs.vscode = {
       enable = true;

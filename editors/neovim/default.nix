@@ -1,7 +1,8 @@
-{ self, ... }:
+{ lib, config, ... }:
 {
-  flake.homeModules.neovim = self.modules.homeManager.neovim;
-  flake.modules.homeManager.neovim = {
+  options.dotfiles.neovim.enable = lib.mkEnableOption "neovim";
+
+  config = lib.mkIf config.dotfiles.neovim.enable {
     programs.nixvim = {
       enable = true;
       defaultEditor = true;

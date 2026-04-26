@@ -113,6 +113,7 @@
         with inputs;
         [
           devctl.overlays.default
+          mynix.overlays.default
           nil.overlays.default
           nix-direnv.overlays.default
           nix-vscode-extensions.overlays.default
@@ -131,23 +132,9 @@
         home-manager.flakeModules.home-manager
         nixvim.flakeModules.default
         treefmt-nix.flakeModule
-
-        ./editors
-        ./shells
-        ./terminals
-        ./toolchain
-        ./users
       ];
 
       flake.overlays.default = overlay;
-
-      flake.modules.flake = {
-        editors = ./editors;
-        erasmussen = ./users/erasmussen;
-        shells = ./shells;
-        terminals = ./terminals;
-        toolchain = ./toolchain;
-      };
 
       nixvim = {
         packages.enable = true;
@@ -172,16 +159,17 @@
               erik = lib.homeManagerConfiguration {
                 inherit pkgs;
                 modules = [
+                  inputs.nixvim.homeModules.nixvim
                   ./users/erik
                   common
-                  { dotfiles.ai.enable = true; }
                 ];
               };
 
               erasmussen = lib.homeManagerConfiguration {
                 inherit pkgs;
                 modules = [
-                  self.modules.homeManager.erasmussen
+                  inputs.nixvim.homeModules.nixvim
+                  ./users/erasmussen
                   common
                 ];
               };
@@ -198,8 +186,7 @@
               home-manager
               ldns
               nil
-              # For the cache fallback behaviour in 2.32
-              nixVersions.latest
+              nix
               nixd
               nixfmt
               shellcheck
