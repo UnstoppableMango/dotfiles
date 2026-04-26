@@ -163,11 +163,8 @@
         };
 
         nixosModules = {
-          dotfiles = {
-            home-manager.imports = [ self.homeModules.dotfiles ];
-          };
-
-          default = self.nixosModules.dotfiles;
+          erik.home-manager.users.erik.imports = [ self.homeModules.erik ];
+          default = self.nixosModules.erik;
         };
       };
 
