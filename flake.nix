@@ -159,34 +159,28 @@
             inherit (inputs.home-manager.lib) homeManagerConfiguration;
             inherit (inputs.nixpkgs) legacyPackages;
 
-            common = {
-              nixpkgs.overlays = [ overlay ];
-              nixpkgs.config.allowUnfree = true;
-            };
+            extraSpecialArgs = { inherit inputs; };
+
+            modules = [
+              self.homeModules.erik
+              { nixpkgs.overlays = [ overlay ]; }
+              { nixpkgs.config.allowUnfree = true; }
+            ];
           in
           {
             "erik@darter" = homeManagerConfiguration {
+              inherit modules extraSpecialArgs;
               pkgs = legacyPackages.x86_64-linux;
-              modules = [
-                self.homeModules.erik
-                common
-              ];
             };
 
             "erik@hades" = homeManagerConfiguration {
+              inherit modules extraSpecialArgs;
               pkgs = legacyPackages.x86_64-linux;
-              modules = [
-                self.homeModules.erik
-                common
-              ];
             };
 
             "erasmussen@MacBook-Pro" = homeManagerConfiguration {
+              inherit modules extraSpecialArgs;
               pkgs = legacyPackages.aarch64-darwin;
-              modules = [
-                self.homeModules.erasmussen
-                common
-              ];
             };
           };
 
