@@ -145,9 +145,10 @@
             imports = with inputs; [
               nixvim.homeModules.nixvim
               direnv-instant.homeModules.direnv-instant
-              { nixpkgs.overlays = [ overlay ]; }
-              { nixpkgs.config.allowUnfree = true; }
             ];
+
+            nixpkgs.overlays = [ overlay ];
+            nixpkgs.config.allowUnfree = true;
           };
 
           erik.imports = [
