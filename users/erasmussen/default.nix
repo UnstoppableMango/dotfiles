@@ -46,7 +46,7 @@ in
     neovim.enable = true;
     vscode.enable = true;
     zsh.enable = true;
-    ghostty.enable = true;
+    ghostty.enable = false; # They prefer to distribute via brew right now
     kitty.enable = true;
     zed.enable = true;
     c.enable = true;
