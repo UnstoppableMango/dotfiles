@@ -169,7 +169,7 @@
               pkgs = legacyPackages.x86_64-linux;
             };
 
-            "erasmussen@MacBook-Pro" = homeManagerConfiguration {
+            "erasmussen@Eriks-MacBook-Pro.local" = homeManagerConfiguration {
               inherit modules extraSpecialArgs;
               pkgs = legacyPackages.aarch64-darwin;
             };
