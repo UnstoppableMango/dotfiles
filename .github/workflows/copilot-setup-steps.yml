@@ -11,7 +11,7 @@ on:
 
 jobs:
   copilot-setup-steps:
-    runs-on: nix-runners
+    runs-on: dotfiles-runners
     permissions:
       contents: read
     steps:
