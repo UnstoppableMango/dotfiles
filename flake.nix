@@ -21,6 +21,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    clan-core = {
+      url = "https://git.clan.lol/clan/clan-core/archive/25.11.tar.gz";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        systems.follows = "systems";
+        flake-parts.follows = "flake-parts";
+        treefmt-nix.follows = "treefmt-nix";
+      };
+    };
+
     nixd = {
       url = "github:nix-community/nixd";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -192,7 +202,7 @@
       };
 
       perSystem =
-        { pkgs, ... }:
+        { inputs', pkgs, ... }:
         {
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
@@ -203,6 +213,7 @@
               git
               gnumake
               home-manager
+              inputs'.clan-core.packages.clan-cli
               ldns
               nil
               nix
