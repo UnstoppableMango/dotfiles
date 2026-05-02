@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   check:
@@ -27,3 +27,6 @@ jobs:
           nix run home-manager -- build \
           --flake ${{ github.workspace }}#erik@darter \
           --no-out-link
+
+  copilot-setup-steps:
+    runs-on: dotfiles-runners
