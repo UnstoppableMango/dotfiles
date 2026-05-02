@@ -26,6 +26,7 @@
       enableCompletion = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
+      historySubstringSearch.enable = true;
 
       shellAliases = {
         gadd = "git add .";
