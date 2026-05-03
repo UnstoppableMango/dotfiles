@@ -1,16 +1,9 @@
-{
-  inputs,
-  pkgs,
-  config,
-  ...
-}:
+{ pkgs, config, ... }:
 let
   username = "erik";
 in
 {
-  imports = with inputs; [
-    direnv-instant.homeModules.direnv-instant
-
+  imports = [
     ../../browsers
     ../../desktops
     ../../editors
