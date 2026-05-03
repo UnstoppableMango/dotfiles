@@ -73,12 +73,12 @@ in
       mise.enable = true;
     };
 
-    direnv-instant = {
-      enable = true;
-      enableBashIntegration = true;
-      enableZshIntegration = true;
-      enableKittyIntegration = config.dotfiles.kitty.enable;
-    };
+    # direnv-instant = {
+    #   enable = true;
+    #   enableBashIntegration = true;
+    #   enableZshIntegration = true;
+    #   enableKittyIntegration = config.dotfiles.kitty.enable;
+    # };
   };
 
   # This value determines the Home Manager release that your configuration is

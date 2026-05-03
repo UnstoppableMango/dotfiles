@@ -76,12 +76,12 @@ in
       nix-direnv.enable = true;
     };
 
-    direnv-instant = {
-      enable = true;
-      enableBashIntegration = true;
-      enableZshIntegration = true;
-      enableKittyIntegration = config.dotfiles.kitty.enable;
-    };
+    # direnv-instant = {
+    #   enable = true;
+    #   enableBashIntegration = true;
+    #   enableZshIntegration = true;
+    #   enableKittyIntegration = config.dotfiles.kitty.enable;
+    # };
 
     claude-code.enable = true;
   };
