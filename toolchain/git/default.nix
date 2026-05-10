@@ -16,7 +16,8 @@
       };
 
       commit = {
-        gpgsign = true;
+        # I think gpgsign=true is what was forcing annotated tags
+        gpgsign = false;
       };
 
       alias = {
