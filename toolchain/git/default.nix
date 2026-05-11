@@ -16,6 +16,10 @@
       };
 
       commit = {
+        gpgsign = true;
+      };
+
+      tag = {
         # I think gpgsign=true is what was forcing annotated tags
         gpgsign = false;
       };
