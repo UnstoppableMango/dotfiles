@@ -16,6 +16,23 @@
         caseSensitive = true;
         prompt.theme = "powerlevel10k";
 
+        # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zsh.prezto.pmodules
+        pmodules = [
+          # Default
+          "environment"
+          "terminal"
+          "editor"
+          "history"
+          "directory"
+          "spectrum"
+          "utility"
+          "completion"
+          "prompt"
+
+          # Custom
+          "history-substring-search"
+        ];
+
         # https://github.com/sorin-ionescu/prezto/issues/205#issuecomment-314538861
         utility.safeOps = false;
       };
