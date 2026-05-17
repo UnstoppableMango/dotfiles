@@ -24,7 +24,7 @@ Note: `make build` validates the local flake (`$PWD`), while `make home` operate
 
 Environment variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC` (all have defaults).
 
-CI runs `nix flake check --all-systems` then builds the `erik` home configuration.
+CI runs `nix flake check --all-systems` then builds the `erik@darter` home configuration.
 
 ## Architecture
 
@@ -32,15 +32,18 @@ The flake uses `flake-parts` with these categorical module directories imported 
 
 - `browsers/` — Brave
 - `desktops/` — GNOME
-- `editors/` — VS Code, Neovim (via nixvim), Zed, Helix, Emacs, Nano
+- `editors/` — VS Code (with profiles per host), Neovim (via nixvim), Zed, Helix, Emacs
 - `shells/` — Zsh (Prezto + Powerlevel10k)
 - `terminals/` — Kitty, Ghostty
-- `toolchain/` — per-language dev tool configs (git, go, dotnet, containers, kubernetes, nix, etc.)
-- `users/erik/` and `users/erasmussen/` — user-specific home configurations
+- `toolchain/` — per-language dev tool configs: c, containers, dotnet, git, go, javascript, kubernetes (with k9s and openshift submodules), nix, ocaml, python
+- `users/erik/` — Linux (x86_64) home config; includes `ai.nix` (enables claude-code, github-copilot-cli, cursor-cli)
+- `users/erasmussen/` — macOS (aarch64-darwin) home config
 
-Overlays from multiple inputs (bun2nix, devctl, gomod2nix, mynix, nil, nix-direnv, nix-vscode-extensions) are composed in `flake.nix` and applied to nixpkgs.
+Three home configurations are defined: `erik@darter` and `erik@hades` (both x86_64-linux), and `erasmussen@Eriks-MacBook-Pro.local` (aarch64-darwin).
 
-The dev shell (entered via `direnv allow` / `nix develop`) includes tools such as: direnv, dprint, git, gnumake, home-manager, nil, nixd, nixfmt, shellcheck, watchexec.
+Overlays from multiple inputs (devctl, mynix, nil, nix-direnv, nix-vscode-extensions, ux) are composed in `flake.nix` and applied to nixpkgs. `zed.overlays.default` is currently commented out due to a `cargo-about` version conflict.
+
+The dev shell (entered via `direnv allow` / `nix develop`) includes: age, bashInteractive, clan-cli, direnv, dprint, git, gnumake, home-manager, ldns, nil, nix, nixd, nixfmt, shellcheck, ssh-to-age, watchexec.
 
 ## Formatting
 
