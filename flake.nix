@@ -18,7 +18,7 @@
 
     home-manager = {
       url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # Explicitly leaving nixpkgs unpinned because hm likes to provide its own
     };
 
     clan-core = {
@@ -45,7 +45,7 @@
 
     nixvim = {
       url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # Explicitly leaving nixpkgs unpinned because nixvim likes to provide its own
       inputs.flake-parts.follows = "flake-parts";
       inputs.systems.follows = "systems";
     };
