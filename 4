@@ -16,9 +16,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    home-manager-nixpkgs.url = "github:nixos/nixpkgs?ref=release-25.11";
+
     home-manager = {
       url = "github:nix-community/home-manager";
-      # Explicitly leaving nixpkgs unpinned because hm likes to provide its own
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     clan-core = {
@@ -43,9 +45,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixvim-nixpkgs.url = "github:nixos/nixpkgs?ref=release-26.05";
+
     nixvim = {
       url = "github:nix-community/nixvim";
-      # Explicitly leaving nixpkgs unpinned because nixvim likes to provide its own
+      inputs.nixpkgs.follows = "nixvim-nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
       inputs.systems.follows = "systems";
     };
