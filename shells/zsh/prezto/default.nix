@@ -9,6 +9,13 @@
     programs.zsh = {
       initContent = ''
         source ~/.p10k.zsh
+
+        # Remove prezto autoload stubs that break Claude Code shell snapshots.
+        # See: https://github.com/anthropics/claude-code/issues/1849
+        for _f in ''${(k)functions}; do
+          [[ ''${functions[$_f]} == *'builtin autoload -XUz'* ]] && unfunction -- $_f
+        done
+        unset _f
       '';
 
       prezto = {
