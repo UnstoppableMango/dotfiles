@@ -68,6 +68,7 @@
           show-show-apps-button = true; # This is not a typo
           show-trash = false;
           unity-backlit-items = false;
+          click-action = "cycle-windows";
         };
       };
     };
