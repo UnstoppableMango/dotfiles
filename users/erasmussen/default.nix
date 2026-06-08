@@ -44,11 +44,12 @@ in
     zed.enable = true;
     c.enable = true;
     containers.enable = true;
+    containers.podmanAutostart = true;
     dotnet.enable = true;
     go.enable = true;
     javascript.enable = true;
     kubernetes.enable = true;
-    openshift.enable = true;
+    openshift.enable = false;
     ocaml.enable = true;
     python.enable = true;
   };

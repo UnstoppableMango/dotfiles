@@ -15,7 +15,9 @@
 
     programs.zsh = {
       initContent = ''
-        eval $(crc podman-env)
+        if crc status 2>/dev/null | grep -q "Running"; then
+          eval $(crc podman-env)
+        fi
       '';
     };
   };
