@@ -226,6 +226,7 @@
               nixfmt
               shellcheck
               ssh-to-age
+              sops
               watchexec
             ];
 
