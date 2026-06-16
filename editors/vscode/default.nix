@@ -25,6 +25,14 @@
           "telemetry.telemetryLevel" = "off";
           "window.nativeTabs" = true;
           "terminal.integrated.fontFamily" = "MesloLGS NF";
+
+          # TODO: Revert once upstream fixed. GPU renderer corrupts long
+          # Claude Code sessions (black/solid block glyphs). Tracking:
+          # https://github.com/anthropics/claude-code/issues/8097
+          # https://github.com/anthropics/claude-code/issues/59163
+          # https://github.com/anthropics/claude-code/issues/59539
+          # https://github.com/anthropics/claude-code/issues/8618
+          "terminal.integrated.gpuAcceleration" = "off";
         };
       };
     };

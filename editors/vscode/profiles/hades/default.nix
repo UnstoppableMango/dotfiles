@@ -2,6 +2,13 @@
 {
   programs.vscode.profiles.Hades = {
     # https://github.com/microsoft/vscode-dotnettools/issues/2266#issuecomment-3571804122
+    # NOTE: settings.json sets terminal.integrated.gpuAcceleration = "off" as
+    # a workaround for upstream Claude Code terminal corruption. Revert once
+    # fixed. Tracking:
+    # https://github.com/anthropics/claude-code/issues/8097
+    # https://github.com/anthropics/claude-code/issues/59163
+    # https://github.com/anthropics/claude-code/issues/59539
+    # https://github.com/anthropics/claude-code/issues/8618
     userSettings = lib.importJSON ./settings.json;
 
     extensions = with pkgs.vscode-marketplace; [
