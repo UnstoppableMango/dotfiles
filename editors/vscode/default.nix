@@ -24,6 +24,7 @@
           "docker.extension.enableComposeLanguageServer" = true;
           "telemetry.telemetryLevel" = "off";
           "window.nativeTabs" = true;
+          "terminal.integrated.fontFamily" = "MesloLGS NF";
         };
       };
     };
