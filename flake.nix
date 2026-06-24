@@ -110,6 +110,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    mangopkgs = {
+      url = "github:unmango/pkgs";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.systems.follows = "systems";
+      inputs.gomod2nix.follows = "gomod2nix";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+    };
+
     mynix = {
       url = "github:UnstoppableMango/nix";
       inputs = {
@@ -130,7 +139,7 @@
         with inputs;
         [
           devctl.overlays.default
-          mynix.overlays.default
+          mangopkgs.overlays.default
           nil.overlays.default
           nix-direnv.overlays.default
           nix-vscode-extensions.overlays.default
