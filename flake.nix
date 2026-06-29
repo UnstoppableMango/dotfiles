@@ -45,7 +45,10 @@
 
     nixvim = {
       url = "github:nix-community/nixvim";
-      # Explicitly leaving nixpkgs unpinned because nixvim likes to provide its own
+      # nixpkgs now pinned: nixvim's own updated nixpkgs introduced stricter _module.args
+      # evaluation (f5901329 vs e1c1b847) that exposes a latent cycle in nixvim's LSP
+      # server package aggregation. Using our nixpkgs avoids the stricter detection.
+      inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
       inputs.systems.follows = "systems";
     };

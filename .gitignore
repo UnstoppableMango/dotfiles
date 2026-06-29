@@ -4,3 +4,4 @@ result
 ./configuration.nix
 *.dconf
 .claude/
+*.bak
