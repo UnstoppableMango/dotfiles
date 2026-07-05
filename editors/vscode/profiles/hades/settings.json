@@ -19,6 +19,9 @@
   "gitlens.advanced.skipOnboarding": true,
   "go.toolsManagement.autoUpdate": true,
   "go.showWelcome": false,
+  "gopls": {
+    "ui.semanticTokens": true
+  },
   "json.schemaDownload.trustedDomains": {
     "https://schemastore.azurewebsites.net/": true,
     "https://raw.githubusercontent.com/microsoft/vscode/": true,
