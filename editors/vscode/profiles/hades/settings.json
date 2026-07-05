@@ -17,6 +17,7 @@
   "gitlens.telemetry.enabled": false,
   "gitlens.showWhatsNewAfterUpgrades": false,
   "gitlens.advanced.skipOnboarding": true,
+  "go.toolsManagement.autoUpdate": true,
   "go.showWelcome": false,
   "json.schemaDownload.trustedDomains": {
     "https://schemastore.azurewebsites.net/": true,
