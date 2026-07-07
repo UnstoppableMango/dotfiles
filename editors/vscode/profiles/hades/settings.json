@@ -43,6 +43,7 @@
       }
     }
   },
+  "projectManager.openInNewWindowWhenClickingInStatusBar": true,
   "projectManager.git.baseFolders": [
     "~/src/github.com/UnstoppableMango",
     "~/src/github.com/unmango",
@@ -56,6 +57,7 @@
   "redhat.telemetry.enabled": false,
   "terminal.integrated.fontFamily": "MesloLGS NF",
   "terminal.integrated.gpuAcceleration": "off",
+  "update.showReleaseNotes": false,
   "vs-kubernetes": {
     "vs-kubernetes.crd-code-completion": "enabled"
   },
