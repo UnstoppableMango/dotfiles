@@ -23,6 +23,7 @@ in
     packages = with pkgs; [
       bat
       buf
+      crane
       cursor-cli
       fnm
       github-copilot-cli
