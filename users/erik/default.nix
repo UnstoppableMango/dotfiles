@@ -6,6 +6,7 @@ in
   imports = [
     ../../ai
     ../../browsers
+    ../../desktops
     ../../editors
     ../../gnupg
     ../../shells

@@ -32,6 +32,7 @@ The flake uses `flake-parts` with these categorical module directories imported 
 
 - `ai/` — claude-code, github-copilot-cli, cursor-cli (shared by both users)
 - `browsers/` — Brave
+- `desktops/` — GNOME
 - `editors/` — VS Code (with profiles per host), Neovim (via nixvim), Zed, Helix, Emacs
 - `gnupg/` — gpg + gpg-agent (shared by both users; pinentry only on Linux)
 - `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)
@@ -39,8 +40,6 @@ The flake uses `flake-parts` with these categorical module directories imported 
 - `toolchain/` — per-language dev tool configs: c, containers, dotnet, git, go, javascript, kubernetes (with k9s and openshift submodules), nix, ocaml, python
 - `users/erik/` — Linux (x86_64) home config
 - `users/erasmussen/` — macOS (aarch64-darwin) home config
-
-GNOME desktop config lives in the separate NixOS repo, not here.
 
 Three home configurations are defined: `erik@darter` and `erik@hades` (both x86_64-linux), and `erasmussen@Eriks-MacBook-Pro.local` (aarch64-darwin).
 
