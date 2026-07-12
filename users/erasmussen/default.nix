@@ -4,12 +4,12 @@ let
 in
 {
   imports = [
-    ../../shells/zsh
+    ../../ai
     ../../editors
+    ../../gnupg
+    ../../shells/zsh
     ../../terminals
     ../../toolchain
-
-    ./gnupg.nix
   ];
 
   home = {
@@ -24,9 +24,7 @@ in
       bat
       buf
       crane
-      cursor-cli
       fnm
-      github-copilot-cli
       gitkraken
       glow
       pay-respects
@@ -37,6 +35,7 @@ in
   };
 
   dotfiles = {
+    ai.enable = true;
     neovim.enable = true;
     vscode.enable = true;
     zsh.enable = true;
@@ -47,9 +46,11 @@ in
     containers.enable = true;
     containers.podmanAutostart = true;
     dotnet.enable = true;
+    git.enable = true;
     go.enable = true;
     javascript.enable = true;
     kubernetes.enable = true;
+    nix.enable = true;
     openshift.enable = false;
     ocaml.enable = true;
     python.enable = true;
@@ -84,8 +85,6 @@ in
     #   enableZshIntegration = true;
     #   enableKittyIntegration = config.dotfiles.kitty.enable;
     # };
-
-    claude-code.enable = true;
   };
 
   programs.git = {

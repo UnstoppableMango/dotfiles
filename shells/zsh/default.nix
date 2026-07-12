@@ -5,7 +5,10 @@
   ...
 }:
 {
-  imports = [ ./prezto ];
+  imports = [
+    ./prezto
+    ./oh-my-zsh
+  ];
 
   options.dotfiles.zsh.enable = lib.mkEnableOption "zsh";
 

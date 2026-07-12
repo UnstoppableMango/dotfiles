@@ -1,7 +1,9 @@
+{ lib, config, ... }:
 {
-  programs.zsh = {
-    enable = true;
-    oh-my-zsh = {
+  options.dotfiles.zsh.ohMyZsh.enable = lib.mkEnableOption "oh-my-zsh (alt to prezto)";
+
+  config = lib.mkIf config.dotfiles.zsh.ohMyZsh.enable {
+    programs.zsh.oh-my-zsh = {
       enable = true;
       plugins = [
         "sudo"
