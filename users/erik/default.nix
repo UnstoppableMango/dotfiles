@@ -4,15 +4,14 @@ let
 in
 {
   imports = [
+    ../../ai
     ../../browsers
     ../../desktops
     ../../editors
+    ../../gnupg
     ../../shells
     ../../terminals
     ../../toolchain
-
-    ./ai.nix
-    ./gnupg.nix
   ];
 
   home = {
@@ -32,13 +31,16 @@ in
   };
 
   dotfiles = {
+    ai.enable = true;
     emacs.enable = true;
     neovim.enable = true;
     zsh.enable = true;
     c.enable = true;
+    git.enable = true;
     go.enable = true;
     javascript.enable = true;
     kubernetes.enable = true;
+    nix.enable = true;
     python.enable = true;
   };
 

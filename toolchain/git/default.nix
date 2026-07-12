@@ -1,59 +1,68 @@
-{ pkgs, ... }:
 {
-  programs.git = {
-    enable = true;
-    package = pkgs.git;
-    lfs.enable = true;
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+{
+  options.dotfiles.git.enable = lib.mkEnableOption "git Toolchain";
 
-    settings = {
-      core = {
-        editor = "nvim";
+  config = lib.mkIf config.dotfiles.git.enable {
+    programs.git = {
+      enable = true;
+      package = pkgs.git;
+      lfs.enable = true;
+
+      settings = {
+        core = {
+          editor = "nvim";
+        };
+
+        user = {
+          name = "UnstoppableMango";
+          email = "erik.rasmussen@unmango.dev";
+        };
+
+        commit = {
+          gpgsign = true;
+        };
+
+        tag = {
+          # I think gpgsign=true is what was forcing annotated tags
+          gpgsign = false;
+        };
+
+        alias = {
+          co = "checkout";
+          ff = "merge --ff-only";
+          last = "log -1 HEAD";
+          unstage = "reset HEAD --";
+        };
+
+        push.autoSetupRemote = true;
       };
 
-      user = {
-        name = "UnstoppableMango";
-        email = "erik.rasmussen@unmango.dev";
-      };
-
-      commit = {
-        gpgsign = true;
-      };
-
-      tag = {
-        # I think gpgsign=true is what was forcing annotated tags
-        gpgsign = false;
-      };
-
-      alias = {
-        co = "checkout";
-        ff = "merge --ff-only";
-        last = "log -1 HEAD";
-        unstage = "reset HEAD --";
-      };
-
-      push.autoSetupRemote = true;
+      ignores = [
+        "**/node_modules/"
+        ".DS_Store"
+        ".direnv/"
+        ".envrc"
+        ".idea/**/discord.xml"
+        ".worktree/"
+      ];
     };
 
-    ignores = [
-      "**/node_modules/"
-      ".DS_Store"
-      ".direnv/"
-      ".envrc"
-      ".idea/**/discord.xml"
-      ".worktree/"
-    ];
-  };
+    # Still fiddling with these
+    # https://github.com/git/git/blob/master/contrib/diff-highlight/README
+    programs.diff-highlight = {
+      enable = true;
+      enableGitIntegration = true;
+    };
+    # https://github.com/so-fancy/diff-so-fancy
+    # programs.diff-so-fancy.enable = true;
+    # https://github.com/Wilfred/difftastic
+    # programs.difftastic.enable = true;
 
-  # Still fiddling with these
-  # https://github.com/git/git/blob/master/contrib/diff-highlight/README
-  programs.diff-highlight = {
-    enable = true;
-    enableGitIntegration = true;
+    programs.gh.enable = true;
   };
-  # https://github.com/so-fancy/diff-so-fancy
-  # programs.diff-so-fancy.enable = true;
-  # https://github.com/Wilfred/difftastic
-  # programs.difftastic.enable = true;
-
-  programs.gh.enable = true;
 }
