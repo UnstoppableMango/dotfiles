@@ -11,7 +11,9 @@ on:
 
 jobs:
   copilot-setup-steps:
-    runs-on: dotfiles-runners
+    # It broke atm
+    # runs-on: dotfiles-runners
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
