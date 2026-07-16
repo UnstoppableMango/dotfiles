@@ -1,5 +1,10 @@
 { pkgs, ... }:
 {
+  programs.git.settings = {
+    user.signingkey = "264283BBFDC491BC";
+    gpg.format = "openpgp";
+  };
+
   dotfiles = {
     gnome.enable = true;
     brave.enable = true;

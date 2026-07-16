@@ -75,11 +75,6 @@ in
       mise.enable = true;
     };
 
-    git.settings = {
-      user.signingkey = "264283BBFDC491BC";
-      gpg.format = "openpgp";
-    };
-
     # direnv-instant = {
     #   enable = true;
     #   enableBashIntegration = true;
