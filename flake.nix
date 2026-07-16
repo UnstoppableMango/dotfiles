@@ -192,7 +192,7 @@
             "erik@hades" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs; };
-              inherit modules;
+              modules = modules ++ [ ./users/erik/hades.nix ];
             };
 
             "erasmussen@Eriks-MacBook-Pro.local" = homeManagerConfiguration {
