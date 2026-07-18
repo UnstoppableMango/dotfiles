@@ -21,7 +21,6 @@
         user = {
           name = "UnstoppableMango";
           email = "erik.rasmussen@unmango.dev";
-          signingkey = "264283BBFDC491BC";
         };
 
         commit = {

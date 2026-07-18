@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 let
   username = "erik";
 in
@@ -12,6 +12,7 @@ in
     ../../shells
     ../../terminals
     ../../toolchain
+    ./hades.nix
   ];
 
   home = {
