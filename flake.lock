@@ -313,9 +313,6 @@
         "gomod2nix": [
           "gomod2nix"
         ],
-        "nil": [
-          "nil"
-        ],
         "nixpkgs": [
           "nixpkgs"
         ],
@@ -327,11 +324,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1783824800,
-        "narHash": "sha256-5U5Ocu3xSX10SJWMjwC5IyPmw+t5LYY3EAm3sCu/2kg=",
+        "lastModified": 1784212764,
+        "narHash": "sha256-sf5mnFNevvVoM7avbnbBHYqvYGbV49DuS2ZNkAHYJ2g=",
         "owner": "UnstoppableMango",
         "repo": "nix",
-        "rev": "5f7ac27143cfd310d225eae697f790e6943b2373",
+        "rev": "88340a9295458dee432b895f0dd9b87fce749034",
         "type": "github"
       },
       "original": {

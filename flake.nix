@@ -127,7 +127,6 @@
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
         gomod2nix.follows = "gomod2nix";
-        nil.follows = "nil";
         treefmt-nix.follows = "treefmt-nix";
         systems.follows = "systems";
       };
