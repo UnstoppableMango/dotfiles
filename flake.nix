@@ -196,11 +196,6 @@
               ];
             };
           };
-
-        nixosModules = {
-          erik.home-manager.users.erik.imports = [ self.homeModules.erik ];
-          default = self.nixosModules.erik;
-        };
       };
 
       nixvim = {
