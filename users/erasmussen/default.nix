@@ -1,15 +1,10 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 let
   username = "erasmussen";
 in
 {
   imports = [
-    ../../ai
-    ../../editors
-    ../../gnupg
-    ../../shells/zsh
-    ../../terminals
-    ../../toolchain
+    ../../modules
   ];
 
   home = {

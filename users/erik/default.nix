@@ -4,14 +4,7 @@ let
 in
 {
   imports = [
-    ../../ai
-    ../../browsers
-    ../../desktops
-    ../../editors
-    ../../gnupg
-    ../../shells
-    ../../terminals
-    ../../toolchain
+    ../../modules
     ./hades.nix
   ];
 
