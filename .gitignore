@@ -5,3 +5,4 @@ result
 *.dconf
 .claude/
 *.bak
+.envrc
