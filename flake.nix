@@ -158,8 +158,8 @@
         overlays.default = overlay;
 
         homeModules = {
-          erik.imports = [ ./users/erik ];
-          erasmussen.imports = [ ./users/erasmussen ];
+          erik = ./users/erik;
+          erasmussen = ./users/erasmussen;
         };
 
         homeConfigurations =
