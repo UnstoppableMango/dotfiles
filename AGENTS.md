@@ -45,15 +45,15 @@ Three home configurations are defined: `erik@darter` and `erik@hades` (both x86_
 
 Overlays from multiple inputs (devctl, mynix, nil, nix-direnv, nix-vscode-extensions, ux) are composed in `flake.nix` and applied to nixpkgs. `zed.overlays.default` is currently commented out due to a `cargo-about` version conflict.
 
-The dev shell (entered via `direnv allow` / `nix develop`) includes: age, bashInteractive, clan-cli, direnv, dprint, git, gnumake, home-manager, ldns, nil, nix, nixd, nixfmt, shellcheck, ssh-to-age, watchexec.
+The dev shell (entered via `direnv allow` / `nix develop`) includes: age, bashInteractive, clan-cli, direnv, git, gnumake, home-manager, ldns, nil, nix, nixd, nixfmt, shellcheck, ssh-to-age, watchexec.
 
 ## Formatting
 
 - Nix files: `nixfmt` (via treefmt)
-- JSON/Markdown/YAML: `dprint` (configured in `.dprint.json`)
+- JSON/Markdown/YAML/markup: `prettier` (via treefmt)
 - Indentation: tabs everywhere except JSON/YAML/Nix which use 2 spaces (`.editorconfig`)
 
-Note: dprint is currently disabled in the treefmt flake module due to `nix flake check` issues.
+All formatters run through `treefmt-nix` (`nix fmt` / `make fmt`).
 
 ## Cachix
 

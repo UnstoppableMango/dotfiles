@@ -37,9 +37,7 @@
   "nix.serverSettings": {
     "nil": {
       "formatting": {
-        "command": [
-          "nixfmt"
-        ]
+        "command": ["nixfmt"]
       }
     }
   },
@@ -49,11 +47,7 @@
     "~/src/github.com/unmango",
     "~/src/github.com/pulumiverse"
   ],
-  "projectManager.tags": [
-    "Personal",
-    "Work",
-    "FOSS"
-  ],
+  "projectManager.tags": ["Personal", "Work", "FOSS"],
   "redhat.telemetry.enabled": false,
   "terminal.integrated.fontFamily": "MesloLGS NF",
   "terminal.integrated.gpuAcceleration": "off",

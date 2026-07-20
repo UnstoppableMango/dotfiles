@@ -211,7 +211,6 @@
               age
               bashInteractive
               direnv
-              dprint
               git
               gnumake
               home-manager
@@ -227,7 +226,6 @@
               watchexec
             ];
 
-            DPRINT = pkgs.dprint + "/bin/dprint";
             GIT = pkgs.git + "/bin/git";
             HOMEMANAGER = pkgs.home-manager + "/bin/home-manager";
             NIXFMT = pkgs.nixfmt + "/bin/nixfmt";
@@ -237,19 +235,7 @@
 
           treefmt = {
             programs.nixfmt.enable = true;
-            programs.dprint = {
-              enable = false; # Causing issues with flake checks
-              settings.plugins = (
-                pkgs.dprint-plugins.getPluginList (
-                  plugins: with plugins; [
-                    dprint-plugin-json
-                    dprint-plugin-markdown
-                    g-plane-markup_fmt
-                    g-plane-pretty_yaml
-                  ]
-                )
-              );
-            };
+            programs.prettier.enable = true;
           };
         };
     };
