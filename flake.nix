@@ -137,6 +137,10 @@
           nix-direnv.overlays.default
           nix-vscode-extensions.overlays.default
 
+          (final: prev: {
+            inherit (clan-core.packages.${prev.system}) clan-cli;
+          })
+
           # Stupid goddamn bullshit
           # error: could not find `cargo-about` in registry `crates-io` with version `=0.8.2`
           # zed.overlays.default

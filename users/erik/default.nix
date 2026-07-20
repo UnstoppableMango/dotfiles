@@ -14,6 +14,7 @@ in
 
     packages = with pkgs; [
       buf
+      clan-cli
       glow
       mise
       nano

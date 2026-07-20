@@ -18,6 +18,7 @@ in
     packages = with pkgs; [
       bat
       buf
+      clan-cli
       crane
       fnm
       gitkraken
