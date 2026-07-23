@@ -29,6 +29,7 @@
     programs.lutris.enable = true;
 
     home.packages = with pkgs; [
+      devenv
       jetbrains-toolbox
       gitkraken
       bitwarden-cli
