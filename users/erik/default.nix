@@ -27,6 +27,7 @@ in
 
   dotfiles = {
     ai.enable = true;
+    ai.agentConfig.enable = true;
     emacs.enable = true;
     neovim.enable = true;
     zsh.enable = true;
