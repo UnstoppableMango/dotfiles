@@ -37,9 +37,7 @@
     };
 
     nil = {
-      # https://github.com/oxalica/nil/pull/198
-      url = "github:foobar14/nil?ref=fix/nix-2.35.1-primops-docs";
-      # url = "github:oxalica/nil";
+      url = "github:oxalica/nil";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

@@ -343,16 +343,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1784156584,
-        "narHash": "sha256-9ZljjtU1aAVAgiNlLHasPHE8GgDcn5T/1ONJj9k79Tg=",
-        "owner": "foobar14",
+        "lastModified": 1785028902,
+        "narHash": "sha256-F+MFs5cJbqcrlu/6BzQhNwF7Ih26yG9Yg9p4xyDz5eY=",
+        "owner": "oxalica",
         "repo": "nil",
-        "rev": "9adecd46916748bf74dc971c2c39d55e63f9ba72",
+        "rev": "205c8ba65a7f956d7837a710794001b3515c65ff",
         "type": "github"
       },
       "original": {
-        "owner": "foobar14",
-        "ref": "fix/nix-2.35.1-primops-docs",
+        "owner": "oxalica",
         "repo": "nil",
         "type": "github"
       }
