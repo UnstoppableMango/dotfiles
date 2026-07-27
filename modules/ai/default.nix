@@ -20,8 +20,8 @@
     })
     (lib.mkIf config.dotfiles.ai.agentConfig.enable {
       home.file = {
-        ".claude/CLAUDE.md".source = ./CLAUDE.md;
-        ".copilot/copilot-instructions.md".source = ./copilot-instructions.md;
+        ".claude/CLAUDE.md".source = ./agent-instructions.md;
+        ".copilot/copilot-instructions.md".source = ./agent-instructions.md;
       };
     })
   ];
