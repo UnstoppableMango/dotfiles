@@ -12,6 +12,8 @@ in
     inherit username;
     homeDirectory = "/home/${username}";
 
+    sessionVariables.DO_NOT_TRACK = "1";
+
     packages = with pkgs; [
       buf
       clan-cli
