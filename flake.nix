@@ -139,8 +139,10 @@
             inherit (clan-core.packages.${prev.stdenv.hostPlatform.system}) clan-cli;
           })
 
-          # Stupid goddamn bullshit
-          # error: could not find `cargo-about` in registry `crates-io` with version `=0.8.2`
+          # cargo-about pin conflict is resolved upstream (zed's own nix/build.nix
+          # now vendors cargo-about via fetchFromGitHub), but a new mismatch surfaced:
+          # nixpkgs' livekit-libwebrtc is out of sync with zed 0.217.3's expected
+          # webrtc API (`no type named 'AudioDeviceSink' in namespace 'webrtc'`).
           # zed.overlays.default
         ]
       );

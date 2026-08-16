@@ -3,8 +3,11 @@
   programs.vscode.profiles.Hades = {
     # https://github.com/microsoft/vscode-dotnettools/issues/2266#issuecomment-3571804122
     # NOTE: settings.json sets terminal.integrated.gpuAcceleration = "off" as
-    # a workaround for upstream Claude Code terminal corruption. Revert once
-    # fixed. Tracking:
+    # a workaround for upstream Claude Code terminal corruption. Root cause is
+    # an upstream xterm.js webgl-renderer bug; the actual fix is
+    # https://github.com/xtermjs/xterm.js/pull/5883 (merged 2026-05-21 but not
+    # yet in a published xterm.js release, so VS Code hasn't picked it up).
+    # Revert once fixed. Tracking:
     # https://github.com/anthropics/claude-code/issues/8097
     # https://github.com/anthropics/claude-code/issues/59163
     # https://github.com/anthropics/claude-code/issues/59539
