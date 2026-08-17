@@ -25,6 +25,7 @@ in
       glow
       pay-respects
       pwgen
+      slackdump
       spotify
       vhs
     ];

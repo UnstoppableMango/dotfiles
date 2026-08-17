@@ -23,6 +23,7 @@ in
       fastfetch
       openssl
       pay-respects
+      slackdump
       vhs
     ];
   };
