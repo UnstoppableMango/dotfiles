@@ -24,9 +24,10 @@
         ".copilot/copilot-instructions.md".source = ./agent-instructions.md;
       };
       xdg.configFile."caveman/config.json".source =
-        (pkgs.formats.json { }).generate "caveman-config.json" {
-          defaultMode = "off";
-        };
+        (pkgs.formats.json { }).generate "caveman-config.json"
+          {
+            defaultMode = "off";
+          };
     })
   ];
 }
