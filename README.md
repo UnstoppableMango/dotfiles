@@ -1,50 +1,57 @@
 # UnstoppableMango's dotfiles
 
+[![CI](https://github.com/UnstoppableMango/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/UnstoppableMango/dotfiles/actions/workflows/ci.yml)
+[![Last commit](https://img.shields.io/github/last-commit/UnstoppableMango/dotfiles)](https://github.com/UnstoppableMango/dotfiles/commits/main)
+[![License: MIT](https://img.shields.io/github/license/UnstoppableMango/dotfiles)](LICENSE)
+[![Nix flake](https://img.shields.io/badge/nix-flake-blue?logo=nixos)](flake.nix)
+
 [Nix](https://nixos.org) has consumed my dotfiles.
-`main` is not stable, my NixOS configurations live over at [UnstoppableMango/nixos](https://github.com/Unstoppablemango/nixos).
+`main` is not stable, my NixOS system configurations live over at [UnstoppableMango/nixos](https://github.com/UnstoppableMango/nixos).
+
+This repo manages [Home Manager](https://nix-community.github.io/home-manager/) configs for two users with [flake-parts](https://flake.parts/), using the "Dendritic Pattern": modules are grouped by category (browsers, editors, shells, ...) instead of by user.
+
+## Home configurations
+
+| Configuration                        | System         |
+| ------------------------------------ | -------------- |
+| `erik@darter`                        | x86_64-linux   |
+| `erik@hades`                         | x86_64-linux   |
+| `erasmussen@Eriks-MacBook-Pro.local` | aarch64-darwin |
+
+## Layout
+
+Category modules live under `modules/`, imported as `flake.modules.flake`:
+
+- `ai/` - Claude Code, GitHub Copilot CLI, Cursor CLI
+- `browsers/` - Brave
+- `desktops/gnome/` - GNOME
+- `editors/` - VS Code, Neovim (nixvim), Zed, Helix, Emacs
+- `gnupg/` - gpg + gpg-agent, pinentry on Linux
+- `shells/zsh/` - Zsh (Prezto, or oh-my-zsh via `dotfiles.zsh.ohMyZsh.enable`), Powerlevel10k
+- `terminals/` - Kitty, Ghostty
+- `toolchain/` - c, containers, dotnet, git, go, javascript, kubernetes, nix, ocaml, python
+
+Per-user home configs live under `users/erik/` and `users/erasmussen/`.
 
 ## Development
 
-There are some `make` targets that can save you typing like, 5 keystrokes and, naturally, my repos _need_ a Makefile.
-
-Run flake checks
+`make` targets save some typing:
 
 ```shell
-$ make check
-nix flake check
+$ make check   # nix flake check
+$ make build   # home-manager build --flake $PWD
+$ make fmt     # nix fmt (nixfmt + prettier via treefmt)
+$ make watch   # rerun `nix flake check` on file changes
+$ make update  # nix flake update
+$ make home    # update + switch ~/.config/home-manager
+$ make system  # update + rebuild /etc/nixos (needs sudo)
 ```
 
-Update flake inputs
+Note: `make build` validates the local flake (`$PWD`); `make home` operates on the installed config at `~/.config/home-manager`.
 
-```shell
-$ make update
-nix flake update
-```
+Overridable variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC` (all have defaults).
 
-Usual command
-
-```shell
-$ make check build
-nix flake check
-home-manager build --flake $PWD
-```
-
-Run checks automatically while working
-
-```shell
-$ make watch
-watchexec -e nix nix flake check
-[Running: nix flake check]
-[Command was successful]
-```
-
-```shell
-$ export WATCHEXEC=/path/to/watchexec
-$ make watch
-/path/to/watchexec -e nix nix flake check
-[Running: nix flake check]
-[Command was successful]
-```
+CI runs `nix flake check --all-systems`, then builds the `erik@darter` home configuration, using the `unstoppablemango` [Cachix](https://www.cachix.org/) cache.
 
 ## References and Links
 
