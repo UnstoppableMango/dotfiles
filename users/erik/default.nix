@@ -37,6 +37,7 @@ in
     c.enable = true;
     git.enable = true;
     go.enable = true;
+    gnupg.enable = true;
     javascript.enable = true;
     kubernetes.enable = true;
     nix.enable = true;

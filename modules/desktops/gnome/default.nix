@@ -16,6 +16,7 @@
         appindicator
         dash-to-dock
         docker
+        system-monitor
         tweaks-in-system-menu
         user-themes
         gsconnect

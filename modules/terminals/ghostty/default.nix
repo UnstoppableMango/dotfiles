@@ -6,7 +6,7 @@
     programs.ghostty = {
       enable = true;
       settings = {
-        font-family = "MesloLGS NF";
+        font-family = config.dotfiles.zsh.font;
       };
     };
   };

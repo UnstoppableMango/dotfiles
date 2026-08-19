@@ -13,12 +13,10 @@
       openshift
     ];
 
-    programs.zsh = {
-      initContent = ''
-        if crc status 2>/dev/null | grep -q "Running"; then
-          eval $(crc podman-env)
-        fi
-      '';
-    };
+    programs.zsh.initContent = lib.mkIf config.dotfiles.zsh.enable ''
+      if crc status 2>/dev/null | grep -q "Running"; then
+        eval $(crc podman-env)
+      fi
+    '';
   };
 }

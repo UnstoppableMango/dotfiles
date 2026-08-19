@@ -8,16 +8,16 @@
       enableGitIntegration = true;
 
       font = {
-        name = "MesloLGS NF Regular";
+        name = "${config.dotfiles.zsh.font} Regular";
         size = 12.0;
       };
 
       shellIntegration.mode = "no-cursor";
 
       settings = {
-        bold_font = "MesloLGS NF Bold";
-        italic_font = "MesloLGS NF Italic";
-        bold_italic_font = "MesloLGS NF Bold Italic";
+        bold_font = "${config.dotfiles.zsh.font} Bold";
+        italic_font = "${config.dotfiles.zsh.font} Italic";
+        bold_italic_font = "${config.dotfiles.zsh.font} Bold Italic";
         cursor = "none";
         cursor_shape = "block";
         enabled_layouts = "tall:bias=50;full_size=2;mirrored=false";

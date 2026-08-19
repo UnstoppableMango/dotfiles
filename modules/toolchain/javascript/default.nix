@@ -12,7 +12,7 @@
       fnm
     ];
 
-    programs.zsh.initContent = ''
+    programs.zsh.initContent = lib.mkIf config.dotfiles.zsh.enable ''
       eval "$(${pkgs.fnm}/bin/fnm env --use-on-cd --shell zsh)"
     '';
   };

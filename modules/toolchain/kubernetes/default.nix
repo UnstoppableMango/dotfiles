@@ -23,10 +23,8 @@
       kubectl-rook-ceph
     ];
 
-    programs.zsh = {
-      initContent = ''
-        export PATH="''\${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-      '';
-    };
+    programs.zsh.initContent = lib.mkIf config.dotfiles.zsh.enable ''
+      export PATH="''\${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+    '';
   };
 }

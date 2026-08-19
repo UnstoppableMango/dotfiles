@@ -45,6 +45,7 @@ in
     containers.podmanAutostart = true;
     dotnet.enable = true;
     git.enable = true;
+    gnupg.enable = true;
     go.enable = true;
     javascript.enable = true;
     kubernetes.enable = true;
