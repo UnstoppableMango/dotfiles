@@ -3,6 +3,7 @@ result
 ./hardware-configuration.nix
 ./configuration.nix
 *.dconf
-.claude/
+.claude/*
+!.claude/skills/
 *.bak
 .envrc
