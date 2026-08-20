@@ -9,21 +9,14 @@ let
   json = pkgs.formats.json { };
 in
 {
+  imports = [ ./opencode.nix ];
+
   options.dotfiles.ai = {
     enable = lib.mkEnableOption "slop";
-
-    opencode.enable = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-    };
   };
 
   config = lib.mkIf cfg.enable {
     programs.claude-code.enable = true;
-
-    programs.opencode = {
-      enable = cfg.opencode.enable;
-    };
 
     home.packages = with pkgs; [
       github-copilot-cli
