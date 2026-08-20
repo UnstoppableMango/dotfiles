@@ -33,7 +33,6 @@ in
 
   dotfiles = {
     ai.enable = true;
-    ai.agentConfig.enable = true;
     neovim.enable = true;
     vscode.enable = true;
     zsh.enable = true;
