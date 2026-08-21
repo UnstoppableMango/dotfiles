@@ -63,6 +63,9 @@
     # https://github.com/Wilfred/difftastic
     # programs.difftastic.enable = true;
 
-    programs.gh.enable = true;
+    programs.gh = {
+      enable = true;
+      extensions = [ pkgs.gh-stack ];
+    };
   };
 }
