@@ -22,6 +22,7 @@ in
     ./caveman.nix
     ./go.nix
     ./nix.nix
+    ./ocaml.nix
     ./opencode.nix
   ];
 
