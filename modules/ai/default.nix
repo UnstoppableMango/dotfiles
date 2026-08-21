@@ -25,6 +25,7 @@ in
     ./gh-stack.nix
     ./go.nix
     ./haskell.nix
+    ./kubernetes.nix
     ./nix.nix
     ./ocaml.nix
     ./opencode.nix
