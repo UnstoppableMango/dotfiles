@@ -6,7 +6,6 @@
 }:
 let
   cfg = config.dotfiles.ai;
-  json = pkgs.formats.json { };
 
   # Official Anthropic plugin marketplace: https://github.com/anthropics/claude-plugins-official
   claudePluginsOfficial = pkgs.fetchFromGitHub {
@@ -16,16 +15,12 @@ let
     sha256 = "sha256-PZNjydvhQh2fSbIxRk6+5plJMdD5cYLwZsHNzh3Eowg=";
   };
 
-  # https://github.com/JuliusBrussee/caveman
-  caveman = pkgs.fetchFromGitHub {
-    owner = "JuliusBrussee";
-    repo = "caveman";
-    rev = "2f49f0e1a352aa810e70056b7930aeb0b3d219b4";
-    sha256 = "sha256-FagkzOnjW9tqeaAK8NX1X8REsjWRRMqfrvhByEtrAXM=";
-  };
 in
 {
-  imports = [ ./opencode.nix ];
+  imports = [
+    ./caveman.nix
+    ./opencode.nix
+  ];
 
   options.dotfiles.ai = {
     enable = lib.mkEnableOption "slop";
@@ -38,7 +33,6 @@ in
       plugins = {
         github = "${claudePluginsOfficial}/external_plugins/github";
         claude-md-management = "${claudePluginsOfficial}/plugins/claude-md-management";
-        inherit caveman;
       };
     };
 
@@ -53,9 +47,5 @@ in
     };
 
     home.packages = with pkgs; [ cursor-cli ];
-
-    xdg.configFile."caveman/config.json".source = json.generate "caveman-config.json" {
-      defaultMode = "off";
-    };
   };
 }
