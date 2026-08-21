@@ -21,20 +21,29 @@ in
     ./adhd.nix
     ./aws.nix
     ./azure.nix
+    ./brave-search.nix
     ./caveman.nix
+    ./chrome-devtools.nix
     ./cloudflare.nix
     ./containers.nix
+    ./context7.nix
     ./csharp.nix
+    ./deepwiki.nix
+    ./figma.nix
     ./fsharp.nix
     ./gh-stack.nix
+    ./git-mcp.nix
     ./go.nix
     ./gossamer.nix
     ./haskell.nix
     ./kubernetes.nix
     ./nix.nix
+    ./notion.nix
     ./ocaml.nix
     ./opencode.nix
+    ./playwright.nix
     ./rust.nix
+    ./slack.nix
     ./typescript.nix
   ];
 
