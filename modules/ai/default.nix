@@ -18,6 +18,7 @@ let
 in
 {
   imports = [
+    ./adhd.nix
     ./azure.nix
     ./caveman.nix
     ./cloudflare.nix
