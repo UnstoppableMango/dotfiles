@@ -46,6 +46,7 @@ in
     ./rust.nix
     ./slack.nix
     ./tdd-orchestrator.nix
+    ./terraform.nix
     ./typescript.nix
   ];
 
