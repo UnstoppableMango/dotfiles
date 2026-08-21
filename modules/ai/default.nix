@@ -19,6 +19,7 @@ in
 {
   imports = [
     ./adhd.nix
+    ./aws.nix
     ./azure.nix
     ./caveman.nix
     ./cloudflare.nix
