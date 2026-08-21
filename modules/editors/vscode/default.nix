@@ -1,4 +1,9 @@
-{ lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 {
   imports = [ ./profiles/hades ];
 
@@ -18,6 +23,10 @@
       profiles.default = {
         enableExtensionUpdateCheck = false;
         enableUpdateCheck = false;
+
+        # Not on the marketplace, from the gossamer package's editorSupport
+        # passthru instead.
+        extensions = [ pkgs.gossamer.passthru.editorSupport.vscode ];
 
         # TODO: This doesn't count as the "default" profile for app-level settings
         userSettings = {
