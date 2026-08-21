@@ -25,6 +25,7 @@ in
     ./ocaml.nix
     ./opencode.nix
     ./rust.nix
+    ./typescript.nix
   ];
 
   options.dotfiles.ai = {
