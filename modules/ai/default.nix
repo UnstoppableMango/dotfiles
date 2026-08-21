@@ -37,6 +37,7 @@ in
     ./gossamer.nix
     ./haskell.nix
     ./kubernetes.nix
+    ./moer.nix
     ./nix.nix
     ./notion.nix
     ./ocaml.nix
