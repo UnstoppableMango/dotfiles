@@ -22,6 +22,7 @@ in
     ./caveman.nix
     ./gh-stack.nix
     ./go.nix
+    ./haskell.nix
     ./nix.nix
     ./ocaml.nix
     ./opencode.nix
