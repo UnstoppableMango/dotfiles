@@ -20,6 +20,7 @@ in
   imports = [
     ./azure.nix
     ./caveman.nix
+    ./dotnet.nix
     ./gh-stack.nix
     ./go.nix
     ./haskell.nix
