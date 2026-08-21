@@ -25,6 +25,7 @@ in
     ./fsharp.nix
     ./gh-stack.nix
     ./go.nix
+    ./gossamer.nix
     ./haskell.nix
     ./kubernetes.nix
     ./nix.nix
