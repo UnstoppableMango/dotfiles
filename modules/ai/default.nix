@@ -20,6 +20,7 @@ in
   imports = [
     ./azure.nix
     ./caveman.nix
+    ./go.nix
     ./nix.nix
     ./opencode.nix
   ];
