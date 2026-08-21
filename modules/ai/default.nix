@@ -34,9 +34,15 @@ in
         github = "${claudePluginsOfficial}/external_plugins/github";
         claude-md-management = "${claudePluginsOfficial}/plugins/claude-md-management";
       };
-      mcpServers.pulumi = {
-        type = "http";
-        url = "https://mcp.ai.pulumi.com/mcp";
+      mcpServers = {
+        pulumi = {
+          type = "http";
+          url = "https://mcp.ai.pulumi.com/mcp";
+        };
+        gitlab = {
+          type = "http";
+          url = "https://gitlab.com/api/v4/mcp";
+        };
       };
     };
 
@@ -52,6 +58,10 @@ in
         pulumi = {
           type = "http";
           url = "https://mcp.ai.pulumi.com/mcp";
+        };
+        gitlab = {
+          type = "http";
+          url = "https://gitlab.com/api/v4/mcp";
         };
       };
     };
