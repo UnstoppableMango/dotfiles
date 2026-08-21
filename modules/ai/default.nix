@@ -45,6 +45,7 @@ in
     ./playwright.nix
     ./rust.nix
     ./slack.nix
+    ./tdd-orchestrator.nix
     ./typescript.nix
   ];
 
