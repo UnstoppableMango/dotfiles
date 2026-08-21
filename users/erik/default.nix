@@ -59,7 +59,10 @@ in
     vim.enable = true;
     micro.enable = true;
 
-    yt-dlp.enable = true;
+    # Disabled: yt-dlp depends on curl-cffi, whose test suite currently fails
+    # to build in nixpkgs (SSL error message regex mismatch in test_verify).
+    # Re-enable once upstream is fixed.
+    yt-dlp.enable = false;
 
     direnv = {
       enable = true;
