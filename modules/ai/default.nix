@@ -34,15 +34,25 @@ in
         github = "${claudePluginsOfficial}/external_plugins/github";
         claude-md-management = "${claudePluginsOfficial}/plugins/claude-md-management";
       };
+      mcpServers.pulumi = {
+        type = "http";
+        url = "https://mcp.ai.pulumi.com/mcp";
+      };
     };
 
     programs.github-copilot-cli = {
       enable = true;
       context = ./global-context.md;
-      mcpServers.github = {
-        type = "http";
-        url = "https://api.githubcopilot.com/mcp/";
-        headers.Authorization = "Bearer \${GITHUB_PERSONAL_ACCESS_TOKEN}";
+      mcpServers = {
+        github = {
+          type = "http";
+          url = "https://api.githubcopilot.com/mcp/";
+          headers.Authorization = "Bearer \${GITHUB_PERSONAL_ACCESS_TOKEN}";
+        };
+        pulumi = {
+          type = "http";
+          url = "https://mcp.ai.pulumi.com/mcp";
+        };
       };
     };
 
