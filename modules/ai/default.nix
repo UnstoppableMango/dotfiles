@@ -15,6 +15,14 @@ let
     rev = "67a666efc8524ff7abaa266f84e514aa77aee48f";
     sha256 = "sha256-PZNjydvhQh2fSbIxRk6+5plJMdD5cYLwZsHNzh3Eowg=";
   };
+
+  # https://github.com/JuliusBrussee/caveman
+  caveman = pkgs.fetchFromGitHub {
+    owner = "JuliusBrussee";
+    repo = "caveman";
+    rev = "2f49f0e1a352aa810e70056b7930aeb0b3d219b4";
+    sha256 = "sha256-FagkzOnjW9tqeaAK8NX1X8REsjWRRMqfrvhByEtrAXM=";
+  };
 in
 {
   imports = [ ./opencode.nix ];
@@ -30,6 +38,7 @@ in
       plugins = {
         github = "${claudePluginsOfficial}/external_plugins/github";
         claude-md-management = "${claudePluginsOfficial}/plugins/claude-md-management";
+        inherit caveman;
       };
     };
 
