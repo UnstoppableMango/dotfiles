@@ -18,6 +18,7 @@ let
 in
 {
   imports = [
+    ./azure.nix
     ./caveman.nix
     ./opencode.nix
   ];
