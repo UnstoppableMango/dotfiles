@@ -19,15 +19,15 @@ let
   };
 in
 {
-  options.dotfiles.ai.dotnet = {
+  options.dotfiles.ai.csharp = {
     enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
-      description = "C#/.NET language support for Claude Code and Copilot CLI: csharp-ls on Linux, omnisharp-roslyn on Darwin (csharp-ls is unsupported there), as the LSP server for .cs files.";
+      description = "C# language support for Claude Code and Copilot CLI: csharp-ls on Linux, omnisharp-roslyn on Darwin (csharp-ls is unsupported there), as the LSP server for .cs files.";
     };
   };
 
-  config = lib.mkIf (cfg.enable && cfg.dotnet.enable) {
+  config = lib.mkIf (cfg.enable && cfg.csharp.enable) {
     programs.claude-code.lspServers.csharp = {
       command = lspCommand;
       args = lspArgs;
