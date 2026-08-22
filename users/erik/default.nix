@@ -40,6 +40,7 @@ in
     javascript.enable = true;
     kubernetes.enable = true;
     nix.enable = true;
+    obsidian.enable = true;
     python.enable = true;
   };
 
