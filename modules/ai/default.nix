@@ -41,6 +41,7 @@ in
     ./nix.nix
     ./notion.nix
     ./ocaml.nix
+    ./omnigent.nix
     ./opencode.nix
     ./playwright.nix
     ./rust.nix
