@@ -6,7 +6,9 @@
     programs.ghostty = {
       enable = true;
       settings = {
-        font-family = config.dotfiles.zsh.font;
+        # mkForce: stylix's ghostty target (see modules/stylix) also sets
+        # font-family at normal priority, which conflicts outright.
+        font-family = lib.mkForce config.dotfiles.zsh.font;
       };
     };
   };

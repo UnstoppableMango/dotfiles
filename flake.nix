@@ -121,6 +121,21 @@
       inputs.treefmt-nix.follows = "treefmt-nix";
       inputs.systems.follows = "systems";
     };
+
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.systems.follows = "systems";
+      # stylix's flake.nix does not declare a treefmt-nix input - do not add
+      # inputs.treefmt-nix.follows, it will fail eval.
+    };
+
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+      # nix-darwin only declares a nixpkgs input - no other follows are valid.
+    };
   };
 
   outputs =
@@ -166,6 +181,23 @@
           erasmussen = ./users/erasmussen;
         };
 
+        darwinModules.erasmussen = ./darwin/erasmussen;
+
+        darwinConfigurations."Eriks-MacBook-Pro" = inputs.nix-darwin.lib.darwinSystem {
+          modules = [
+            { nixpkgs.overlays = [ overlay ]; }
+            self.darwinModules.erasmussen
+            inputs.home-manager.darwinModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = { inherit inputs; };
+              home-manager.sharedModules = [ inputs.stylix.homeModules.stylix ];
+              home-manager.users.erasmussen = self.homeModules.erasmussen;
+            }
+          ];
+        };
+
         homeConfigurations =
           let
             inherit (inputs.home-manager.lib) homeManagerConfiguration;
@@ -174,6 +206,7 @@
             modules = [
               { nixpkgs.overlays = [ overlay ]; }
               { nixpkgs.config.allowUnfree = true; }
+              inputs.stylix.homeModules.stylix
               self.homeModules.erik
             ];
           in
@@ -196,6 +229,7 @@
               modules = [
                 { nixpkgs.overlays = [ overlay ]; }
                 { nixpkgs.config.allowUnfree = true; }
+                inputs.stylix.homeModules.stylix
                 self.homeModules.erasmussen
               ];
             };

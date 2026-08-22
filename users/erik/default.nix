@@ -42,6 +42,9 @@ in
     nix.enable = true;
     obsidian.enable = true;
     python.enable = true;
+    fonts.enable = true;
+    ssh.enable = true;
+    stylix.enable = true;
   };
 
   programs = {
@@ -56,6 +59,13 @@ in
 
     ripgrep.enable = true;
     ripgrep-all.enable = true;
+
+    bat.enable = true;
+    eza.enable = true;
+    zoxide = {
+      enable = true;
+      enableZshIntegration = true;
+    };
 
     vim.enable = true;
     micro.enable = true;

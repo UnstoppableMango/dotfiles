@@ -10,5 +10,6 @@
     ./nix
     ./ocaml
     ./python
+    ./rust
   ];
 }
