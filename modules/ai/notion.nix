@@ -15,7 +15,7 @@ in
   options.dotfiles.ai.notion = {
     enable = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = false;
       description = "Official Notion MCP server. OAuth via browser popup on first connect, no token in config.";
     };
   };

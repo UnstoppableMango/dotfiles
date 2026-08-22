@@ -15,7 +15,7 @@ in
   options.dotfiles.ai.slack = {
     enable = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = false;
       description = "Official Slack MCP server: search, messaging, canvases, and member info for a workspace. OAuth via browser popup, no token in config.";
     };
   };

@@ -15,7 +15,7 @@ in
   options.dotfiles.ai.figma = {
     enable = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = false;
       description = ''
         Figma's Dev Mode MCP server. This only registers the client-side
         pointer at the fixed local address Figma's desktop app listens on;
