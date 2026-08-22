@@ -127,14 +127,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
       inputs.systems.follows = "systems";
-      # stylix's flake.nix does not declare a treefmt-nix input - do not add
-      # inputs.treefmt-nix.follows, it will fail eval.
     };
 
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
-      # nix-darwin only declares a nixpkgs input - no other follows are valid.
     };
   };
 
