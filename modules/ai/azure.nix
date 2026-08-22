@@ -30,6 +30,7 @@ in
   config = lib.mkIf (cfg.enable && cfg.azure.enable) {
     programs.claude-code.mcpServers.azure = mcpServer;
     programs.github-copilot-cli.mcpServers.azure = mcpServer;
+    programs.mcp.servers.azure = mcpServer;
 
     home.packages = [
       pkgs.azure-cli

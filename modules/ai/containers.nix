@@ -28,6 +28,7 @@ in
   config = lib.mkIf (cfg.enable && cfg.containers.enable) {
     programs.claude-code.mcpServers.containers = mcpServer;
     programs.github-copilot-cli.mcpServers.containers = mcpServer;
+    programs.mcp.servers.containers = mcpServer;
 
     home.packages = [ pkgs.nodejs ];
   };

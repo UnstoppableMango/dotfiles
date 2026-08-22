@@ -9,6 +9,11 @@ let
 
   rustAnalyzer = lib.getExe pkgs.rust-analyzer;
   rustAnalyzerMcp = lib.getExe pkgs.rust-analyzer-mcp;
+
+  mcpServer = {
+    type = "stdio";
+    command = rustAnalyzerMcp;
+  };
 in
 {
   options.dotfiles.ai.rust = {
@@ -27,11 +32,10 @@ in
           ".rs" = "rust";
         };
       };
-      mcpServers.rust = {
-        type = "stdio";
-        command = rustAnalyzerMcp;
-      };
+      mcpServers.rust = mcpServer;
     };
+
+    programs.mcp.servers.rust = mcpServer;
 
     programs.github-copilot-cli = {
       lspServers.rust = {
@@ -40,10 +44,7 @@ in
           ".rs" = "rust";
         };
       };
-      mcpServers.rust = {
-        type = "stdio";
-        command = rustAnalyzerMcp;
-      };
+      mcpServers.rust = mcpServer;
     };
 
     home.packages = [

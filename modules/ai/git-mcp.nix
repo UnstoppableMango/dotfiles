@@ -24,6 +24,7 @@ in
   config = lib.mkIf (cfg.enable && cfg.gitMcp.enable) {
     programs.claude-code.mcpServers.git = mcpServer;
     programs.github-copilot-cli.mcpServers.git = mcpServer;
+    programs.mcp.servers.git = mcpServer;
 
     home.packages = [ pkgs.mcp-server-git ];
   };

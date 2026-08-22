@@ -56,6 +56,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    programs.mcp.enable = true;
+
     programs.claude-code = {
       enable = true;
       context = ./global-context.md;

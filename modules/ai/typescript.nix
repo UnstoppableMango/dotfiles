@@ -15,6 +15,17 @@ let
     ".js" = "javascript";
     ".jsx" = "javascriptreact";
   };
+
+  mcpServer = {
+    type = "stdio";
+    command = "npx";
+    args = [
+      "-y"
+      "@mizchi/lsmcp"
+      "-p"
+      "typescript"
+    ];
+  };
 in
 {
   options.dotfiles.ai.typescript = {
@@ -32,17 +43,10 @@ in
         args = [ "--stdio" ];
         inherit extensionToLanguage;
       };
-      mcpServers.typescript = {
-        type = "stdio";
-        command = "npx";
-        args = [
-          "-y"
-          "@mizchi/lsmcp"
-          "-p"
-          "typescript"
-        ];
-      };
+      mcpServers.typescript = mcpServer;
     };
+
+    programs.mcp.servers.typescript = mcpServer;
 
     programs.github-copilot-cli = {
       lspServers.typescript = {
@@ -50,16 +54,7 @@ in
         args = [ "--stdio" ];
         fileExtensions = extensionToLanguage;
       };
-      mcpServers.typescript = {
-        type = "stdio";
-        command = "npx";
-        args = [
-          "-y"
-          "@mizchi/lsmcp"
-          "-p"
-          "typescript"
-        ];
-      };
+      mcpServers.typescript = mcpServer;
     };
 
     home.packages = [

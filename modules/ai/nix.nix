@@ -9,6 +9,11 @@ let
 
   nixd = lib.getExe pkgs.nixd;
   mcpNixos = lib.getExe pkgs.mcp-nixos;
+
+  mcpServer = {
+    type = "stdio";
+    command = mcpNixos;
+  };
 in
 {
   options.dotfiles.ai.nix = {
@@ -27,11 +32,10 @@ in
           ".nix" = "nix";
         };
       };
-      mcpServers.nix = {
-        type = "stdio";
-        command = mcpNixos;
-      };
+      mcpServers.nix = mcpServer;
     };
+
+    programs.mcp.servers.nix = mcpServer;
 
     programs.github-copilot-cli = {
       lspServers.nix = {
@@ -40,10 +44,7 @@ in
           ".nix" = "nix";
         };
       };
-      mcpServers.nix = {
-        type = "stdio";
-        command = mcpNixos;
-      };
+      mcpServers.nix = mcpServer;
     };
 
     home.packages = [

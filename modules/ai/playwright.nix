@@ -27,6 +27,7 @@ in
   config = lib.mkIf (cfg.enable && cfg.playwright.enable) {
     programs.claude-code.mcpServers.playwright = mcpServer;
     programs.github-copilot-cli.mcpServers.playwright = mcpServer;
+    programs.mcp.servers.playwright = mcpServer;
 
     home.packages = [ pkgs.nodejs ];
   };

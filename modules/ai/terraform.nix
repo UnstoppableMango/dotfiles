@@ -42,6 +42,8 @@ in
       mcpServers.terraform = mcpServer;
     };
 
+    programs.mcp.servers.terraform = mcpServer;
+
     programs.github-copilot-cli = {
       lspServers.terraform = {
         command = tofuLs;

@@ -29,6 +29,7 @@ in
   config = lib.mkIf (cfg.enable && cfg.kubernetes.enable) {
     programs.claude-code.mcpServers.kubernetes = mcpServer;
     programs.github-copilot-cli.mcpServers.kubernetes = mcpServer;
+    programs.mcp.servers.kubernetes = mcpServer;
 
     home.packages = [ pkgs.nodejs ];
   };

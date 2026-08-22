@@ -23,5 +23,6 @@ in
   config = lib.mkIf (cfg.enable && cfg.context7.enable) {
     programs.claude-code.mcpServers.context7 = mcpServer;
     programs.github-copilot-cli.mcpServers.context7 = mcpServer;
+    programs.mcp.servers.context7 = mcpServer;
   };
 }

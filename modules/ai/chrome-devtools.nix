@@ -28,6 +28,7 @@ in
   config = lib.mkIf (cfg.enable && cfg.chromeDevtools.enable) {
     programs.claude-code.mcpServers.chrome-devtools = mcpServer;
     programs.github-copilot-cli.mcpServers.chrome-devtools = mcpServer;
+    programs.mcp.servers.chrome-devtools = mcpServer;
 
     home.packages = [ pkgs.nodejs ];
   };

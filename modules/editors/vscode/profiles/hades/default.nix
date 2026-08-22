@@ -13,6 +13,7 @@
     # https://github.com/anthropics/claude-code/issues/59539
     # https://github.com/anthropics/claude-code/issues/8618
     userSettings = lib.importJSON ./settings.json;
+    enableMcpIntegration = true;
 
     extensions = with pkgs.vscode-marketplace; [
       alefragnani.project-manager

@@ -12,6 +12,17 @@ let
   extensionToLanguage = {
     ".hs" = "haskell";
   };
+
+  mcpServer = {
+    type = "stdio";
+    command = "npx";
+    args = [
+      "-y"
+      "@mizchi/lsmcp"
+      "-p"
+      "hls"
+    ];
+  };
 in
 {
   options.dotfiles.ai.haskell = {
@@ -29,17 +40,10 @@ in
         args = [ "--lsp" ];
         inherit extensionToLanguage;
       };
-      mcpServers.haskell = {
-        type = "stdio";
-        command = "npx";
-        args = [
-          "-y"
-          "@mizchi/lsmcp"
-          "-p"
-          "hls"
-        ];
-      };
+      mcpServers.haskell = mcpServer;
     };
+
+    programs.mcp.servers.haskell = mcpServer;
 
     programs.github-copilot-cli = {
       lspServers.haskell = {
@@ -47,16 +51,7 @@ in
         args = [ "--lsp" ];
         fileExtensions = extensionToLanguage;
       };
-      mcpServers.haskell = {
-        type = "stdio";
-        command = "npx";
-        args = [
-          "-y"
-          "@mizchi/lsmcp"
-          "-p"
-          "hls"
-        ];
-      };
+      mcpServers.haskell = mcpServer;
     };
 
     home.packages = [

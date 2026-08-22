@@ -26,6 +26,12 @@ let
       ${gos} skill-prompt
     } > $out/SKILL.md
   '';
+
+  mcpServer = {
+    type = "stdio";
+    command = gos;
+    args = [ "mcp" ];
+  };
 in
 {
   options.dotfiles.ai.gossamer = {
@@ -43,13 +49,11 @@ in
         args = [ "lsp" ];
         inherit extensionToLanguage;
       };
-      mcpServers.gossamer = {
-        type = "stdio";
-        command = gos;
-        args = [ "mcp" ];
-      };
+      mcpServers.gossamer = mcpServer;
       skills.gossamer = gossamerSkill;
     };
+
+    programs.mcp.servers.gossamer = mcpServer;
 
     programs.github-copilot-cli = {
       lspServers.gossamer = {
@@ -57,11 +61,7 @@ in
         args = [ "lsp" ];
         fileExtensions = extensionToLanguage;
       };
-      mcpServers.gossamer = {
-        type = "stdio";
-        command = gos;
-        args = [ "mcp" ];
-      };
+      mcpServers.gossamer = mcpServer;
       skills.gossamer = gossamerSkill;
     };
 

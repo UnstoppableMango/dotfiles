@@ -14,6 +14,17 @@ let
     ".fsi" = "fsharp";
     ".fsx" = "fsharp";
   };
+
+  mcpServer = {
+    type = "stdio";
+    command = "npx";
+    args = [
+      "-y"
+      "@mizchi/lsmcp"
+      "-p"
+      "fsharp"
+    ];
+  };
 in
 {
   options.dotfiles.ai.fsharp = {
@@ -31,17 +42,10 @@ in
         args = [ "--background-service-enabled" ];
         inherit extensionToLanguage;
       };
-      mcpServers.fsharp = {
-        type = "stdio";
-        command = "npx";
-        args = [
-          "-y"
-          "@mizchi/lsmcp"
-          "-p"
-          "fsharp"
-        ];
-      };
+      mcpServers.fsharp = mcpServer;
     };
+
+    programs.mcp.servers.fsharp = mcpServer;
 
     programs.github-copilot-cli = {
       lspServers.fsharp = {
@@ -49,16 +53,7 @@ in
         args = [ "--background-service-enabled" ];
         fileExtensions = extensionToLanguage;
       };
-      mcpServers.fsharp = {
-        type = "stdio";
-        command = "npx";
-        args = [
-          "-y"
-          "@mizchi/lsmcp"
-          "-p"
-          "fsharp"
-        ];
-      };
+      mcpServers.fsharp = mcpServer;
     };
 
     home.packages = [

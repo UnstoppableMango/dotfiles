@@ -8,6 +8,12 @@ let
   cfg = config.dotfiles.ai;
 
   gopls = lib.getExe pkgs.gopls;
+
+  mcpServer = {
+    type = "stdio";
+    command = gopls;
+    args = [ "mcp" ];
+  };
 in
 {
   options.dotfiles.ai.go = {
@@ -27,12 +33,10 @@ in
           ".go" = "go";
         };
       };
-      mcpServers.go = {
-        type = "stdio";
-        command = gopls;
-        args = [ "mcp" ];
-      };
+      mcpServers.go = mcpServer;
     };
+
+    programs.mcp.servers.go = mcpServer;
 
     programs.github-copilot-cli = {
       lspServers.go = {
@@ -42,11 +46,7 @@ in
           ".go" = "go";
         };
       };
-      mcpServers.go = {
-        type = "stdio";
-        command = gopls;
-        args = [ "mcp" ];
-      };
+      mcpServers.go = mcpServer;
     };
 
     home.packages = [ pkgs.gopls ];

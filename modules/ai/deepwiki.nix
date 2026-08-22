@@ -23,5 +23,6 @@ in
   config = lib.mkIf (cfg.enable && cfg.deepwiki.enable) {
     programs.claude-code.mcpServers.deepwiki = mcpServer;
     programs.github-copilot-cli.mcpServers.deepwiki = mcpServer;
+    programs.mcp.servers.deepwiki = mcpServer;
   };
 }

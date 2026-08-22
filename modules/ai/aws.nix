@@ -74,6 +74,8 @@ in
       );
     };
 
+    programs.mcp.servers.aws = mcpServer;
+
     home.packages = [
       pkgs.uv
       pkgs.python3
