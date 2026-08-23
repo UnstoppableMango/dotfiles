@@ -39,7 +39,13 @@
       humao.rest-client
       ionide.ionide-fake
       ionide.ionide-fsharp
-      jetbrains.resharper-code
+      # NOTE: pkgs.vscode-marketplace resolves resharper-code to 0.0.2, an
+      # expired ReSharper 2025.2 EAP 2 build. Its backend aborts on startup with
+      # "Some of the packages cannot be loaded because they are expired"
+      # (CommandLineTimebombExplosionReporter) and VS Code reports the extension
+      # as failing to start. vscode-marketplace-release pins the stable 2026.2.1
+      # release, which still ships the linux-x64 backend.
+      pkgs.vscode-marketplace-release.jetbrains.resharper-code
       jnoortheen.nix-ide
       microsoft-aspire.aspire-vscode
       mkhl.direnv
