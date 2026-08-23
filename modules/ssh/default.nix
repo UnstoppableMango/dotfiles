@@ -9,12 +9,18 @@
     # no sops-nix/agenix.
     programs.ssh = {
       enable = true;
+
+      # home-manager's implicit defaults are deprecated, set them explicitly.
+      enableDefaultConfig = false;
+
       settings."*" = {
         Compression = true;
         HashKnownHosts = true;
         ControlMaster = "auto";
+        ControlPath = "~/.ssh/master-%r@%n:%p";
         ControlPersist = "10m";
         AddKeysToAgent = "yes";
+        UserKnownHostsFile = "~/.ssh/known_hosts";
       };
 
       # matchBlocks."host-alias" = { hostname = "..."; user = "..."; };
