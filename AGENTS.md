@@ -36,6 +36,10 @@ The flake uses `flake-parts` with these categorical module directories imported 
 - `editors/` — VS Code (with profiles per host), Neovim (via nixvim), Zed, Helix, Emacs
 - `gnupg/` — gpg + gpg-agent (shared by both users; pinentry only on Linux)
 - `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)
+- `ssh/` — SSH client config (shared by both users).
+  Host aliases come from `hosts.nix` at the repo root, which the nixos repo also imports through its `dotfiles` flake input, so the `internet` clan service and this config can't drift.
+  `HostKeyAlias` plus the `@cert-authority` entry in `~/.ssh/known_hosts_nix` mean cluster machines validate against the clan SSH CA instead of prompting on first connect.
+  Agent handling belongs to gnupg's gpg-agent, not here.
 - `terminals/` — Kitty, Ghostty
 - `toolchain/` — per-language dev tool configs: c, containers, dotnet, git, go, javascript, kubernetes (with k9s and openshift submodules), nix, ocaml, python
 - `users/erik/` — Linux (x86_64) home config
