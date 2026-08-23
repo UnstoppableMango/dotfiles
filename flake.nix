@@ -209,7 +209,7 @@
             "erik@darter" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs; };
-              inherit modules;
+              modules = modules ++ [ { dotfiles.darter = true; } ];
             };
 
             "erik@hades" = homeManagerConfiguration {
