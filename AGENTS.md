@@ -4,7 +4,9 @@ This file provides guidance to AI agents when working with code in this reposito
 
 ## Overview
 
-This is a Nix-based dotfiles repository using Home Manager and flake-parts. It manages configurations for two users (`erik` and `erasmussen`) using the "Dendritic Pattern" — modules grouped by category (browsers, editors, shells, etc.) rather than by user. The actual NixOS system configs live at https://github.com/UnstoppableMango/nixos.
+This is a Nix-based dotfiles repository using Home Manager and flake-parts.
+It manages configurations for two users (`erik` and `erasmussen`) with modules grouped by category (browsers, editors, shells, etc.) rather than by user.
+The actual NixOS system configs live at https://github.com/UnstoppableMango/nixos.
 
 ## Common Commands
 
@@ -28,7 +30,8 @@ CI runs `nix flake check --all-systems` then builds the `erik@darter` home confi
 
 ## Architecture
 
-The flake uses `flake-parts` with these categorical module directories imported as `flake.modules.flake`:
+The flake uses `flake-parts`.
+Home Manager modules are grouped by category under `modules/`, aggregated by `modules/default.nix`, and imported by each user's home config in `users/<user>/default.nix`:
 
 - `ai/` — claude-code, github-copilot-cli, cursor-cli (shared by both users)
 - `browsers/` — Brave
