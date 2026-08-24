@@ -26,7 +26,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems";
       inputs.flake-parts.follows = "flake-parts";
+      inputs.sops-nix.follows = "sops-nix";
       inputs.treefmt-nix.follows = "treefmt-nix";
+    };
+
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nixd = {

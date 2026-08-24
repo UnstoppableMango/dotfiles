@@ -39,12 +39,15 @@ Home Manager modules are grouped by category under `modules/`, aggregated by `mo
 - `editors/` — VS Code (with profiles per host), Neovim (via nixvim), Zed, Helix, Emacs
 - `gnupg/` — gpg + gpg-agent (shared by both users; pinentry only on Linux)
 - `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)
+- `sops/` - erik's sops-nix age key location (`~/.config/sops/age/keys.txt`).
+  Imports sops-nix's home-manager module for every consumer; it is inert until something declares `sops.secrets`, so only hades actually decrypts anything.
 - `ssh/` — SSH client config (shared by both users).
   Host aliases come from `hosts.nix` at the repo root, which the nixos repo also imports through its `dotfiles` flake input, so the `internet` clan service and this config can't drift.
   `HostKeyAlias` plus the `@cert-authority` entry in `~/.ssh/known_hosts_nix` mean cluster machines validate against the clan SSH CA instead of prompting on first connect.
   Agent handling belongs to gnupg's gpg-agent, not here.
 - `terminals/` — Kitty, Ghostty
-- `toolchain/` — per-language dev tool configs: c, containers, dotnet, git, go, javascript, kubernetes (with k9s and openshift submodules), nix, ocaml, python
+- `toolchain/` — per-language dev tool configs: c, containers, dotnet, git, go, javascript, kubernetes (with k9s, openshift, and rosequartz submodules), nix, ocaml, python.
+  `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); the nixos repo supplies only the clan-generated CA and admin cert/key paths.
 - `users/erik/` — Linux (x86_64) home config
 - `users/erasmussen/` — macOS (aarch64-darwin) home config
 
@@ -52,7 +55,7 @@ Three home configurations are defined: `erik@darter` and `erik@hades` (both x86_
 
 Overlays from multiple inputs (devctl, mynix, nil, nix-direnv, nix-vscode-extensions, ux) are composed in `flake.nix` and applied to nixpkgs. `zed.overlays.default` is currently commented out due to a `cargo-about` version conflict.
 
-The dev shell (entered via `direnv allow` / `nix develop`) includes: age, bashInteractive, clan-cli, direnv, git, gnumake, home-manager, ldns, nil, nix, nixd, nixfmt, shellcheck, ssh-to-age, watchexec.
+The dev shell (entered via `direnv allow` / `nix develop`) includes: age, bashInteractive, clan-cli, direnv, git, gnumake, home-manager, ldns, nil, nix, nixd, nixfmt, shellcheck, sops, ssh-to-age, watchexec.
 
 ## Formatting
 

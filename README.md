@@ -28,8 +28,9 @@ Category modules live under `modules/`, imported as `flake.modules.flake`:
 - `editors/` - VS Code, Neovim (nixvim), Zed, Helix, Emacs
 - `gnupg/` - gpg + gpg-agent, pinentry on Linux
 - `shells/zsh/` - Zsh (Prezto, or oh-my-zsh via `dotfiles.zsh.ohMyZsh.enable`), Powerlevel10k
+- `sops/` - sops-nix age key location for erik
 - `terminals/` - Kitty, Ghostty
-- `toolchain/` - c, containers, dotnet, git, go, javascript, kubernetes, nix, ocaml, python
+- `toolchain/` - c, containers, dotnet, git, go, javascript, kubernetes (incl. the rosequartz kubeconfig), nix, ocaml, python
 
 Per-user home configs live under `users/erik/` and `users/erasmussen/`.
 

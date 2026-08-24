@@ -43,6 +43,7 @@ in
     nix.enable = true;
     obsidian.enable = true;
     python.enable = true;
+    sops.enable = true;
     fonts.enable = true;
     ssh.enable = true;
     stylix.enable = true;

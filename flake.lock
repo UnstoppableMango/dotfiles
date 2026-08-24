@@ -80,7 +80,9 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "sops-nix": "sops-nix",
+        "sops-nix": [
+          "sops-nix"
+        ],
         "systems": [
           "systems"
         ],
@@ -781,6 +783,7 @@
         "nixd": "nixd",
         "nixpkgs": "nixpkgs_2",
         "nixvim": "nixvim",
+        "sops-nix": "sops-nix",
         "stylix": "stylix",
         "systems": "systems",
         "treefmt-nix": "treefmt-nix",
@@ -812,7 +815,6 @@
     "sops-nix": {
       "inputs": {
         "nixpkgs": [
-          "clan-core",
           "nixpkgs"
         ]
       },

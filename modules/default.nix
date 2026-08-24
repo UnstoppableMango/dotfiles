@@ -8,6 +8,7 @@
     ./fonts
     ./gnupg
     ./shells
+    ./sops
     ./ssh
     ./stylix
     ./terminals
