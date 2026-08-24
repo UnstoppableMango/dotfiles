@@ -5,6 +5,8 @@
   ...
 }:
 {
+  imports = [ ./repos.nix ];
+
   options.dotfiles.git.enable = lib.mkEnableOption "git Toolchain";
 
   config = lib.mkIf config.dotfiles.git.enable {
