@@ -34,9 +34,11 @@ The flake uses `flake-parts`.
 Home Manager modules are grouped by category under `modules/`, aggregated by `modules/default.nix`, and imported by each user's home config in `users/<user>/default.nix`:
 
 - `ai/` — claude-code, github-copilot-cli, cursor-cli (shared by both users)
+- `automation/` — flake-update automation
 - `browsers/` — Brave
 - `desktops/` — GNOME
 - `editors/` — VS Code (with profiles per host), Neovim (via nixvim), Zed, Helix, Emacs
+- `fonts/` — Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
 - `gnupg/` — gpg + gpg-agent (shared by both users; pinentry only on Linux)
 - `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)
 - `sops/` - erik's sops-nix age key location (`~/.config/sops/age/keys.txt`).
@@ -45,13 +47,14 @@ Home Manager modules are grouped by category under `modules/`, aggregated by `mo
   Host aliases come from `hosts.nix` at the repo root, which the nixos repo also imports through its `dotfiles` flake input, so the `internet` clan service and this config can't drift.
   `HostKeyAlias` plus the `@cert-authority` entry in `~/.ssh/known_hosts_nix` mean cluster machines validate against the clan SSH CA instead of prompting on first connect.
   Agent handling belongs to gnupg's gpg-agent, not here.
+- `stylix/` — Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
 - `terminals/` — Kitty, Ghostty
-- `toolchain/` — per-language dev tool configs: c, containers, dotnet, git, go, javascript, kubernetes (with k9s, openshift, and rosequartz submodules), nix, ocaml, python.
+- `toolchain/` — per-language dev tool configs: c, containers, dotnet, git (`dotfiles.git.repos` declaratively inits repos under the home directory on activation), go, javascript, kubernetes (with k9s, openshift, and rosequartz submodules), nix, ocaml, python.
   `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); the nixos repo supplies only the clan-generated CA and admin cert/key paths.
 - `users/erik/` — Linux (x86_64) home config
 - `users/erasmussen/` — macOS (aarch64-darwin) home config
 
-Three home configurations are defined: `erik@darter` and `erik@hades` (both x86_64-linux), and `erasmussen@Eriks-MacBook-Pro.local` (aarch64-darwin).
+Four home configurations are defined: `erik@darter`, `erik@hades`, and `erik@server` (all x86_64-linux; `server.nix` is a minimal headless profile — gnupg, shells, sops, ssh, toolchain only, no desktop/editor modules), and `erasmussen@Eriks-MacBook-Pro.local` (aarch64-darwin).
 
 Overlays from multiple inputs (devctl, mynix, nil, nix-direnv, nix-vscode-extensions, ux) are composed in `flake.nix` and applied to nixpkgs. `zed.overlays.default` is currently commented out due to a `cargo-about` version conflict.
 
