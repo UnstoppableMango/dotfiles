@@ -239,8 +239,22 @@
       };
 
       perSystem =
-        { inputs', pkgs, ... }:
         {
+          inputs',
+          system,
+          pkgs,
+          ...
+        }:
+        {
+          packages.nixvim =
+            (inputs.nixvim.lib.evalNixvim {
+              inherit system;
+              modules = [
+                { nixpkgs.overlays = [ overlay ]; }
+                ./modules/editors/neovim/config.nix
+              ];
+            }).config.build.package;
+
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
               age
