@@ -1,36 +1,32 @@
-NIX         ?= nix
-HOMEMANAGER ?= home-manager
-WATCHEXEC   ?= watchexec
-
 SRC != find -path '*.nix' -printf '%P\n'
 
 build:
-	$(HOMEMANAGER) build --flake ${CURDIR}
+	home-manager build --flake ${CURDIR}
 
 check:
-	$(NIX) flake check
+	nix flake check
 
 watch:
-	$(WATCHEXEC) -e nix $(NIX) flake check
+	watchexec -e nix nix flake check
 
 update: flake.lock
 
 home:
-	$(NIX) flake update --flake ${HOME}/.config/home-manager
-	$(HOMEMANAGER) switch --flake ${HOME}/.config/home-manager -b hm-backup
+	nix flake update --flake ${HOME}/.config/home-manager
+	home-manager switch --flake ${HOME}/.config/home-manager -b hm-backup
 
 system:
-	sudo $(NIX) flake update --flake /etc/nixos
+	sudo nix flake update --flake /etc/nixos
 	sudo nixos-rebuild switch --flake /etc/nixos
 
 format fmt:
-	$(NIX) fmt
+	nix fmt
 
 flake.lock: ${SRC}
-	$(NIX) flake update
+	nix flake update
 
 flake.nix:
-	$(NIX) flake init
+	nix flake init
 
 p10k: # This doesn't actually work in make, but its copy-pastable
 	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/shells/zsh/.p10k.zsh p10k configure

@@ -284,12 +284,6 @@
               sops
               watchexec
             ];
-
-            GIT = pkgs.git + "/bin/git";
-            HOMEMANAGER = pkgs.home-manager + "/bin/home-manager";
-            NIXFMT = pkgs.nixfmt + "/bin/nixfmt";
-            SHELLCHECK = pkgs.shellcheck + "/bin/shellcheck";
-            WATCHEXEC = pkgs.watchexec + "/bin/watchexec";
           };
 
           treefmt = {
