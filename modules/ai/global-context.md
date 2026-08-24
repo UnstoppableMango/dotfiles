@@ -5,6 +5,20 @@ Personal preferences and instructions for AI coding agents (Claude Code, GitHub 
 - Never use the em dash character (U+2014). Use a comma, period, or parentheses instead.
 - In markdown files, put each sentence on its own line. Let the renderer wrap text; don't hard-wrap manually.
 
+## Commit and PR conventions
+
+Use Conventional Commits prefixes (`feat:`, `fix:`, `chore:`, `deps:`, `docs:`, `ci:`) for commit subjects and PR titles, matching the convention already used across all my repos.
+
+In repos using release-please (a `chore(main): release ...` PR appears in history), never hand-edit version numbers or CHANGELOG entries; let the release-please PR handle it.
+
+## Bug fixing and review
+
+When a review or debugging session turns up multiple distinct bugs, file one focused GitHub issue per bug rather than a single catch-all issue, and land each fix as its own scoped PR rather than bundling unrelated fixes together. For larger multi-part work, consider the `gh-stack` skill to split it into a reviewable stack.
+
+## Docs and comments
+
+Avoid temporal or narrative language in docs and code comments (e.g. "now", "previously", "this was changed to", "recently added"). Describe the current state only, as if it always existed. This avoids doc/comment rot and repeated cleanup passes.
+
 ## Shell autoload issue
 
 zsh with Prezto registers system commands (`make`, `diff`, and others) as autoloaded wrapper functions.
