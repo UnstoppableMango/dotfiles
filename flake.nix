@@ -145,6 +145,8 @@
   outputs =
     inputs@{ flake-parts, self, ... }:
     let
+      clan = import ./overlays/clan.nix { inherit (inputs) clan-core; };
+
       overlay = inputs.nixpkgs.lib.composeManyExtensions (
         with inputs;
         [
@@ -153,10 +155,7 @@
           nil.overlays.default
           nix-direnv.overlays.default
           nix-vscode-extensions.overlays.default
-
-          (final: prev: {
-            inherit (clan-core.packages.${prev.stdenv.hostPlatform.system}) clan-cli;
-          })
+          clan.overlays.default
 
           # cargo-about pin conflict is resolved upstream (zed's own nix/build.nix
           # now vendors cargo-about via fetchFromGitHub), but a new mismatch surfaced:
