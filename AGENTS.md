@@ -44,7 +44,10 @@ Home Manager modules are grouped by category under `modules/`, aggregated by `mo
 - `sops/` - erik's sops-nix age key location (`~/.config/sops/age/keys.txt`).
   Imports sops-nix's home-manager module for every consumer; it is inert until something declares `sops.secrets`, so only hades actually decrypts anything.
 - `ssh/` — SSH client config (shared by both users).
-  Host aliases come from `hosts.nix` at the repo root, which the nixos repo also imports through its `dotfiles` flake input, so the `internet` clan service and this config can't drift.
+  Host aliases come from the `hosts` flake input (https://github.com/UnstoppableMango/hosts).
+  The module takes the table as data (`dotfiles.ssh.hosts`, empty by default); `flake.nix` feeds it `inputs.hosts.lib.addresses`, so no module closes over `inputs` for it.
+  Anything importing `homeModules.erik` from outside this flake has to set it too, which the nixos repo does in `machines/hades/configuration.nix`.
+  That repo reads the same input for its `internet` clan service, so the two can't drift.
   `HostKeyAlias` plus the `@cert-authority` entry in `~/.ssh/known_hosts_nix` mean cluster machines validate against the clan SSH CA instead of prompting on first connect.
   Agent handling belongs to gnupg's gpg-agent, not here.
 - `stylix/` — Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`

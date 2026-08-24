@@ -78,8 +78,8 @@ in
       default = "https://10.0.69.100:6443";
       description = ''
         Control plane endpoint. This is the loadbalancer VIP, not a machine,
-        which is why it does not live in hosts.nix: the nixos repo maps every
-        hosts.nix entry 1:1 onto a clan machine in the `internet` service.
+        which is why it does not live in the `hosts` flake input: the nixos repo
+        maps every entry there 1:1 onto a clan machine in the `internet` service.
       '';
     };
 

@@ -36,6 +36,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    hosts = {
+      url = "github:UnstoppableMango/hosts";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.systems.follows = "systems";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+    };
+
     nixd = {
       url = "github:nix-community/nixd";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -147,6 +155,12 @@
     let
       clan = import ./overlays/clan.nix { inherit (inputs) clan-core; };
 
+      # modules/ssh takes its host table as data instead of closing over the
+      # flake's inputs, so the wiring lives here, where inputs are in scope.
+      sshHosts = {
+        dotfiles.ssh.hosts = inputs.hosts.lib.addresses;
+      };
+
       overlay = inputs.nixpkgs.lib.composeManyExtensions (
         with inputs;
         [
@@ -194,7 +208,10 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.extraSpecialArgs = { inherit inputs; };
-              home-manager.sharedModules = [ inputs.stylix.homeModules.stylix ];
+              home-manager.sharedModules = [
+                sshHosts
+                inputs.stylix.homeModules.stylix
+              ];
               home-manager.users.erasmussen = self.homeModules.erasmussen;
             }
           ];
@@ -208,6 +225,7 @@
             modules = [
               { nixpkgs.overlays = [ overlay ]; }
               { nixpkgs.config.allowUnfree = true; }
+              sshHosts
               inputs.stylix.homeModules.stylix
               self.homeModules.erik
             ];
@@ -231,6 +249,7 @@
               modules = [
                 { nixpkgs.overlays = [ overlay ]; }
                 { nixpkgs.config.allowUnfree = true; }
+                sshHosts
                 self.homeModules.erikServer
               ];
             };
@@ -241,6 +260,7 @@
               modules = [
                 { nixpkgs.overlays = [ overlay ]; }
                 { nixpkgs.config.allowUnfree = true; }
+                sshHosts
                 inputs.stylix.homeModules.stylix
                 self.homeModules.erasmussen
               ];

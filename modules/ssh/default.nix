@@ -24,10 +24,17 @@ in
 
     hosts = lib.mkOption {
       type = with lib.types; attrsOf str;
-      default = import ../../hosts.nix;
+      default = { };
       description = ''
         Map of host alias to address, rendered as one `Host <alias>` block each
         so machines are reachable by bare name.
+
+        The table itself is data the flake supplies, not something this module
+        reaches for: flake.nix feeds it `inputs.hosts.lib.addresses`
+        (github:UnstoppableMango/hosts). The nixos repo reads that same input
+        for the `internet` clan service, so the two can't drift. Consumers that
+        import this module from elsewhere have to set it; empty just means no
+        aliases.
       '';
     };
 
