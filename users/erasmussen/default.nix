@@ -15,6 +15,7 @@ in
       buf
       clan-cli
       crane
+      devctl
       fnm
       gitkraken
       glow

@@ -18,6 +18,7 @@ in
     packages = with pkgs; [
       buf
       clan-cli
+      devctl
       glow
       mise
       nano
