@@ -11,10 +11,6 @@ in
     inherit username;
     homeDirectory = "/Users/${username}";
 
-    sessionPath = [
-      "$HOME/.local/bin"
-    ];
-
     packages = with pkgs; [
       buf
       clan-cli
