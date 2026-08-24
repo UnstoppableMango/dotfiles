@@ -180,6 +180,7 @@
 
         homeModules = {
           erik = ./users/erik;
+          erikServer = ./users/erik/server.nix;
           erasmussen = ./users/erasmussen;
         };
 
@@ -223,6 +224,16 @@
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs; };
               modules = modules ++ [ { dotfiles.hades = true; } ];
+            };
+
+            "erik@server" = homeManagerConfiguration {
+              pkgs = legacyPackages.x86_64-linux;
+              extraSpecialArgs = { inherit inputs; };
+              modules = [
+                { nixpkgs.overlays = [ overlay ]; }
+                { nixpkgs.config.allowUnfree = true; }
+                self.homeModules.erikServer
+              ];
             };
 
             "erasmussen@Eriks-MacBook-Pro.local" = homeManagerConfiguration {
