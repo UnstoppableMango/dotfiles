@@ -28,6 +28,7 @@
       inputs.flake-parts.follows = "flake-parts";
       inputs.sops-nix.follows = "sops-nix";
       inputs.treefmt-nix.follows = "treefmt-nix";
+      inputs.nix-darwin.follows = "nix-darwin";
     };
 
     sops-nix = {
