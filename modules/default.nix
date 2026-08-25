@@ -3,7 +3,6 @@
     ./ai
     ./automation
     ./browsers
-    ./desktops
     ./editors
     ./fonts
     ./gnupg

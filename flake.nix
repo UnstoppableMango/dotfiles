@@ -197,6 +197,11 @@
           erasmussen = ./users/erasmussen;
         };
 
+        # A raw nixvim submodule (not a home-manager module), shared by both
+        # identities' personal neovim config (users/shared/neovim.nix) and
+        # perSystem's standalone `packages.nixvim` build below.
+        nixvimModules.erik = ./users/shared/nixvim-config.nix;
+
         darwinModules.erasmussen = ./darwin/erasmussen;
 
         darwinConfigurations."Eriks-MacBook-Pro" = inputs.nix-darwin.lib.darwinSystem {
@@ -207,7 +212,7 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = { inherit inputs; };
+              home-manager.extraSpecialArgs = { inherit inputs self; };
               home-manager.sharedModules = [
                 sshHosts
                 inputs.stylix.homeModules.stylix
@@ -233,13 +238,13 @@
           {
             "erik@darter" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
-              extraSpecialArgs = { inherit inputs; };
+              extraSpecialArgs = { inherit inputs self; };
               modules = modules ++ [ { dotfiles.darter = true; } ];
             };
 
             "erik@hades" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
-              extraSpecialArgs = { inherit inputs; };
+              extraSpecialArgs = { inherit inputs self; };
               modules = modules ++ [ { dotfiles.hades = true; } ];
             };
 
@@ -256,7 +261,7 @@
 
             "erasmussen@Eriks-MacBook-Pro.local" = homeManagerConfiguration {
               pkgs = legacyPackages.aarch64-darwin;
-              extraSpecialArgs = { inherit inputs; };
+              extraSpecialArgs = { inherit inputs self; };
               modules = [
                 { nixpkgs.overlays = [ overlay ]; }
                 { nixpkgs.config.allowUnfree = true; }
@@ -281,7 +286,7 @@
               inherit system;
               modules = [
                 { nixpkgs.overlays = [ overlay ]; }
-                ./modules/editors/neovim/config.nix
+                self.nixvimModules.erik
               ];
             }).config.build.package;
 

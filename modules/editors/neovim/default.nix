@@ -15,8 +15,6 @@
       defaultEditor = true;
 
       nixpkgs.useGlobalPackages = true;
-
-      imports = [ ./config.nix ];
     };
   };
 }
