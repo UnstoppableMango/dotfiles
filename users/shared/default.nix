@@ -6,6 +6,6 @@
     ./zed.nix
     ./vscode.nix
     ./k9s.nix
-    ./zsh-prezto.nix
+    ./zsh/prezto.nix
   ];
 }
