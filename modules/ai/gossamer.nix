@@ -20,7 +20,7 @@ let
     {
       echo '---'
       echo 'name: gossamer'
-      echo 'description: Teaches idiomatic Gossamer (.gos files): syntax, the gos toolchain (build/run/test/fmt), and stdlib conventions. Use when writing, reviewing, or debugging Gossamer code, or when the user mentions Gossamer, .gos files, or the gos toolchain.'
+      echo 'description: Teaches idiomatic Gossamer (.gos files), covering syntax, the gos toolchain (build/run/test/fmt), and stdlib conventions. Use when writing, reviewing, or debugging Gossamer code, or when the user mentions Gossamer, .gos files, or the gos toolchain.'
       echo '---'
       echo
       ${gos} skill-prompt
