@@ -6,7 +6,6 @@
 }:
 {
   imports = [
-    ./prezto
     ./oh-my-zsh
   ];
 

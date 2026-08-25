@@ -5,6 +5,7 @@ in
 {
   imports = [
     ../../modules
+    ../shared
     ./darter.nix
     ./hades.nix
   ];

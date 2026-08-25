@@ -16,42 +16,9 @@
       lfs.enable = true;
 
       settings = {
-        core = {
-          editor = "nvim";
-        };
-
-        user = {
-          name = "UnstoppableMango";
-          email = "erik.rasmussen@unmango.dev";
-        };
-
-        commit = {
-          gpgsign = true;
-        };
-
-        tag = {
-          # I think gpgsign=true is what was forcing annotated tags
-          gpgsign = false;
-        };
-
-        alias = {
-          co = "checkout";
-          ff = "merge --ff-only";
-          last = "log -1 HEAD";
-          unstage = "reset HEAD --";
-        };
-
+        core.editor = "nvim";
         push.autoSetupRemote = true;
       };
-
-      ignores = [
-        "**/node_modules/"
-        ".DS_Store"
-        ".direnv/"
-        ".envrc"
-        ".idea/**/discord.xml"
-        ".worktree/"
-      ];
     };
 
     # Still fiddling with these

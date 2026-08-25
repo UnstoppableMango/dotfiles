@@ -5,6 +5,11 @@
   ...
 }:
 {
+  imports = [
+    ./desktop.nix
+    ./vscode-hades.nix
+  ];
+
   options.dotfiles.hades = lib.mkEnableOption "erik's hades desktop profile";
 
   config = lib.mkIf config.dotfiles.hades {

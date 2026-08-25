@@ -5,7 +5,13 @@ This file provides guidance to AI agents when working with code in this reposito
 ## Overview
 
 This is a Nix-based dotfiles repository using Home Manager and flake-parts.
-It manages configurations for two users (`erik` and `erasmussen`) with modules grouped by category (browsers, editors, shells, etc.) rather than by user.
+It manages configurations for two users (`erik` and `erasmussen`) — the same
+person on two machines/OSes.
+`modules/` holds generic, reusable, option-driven software configuration with
+no identity baked in; personal preferences and identity (git email, editor
+LSP/plugin choices, terminal colors, GNOME desktop, etc.) live under
+`users/`, split into `users/shared/` (used by both identities) and
+per-identity files (`users/erik/`, `users/erasmussen/`).
 The actual NixOS system configs live at https://github.com/UnstoppableMango/nixos.
 
 ## Common Commands
@@ -31,13 +37,21 @@ CI runs `nix flake check --all-systems` then builds the `erik@darter` home confi
 ## Architecture
 
 The flake uses `flake-parts`.
-Home Manager modules are grouped by category under `modules/`, aggregated by `modules/default.nix`, and imported by each user's home config in `users/<user>/default.nix`:
+Home Manager modules are grouped by category under `modules/`, aggregated by
+`modules/default.nix`, and imported by each user's home config in
+`users/<user>/default.nix` alongside `users/shared/` (personal config common
+to both identities: git identity/aliases, neovim's LSP/plugin choices, kitty
+colors, zed extensions, vscode's default-profile settings, k9s's skin, and
+the prezto/p10k setup) and identity-exclusive files (e.g. `users/erik/`'s
+`desktop.nix` for GNOME and `vscode-hades.nix` for the Hades VS Code
+profile, both gated behind host options set in `darter.nix`/`hades.nix`).
+`modules/` itself stays generic — enable toggles and the mechanics needed for
+a feature to function, with no personal values:
 
 - `ai/` — claude-code, github-copilot-cli, cursor-cli (shared by both users)
 - `automation/` — flake-update automation
 - `browsers/` — Brave
-- `desktops/` — GNOME
-- `editors/` — VS Code (with profiles per host), Neovim (via nixvim), Zed, Helix, Emacs
+- `editors/` — VS Code, Neovim (via nixvim), Zed, Helix, Emacs
 - `fonts/` — Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
 - `gnupg/` — gpg + gpg-agent (shared by both users; pinentry only on Linux)
 - `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)

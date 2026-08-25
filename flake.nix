@@ -281,7 +281,7 @@
               inherit system;
               modules = [
                 { nixpkgs.overlays = [ overlay ]; }
-                ./modules/editors/neovim/config.nix
+                ./users/shared/nixvim-config.nix
               ];
             }).config.build.package;
 

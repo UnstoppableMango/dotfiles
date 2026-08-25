@@ -5,6 +5,7 @@ in
 {
   imports = [
     ../../modules
+    ../shared
   ];
 
   home = {
