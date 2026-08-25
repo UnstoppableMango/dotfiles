@@ -216,6 +216,7 @@
               home-manager.sharedModules = [
                 sshHosts
                 inputs.stylix.homeModules.stylix
+                { dotfiles.eriksMacbookPro = true; }
               ];
               home-manager.users.erasmussen = self.homeModules.erasmussen;
             }
@@ -268,6 +269,7 @@
                 sshHosts
                 inputs.stylix.homeModules.stylix
                 self.homeModules.erasmussen
+                { dotfiles.eriksMacbookPro = true; }
               ];
             };
           };

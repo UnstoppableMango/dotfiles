@@ -1,0 +1,78 @@
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+{
+  config = lib.mkIf config.dotfiles.eriksMacbookPro {
+    programs.vscode.profiles.MacBook = {
+      # https://github.com/microsoft/vscode-dotnettools/issues/2266#issuecomment-3571804122
+      # NOTE: settings.json sets terminal.integrated.gpuAcceleration = "off" as
+      # a workaround for upstream Claude Code terminal corruption. Root cause is
+      # an upstream xterm.js webgl-renderer bug; the actual fix is
+      # https://github.com/xtermjs/xterm.js/pull/5883 (merged 2026-05-21 but not
+      # yet in a published xterm.js release, so VS Code hasn't picked it up).
+      # Revert once fixed. Tracking:
+      # https://github.com/anthropics/claude-code/issues/8097
+      # https://github.com/anthropics/claude-code/issues/59163
+      # https://github.com/anthropics/claude-code/issues/59539
+      # https://github.com/anthropics/claude-code/issues/8618
+      userSettings = lib.importJSON ./eriks-macbook-pro.settings.json;
+      enableMcpIntegration = true;
+
+      extensions = with pkgs.vscode-marketplace; [
+        alefragnani.project-manager
+        anthropic.claude-code
+        apollographql.vscode-apollo
+        be5invis.vscode-icontheme-nomo-dark
+        bradlc.vscode-tailwindcss
+        bufbuild.vscode-buf
+        dbaeumer.vscode-eslint
+        docker.docker
+        dprint.dprint
+        drblury.protobuf-vsc
+        eamodio.gitlens
+        editorconfig.editorconfig
+        foxundermoon.shell-format
+        github.vscode-github-actions
+        github.copilot-chat
+        golang.go
+        graphql.vscode-graphql
+        graphql.vscode-graphql-syntax
+        hashicorp.terraform
+        haskell.haskell
+        humao.rest-client
+        ionide.ionide-fake
+        ionide.ionide-fsharp
+        # NOTE: pkgs.vscode-marketplace resolves resharper-code to 0.0.2, an
+        # expired ReSharper 2025.2 EAP 2 build. Its backend aborts on startup with
+        # "Some of the packages cannot be loaded because they are expired"
+        # (CommandLineTimebombExplosionReporter) and VS Code reports the extension
+        # as failing to start. vscode-marketplace-release pins the stable 2026.2.1
+        # release, which still ships the linux-x64 backend.
+        pkgs.vscode-marketplace-release.jetbrains.resharper-code
+        jnoortheen.nix-ide
+        microsoft-aspire.aspire-vscode
+        mkhl.direnv
+        ms-azuretools.vscode-containers
+        ms-dotnettools.csharp
+        ms-dotnettools.vscode-dotnet-runtime
+        ms-kubernetes-tools.vscode-kubernetes-tools
+        ms-vscode-remote.remote-containers
+        ms-vscode-remote.remote-ssh
+        myriad-dreamin.tinymist
+        ocamllabs.ocaml-platform
+        oven.bun-vscode
+        redhat.vscode-yaml
+        rust-lang.rust-analyzer
+        tamasfe.even-better-toml
+        timonwong.shellcheck
+        tim-koehler.helm-intellisense
+        weaveworks.vscode-gitops-tools
+        yzhang.markdown-all-in-one
+        ziglang.vscode-zig
+      ];
+    };
+  };
+}

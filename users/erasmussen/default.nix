@@ -6,6 +6,7 @@ in
   imports = [
     ../../modules
     ../shared
+    ./eriks-macbook-pro.nix
   ];
 
   home = {
