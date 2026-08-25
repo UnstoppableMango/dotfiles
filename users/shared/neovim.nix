@@ -1,11 +1,17 @@
-{ lib, config, ... }:
 {
-  # Personal LSP/plugin config lives in ./nixvim-config.nix (a raw nixvim
-  # submodule, not a home-manager module) rather than being wired in from
-  # modules/editors/neovim/default.nix, which stays fully generic and never
-  # reaches into users/. flake.nix's perSystem also builds a standalone
-  # nixvim package directly from ./nixvim-config.nix.
+  self,
+  lib,
+  config,
+  ...
+}:
+{
+  # self.nixvimModules.erik (./nixvim-config.nix) is a raw nixvim submodule,
+  # not a home-manager module, exposed as a flake output so it's the single
+  # shareable nixvim configuration both erik and erasmussen consume here, and
+  # flake.nix's perSystem also builds its standalone `packages.nixvim` from.
+  # modules/editors/neovim/default.nix stays fully generic and never reaches
+  # into users/.
   config = lib.mkIf config.dotfiles.neovim.enable {
-    programs.nixvim.imports = [ ./nixvim-config.nix ];
+    programs.nixvim.imports = [ self.nixvimModules.erik ];
   };
 }
