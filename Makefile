@@ -28,7 +28,12 @@ flake.lock: ${SRC}
 flake.nix:
 	nix flake init
 
+graph: docs/dependency-graph.md
+
+docs/dependency-graph.md: ${SRC} flake.nix scripts/dep-graph.nix
+	nix eval --impure --raw --file scripts/dep-graph.nix > $@
+
 p10k: # This doesn't actually work in make, but its copy-pastable
 	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/shells/zsh/.p10k.zsh p10k configure
 
-.PHONY: flake.lock
+.PHONY: flake.lock graph
