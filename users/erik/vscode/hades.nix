@@ -18,7 +18,7 @@
       # https://github.com/anthropics/claude-code/issues/59163
       # https://github.com/anthropics/claude-code/issues/59539
       # https://github.com/anthropics/claude-code/issues/8618
-      userSettings = lib.importJSON ./vscode-hades.settings.json;
+      userSettings = lib.importJSON ./hades.settings.json;
       enableMcpIntegration = true;
 
       extensions = with pkgs.vscode-marketplace; [
