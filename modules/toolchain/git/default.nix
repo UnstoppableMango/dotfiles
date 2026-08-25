@@ -5,7 +5,10 @@
   ...
 }:
 {
-  imports = [ ./repos.nix ];
+  imports = [
+    ./repos.nix
+    ./opencommit.nix
+  ];
 
   options.dotfiles.git.enable = lib.mkEnableOption "git Toolchain";
 
