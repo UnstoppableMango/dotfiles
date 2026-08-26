@@ -98,6 +98,7 @@ subgraph "modules/toolchain"
     n_modules_toolchain["modules/toolchain"]
     n_modules_toolchain__collapsed_["9 leaf modules"]
     n_modules_toolchain_git["modules/toolchain/git"]
+    n_modules_toolchain_git_opencommit_nix["modules/toolchain/git/opencommit.nix"]
     n_modules_toolchain_git_repos_nix["modules/toolchain/git/repos.nix"]
 end
 subgraph "modules/toolchain/kubernetes"
@@ -193,6 +194,7 @@ end
   n_modules --> n_modules_toolchain
   n_modules_toolchain --> n_modules_toolchain_git
   n_modules_toolchain_git --> n_modules_toolchain_git_repos_nix
+  n_modules_toolchain_git --> n_modules_toolchain_git_opencommit_nix
   n_modules_toolchain --> n_modules_toolchain_kubernetes
   n_modules_toolchain_kubernetes --> n_modules_toolchain_kubernetes_k9s
   n_modules_toolchain_kubernetes --> n_modules_toolchain_kubernetes_openshift

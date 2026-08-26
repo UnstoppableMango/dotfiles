@@ -38,7 +38,19 @@ in
     neovim.enable = true;
     zsh.enable = true;
     c.enable = true;
-    git.enable = true;
+    git = {
+      enable = true;
+      openCommit = {
+        enable = true;
+        apiKeySecret = "oco-api-key";
+        settings = {
+          OCO_AI_PROVIDER = "anthropic";
+          OCO_MODEL = "claude-sonnet-4-6";
+          OCO_OMIT_SCOPE = false;
+          OCO_GITPUSH = false;
+        };
+      };
+    };
     go.enable = true;
     gnupg.enable = true;
     javascript.enable = true;
@@ -50,6 +62,13 @@ in
     fonts.enable = true;
     ssh.enable = true;
     stylix.enable = true;
+  };
+
+  # Encrypted to both of erik's age keys (see .sops.yaml), so it decrypts on
+  # darter and hades alike. Edit with `sops users/erik/secrets/opencommit.yaml`.
+  sops.secrets."oco-api-key" = {
+    sopsFile = ./secrets/opencommit.yaml;
+    key = "oco_api_key";
   };
 
   programs = {

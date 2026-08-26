@@ -56,7 +56,10 @@ a feature to function, with no personal values:
 - `gnupg/` — gpg + gpg-agent (shared by both users; pinentry only on Linux)
 - `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)
 - `sops/` - erik's sops-nix age key location (`~/.config/sops/age/keys.txt`).
-  Imports sops-nix's home-manager module for every consumer; it is inert until something declares `sops.secrets`, so only hades actually decrypts anything.
+  Imports sops-nix's home-manager module for every consumer; it is inert until something declares `sops.secrets`.
+  Repo-local secrets live in `users/erik/secrets/`, encrypted per the root `.sops.yaml` to both of erik's age keys (the same pair the nixos repo registers as the clan user `erik`), so darter and hades both decrypt them.
+  erasmussen has no age key registered and cannot.
+  hades additionally decrypts clan-generated material declared in the nixos repo.
 - `ssh/` — SSH client config (shared by both users).
   Host aliases come from the `hosts` flake input (https://github.com/UnstoppableMango/hosts).
   The module takes the table as data (`dotfiles.ssh.hosts`, empty by default); `flake.nix` feeds it `inputs.hosts.lib.addresses`, so no module closes over `inputs` for it.
@@ -67,6 +70,8 @@ a feature to function, with no personal values:
 - `stylix/` — Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
 - `terminals/` — Kitty, Ghostty
 - `toolchain/` — per-language dev tool configs: c, containers, dotnet, git (`dotfiles.git.repos` declaratively inits repos under the home directory on activation), go, javascript, kubernetes (with k9s, openshift, and rosequartz submodules), nix, ocaml, python.
+  `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its own defaults entirely once that file exists.
+  The file route rather than `OCO_API_KEY` in the environment, since the `prepare-commit-msg` hook also fires for editor and GUI commits that never see a login shell.
   `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); the nixos repo supplies only the clan-generated CA and admin cert/key paths.
 - `users/erik/` — Linux (x86_64) home config
 - `users/erasmussen/` — macOS (aarch64-darwin) home config
