@@ -59,9 +59,7 @@ a feature to function, with no personal values:
 - `gnupg/` — gpg + gpg-agent (shared by both users; pinentry only on Linux)
 - `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)
 - `sops/` - shared sops-nix age key location (`~/.config/sops/age/keys.txt`), one module for both identities.
-  Imports sops-nix's home-manager module for every consumer; it is inert until something declares `sops.secrets`.
-  Repo-local secrets live in `users/erik/secrets/` and `users/erasmussen/secrets/`, each path-scoped in the root `.sops.yaml` to that identity's own age key(s) and never shared: erik's pair (the same one the nixos repo registers as the clan user `erik`) decrypts on darter and hades, while erasmussen's key is local to this repo and its own machine.
-  hades additionally decrypts clan-generated material declared in the nixos repo.
+  Each identity's secrets live under its own `users/<name>/secrets/`, scoped in `.sops.yaml` to that identity's own key(s); hades also decrypts clan-generated material from the nixos repo.
 - `ssh/` — SSH client config (shared by both users).
   Host aliases come from the `hosts` flake input (https://github.com/UnstoppableMango/hosts).
   The module takes the table as data (`dotfiles.ssh.hosts`, empty by default); `flake.nix` feeds it `inputs.hosts.lib.addresses`, so no module closes over `inputs` for it.

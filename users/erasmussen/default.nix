@@ -67,8 +67,7 @@ in
     stylix.enable = true;
   };
 
-  # Encrypted to erasmussen's own age key (see .sops.yaml), separate from
-  # erik's secrets. Edit with `sops users/erasmussen/secrets/<file>.yaml`.
+  # Edit with `sops users/erasmussen/secrets/<file>.yaml`.
   sops.secrets = {
     "oco-api-key" = {
       sopsFile = ./secrets/opencommit.yaml;
