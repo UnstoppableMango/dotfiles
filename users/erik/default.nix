@@ -33,7 +33,13 @@ in
   };
 
   dotfiles = {
-    ai.enable = true;
+    ai = {
+      enable = true;
+      omnigent.openRouter = {
+        enable = true;
+        apiKeySecret = "openrouter-api-key";
+      };
+    };
     emacs.enable = true;
     neovim.enable = true;
     zsh.enable = true;
@@ -64,11 +70,18 @@ in
     stylix.enable = true;
   };
 
-  # Encrypted to both of erik's age keys (see .sops.yaml), so it decrypts on
-  # darter and hades alike. Edit with `sops users/erik/secrets/opencommit.yaml`.
-  sops.secrets."oco-api-key" = {
-    sopsFile = ./secrets/opencommit.yaml;
-    key = "oco_api_key";
+  # Encrypted to both of erik's age keys (see .sops.yaml), so these decrypt on
+  # darter and hades alike. Edit with `sops users/erik/secrets/<file>.yaml`.
+  sops.secrets = {
+    "oco-api-key" = {
+      sopsFile = ./secrets/opencommit.yaml;
+      key = "oco_api_key";
+    };
+
+    "openrouter-api-key" = {
+      sopsFile = ./secrets/openrouter.yaml;
+      key = "openrouter_api_key";
+    };
   };
 
   programs = {

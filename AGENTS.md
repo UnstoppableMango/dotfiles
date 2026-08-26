@@ -48,7 +48,10 @@ profile, both gated behind host options set in `darter.nix`/`hades.nix`).
 `modules/` itself stays generic — enable toggles and the mechanics needed for
 a feature to function, with no personal values:
 
-- `ai/` — claude-code, github-copilot-cli, cursor-cli (shared by both users)
+- `ai/` — claude-code, github-copilot-cli, cursor-cli (shared by both users).
+  `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
+  The OpenRouter key reaches that entry through an `auth_command` reading a `sops.secrets` path rather than `OPENROUTER_API_KEY` in the environment, since the systemd user unit running the server never sees a login shell (the same reasoning as `toolchain/git/opencommit.nix`).
+  Enabled for erik only; erasmussen has no age key and cannot decrypt the secret.
 - `automation/` — flake-update automation
 - `browsers/` — Brave
 - `editors/` — VS Code, Neovim (via nixvim), Zed, Helix, Emacs
