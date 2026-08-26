@@ -41,7 +41,17 @@ in
     containers.enable = true;
     containers.podmanAutostart = true;
     dotnet.enable = true;
-    git.enable = true;
+    git = {
+      enable = true;
+      openCommit = {
+        enable = true;
+        apiKeySecret = "oco-api-key";
+        settings = {
+          OCO_AI_PROVIDER = "anthropic";
+          OCO_MODEL = "claude-sonnet-4-6";
+        };
+      };
+    };
     gnupg.enable = true;
     go.enable = true;
     javascript.enable = true;
@@ -50,9 +60,19 @@ in
     openshift.enable = false;
     ocaml.enable = true;
     python.enable = true;
+    sops.enable = true;
     fonts.enable = true;
     ssh.enable = true;
     stylix.enable = true;
+  };
+
+  # Encrypted to erasmussen's own age key (see .sops.yaml), separate from
+  # erik's secrets. Edit with `sops users/erasmussen/secrets/<file>.yaml`.
+  sops.secrets = {
+    "oco-api-key" = {
+      sopsFile = ./secrets/opencommit.yaml;
+      key = "oco_api_key";
+    };
   };
 
   programs = {

@@ -58,10 +58,9 @@ a feature to function, with no personal values:
 - `fonts/` — Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
 - `gnupg/` — gpg + gpg-agent (shared by both users; pinentry only on Linux)
 - `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)
-- `sops/` - erik's sops-nix age key location (`~/.config/sops/age/keys.txt`).
+- `sops/` - shared sops-nix age key location (`~/.config/sops/age/keys.txt`), one module for both identities.
   Imports sops-nix's home-manager module for every consumer; it is inert until something declares `sops.secrets`.
-  Repo-local secrets live in `users/erik/secrets/`, encrypted per the root `.sops.yaml` to both of erik's age keys (the same pair the nixos repo registers as the clan user `erik`), so darter and hades both decrypt them.
-  erasmussen has no age key registered and cannot.
+  Repo-local secrets live in `users/erik/secrets/` and `users/erasmussen/secrets/`, each path-scoped in the root `.sops.yaml` to that identity's own age key(s) and never shared: erik's pair (the same one the nixos repo registers as the clan user `erik`) decrypts on darter and hades, while erasmussen's key is local to this repo and its own machine.
   hades additionally decrypts clan-generated material declared in the nixos repo.
 - `ssh/` — SSH client config (shared by both users).
   Host aliases come from the `hosts` flake input (https://github.com/UnstoppableMango/hosts).

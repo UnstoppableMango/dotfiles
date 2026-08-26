@@ -1,14 +1,15 @@
-# Recipients for secrets kept in this repo. These are the same two age keys
-# the nixos repo registers as the single clan user `erik` in
-# sops/users/erik/key.json, one per machine, so a secret encrypted here
+# Recipients for secrets kept in this repo. erik's two age keys are the same
+# ones the nixos repo registers as the single clan user `erik` in
+# sops/users/erik/key.json, one per machine, so a secret encrypted to them
 # decrypts on every machine that runs `dotfiles.sops.enable`.
 #
-# erasmussen (the MacBook) has no age key registered, so it cannot decrypt
-# these. Add its public key to both this file and the nixos repo's key.json,
-# then `sops updatekeys`, before enabling any sops-backed option there.
+# erasmussen's key is local to this repo only (no nixos repo counterpart) and
+# only ever a recipient on users/erasmussen/secrets/*.yaml, which hold
+# separate secret values from erik's rather than sharing them.
 keys:
   - &erik_darter age16yu7pqrmwd3m7jrs5pdh2rd2z4lzskc2ywftqngtssgkd8vj54us875q6t
   - &erik_hades age1jnndq4jl03mc7f5vtlyh24rr6e2pxe8y9nlk6yt9ztpmpahqhuwqmz639k
+  - &erasmussen_macbook age1y0vqekk68w2lkpdkl8f7gnkwy50gnayyyxpqvg3tnhye25xk7fxsvkutd3
 
 creation_rules:
   - path_regex: users/erik/secrets/[^/]+\.yaml$
@@ -16,3 +17,8 @@ creation_rules:
       - age:
           - *erik_darter
           - *erik_hades
+
+  - path_regex: users/erasmussen/secrets/[^/]+\.yaml$
+    key_groups:
+      - age:
+          - *erasmussen_macbook
