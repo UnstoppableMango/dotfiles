@@ -5,6 +5,14 @@ Personal preferences and instructions for AI coding agents (Claude Code, GitHub 
 - Never use the em dash character (U+2014). Use a comma, period, or parentheses instead.
 - In markdown files, put each sentence on its own line. Let the renderer wrap text; don't hard-wrap manually.
 
+## English style
+
+- Avoid flourish. State things plainly rather than reaching for a dramatic or literary phrasing.
+- Avoid cliche and idiom (e.g. "game-changer," "at the end of the day," "circle back"). Say the literal thing instead.
+- Avoid intensifiers ("very," "really," "incredibly," "significantly") unless a number or comparison backs them up.
+- Minimize tricolon repetition, the "X, Y, and Z" rhythm used for rhetorical effect (e.g. "robust, scalable, and secure"). Use it only when all three items carry distinct information.
+- Avoid negative contrastive phrasing ("not just X, but Y," "it's not about X, it's about Y"). State the positive claim directly.
+
 ## Commit and PR conventions
 
 Use Conventional Commits prefixes (`feat:`, `fix:`, `chore:`, `deps:`, `docs:`, `ci:`) for commit subjects and PR titles, matching the convention already used across all my repos.
