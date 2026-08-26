@@ -49,6 +49,7 @@ in
         settings = {
           OCO_AI_PROVIDER = "anthropic";
           OCO_MODEL = "claude-sonnet-4-6";
+          OCO_GITPUSH = false;
         };
       };
     };
