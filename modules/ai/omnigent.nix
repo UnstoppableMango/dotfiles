@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.dotfiles.ai.omnigent;
+  cfg = config.dotfiles.ai;
 
   omnigentBin = "${config.home.homeDirectory}/.local/bin/omnigent";
 
@@ -47,11 +47,11 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable (
+  config = lib.mkIf (cfg.enable && cfg.omnigent.enable) (
     lib.mkMerge [
       { programs.uv.tool.packages = [ "omnigent" ]; }
 
-      (lib.mkIf (cfg.autostart && pkgs.stdenv.hostPlatform.isDarwin) {
+      (lib.mkIf (cfg.omnigent.autostart && pkgs.stdenv.hostPlatform.isDarwin) {
         launchd.agents.omnigent-server = {
           enable = true;
           config = {
@@ -68,18 +68,25 @@ in
         };
       })
 
-      (lib.mkIf (cfg.autostart && pkgs.stdenv.hostPlatform.isLinux) {
+      (lib.mkIf (cfg.omnigent.autostart && pkgs.stdenv.hostPlatform.isLinux) {
         systemd.user.services.omnigent-server = {
           Unit.Description = "Omnigent local server";
           Service = {
-            ExecStart = "%h/.local/bin/omnigent start";
+            # `omnigent host` runs the daemon loop in the foreground, which is
+            # what a Type=simple unit needs. Its `omnigent start` alias adds
+            # `--background`, detaches, and exits 0, which would have systemd
+            # tear the cgroup down and take the daemon with it. With no
+            # `server:` in config.yaml the daemon selects local mode and brings
+            # up the localhost:6767 server itself.
+            ExecStart = "%h/.local/bin/omnigent host";
+            ExecStop = "%h/.local/bin/omnigent stop";
             Restart = "on-failure";
           };
           Install.WantedBy = [ "default.target" ];
         };
       })
 
-      (lib.mkIf (cfg.desktopApp && pkgs.stdenv.hostPlatform.isDarwin) {
+      (lib.mkIf (cfg.omnigent.desktopApp && pkgs.stdenv.hostPlatform.isDarwin) {
         # Symlinked straight from the nix store, so the bundle carries no
         # quarantine/notarization ticket - first launch needs a right-click >
         # Open to get past Gatekeeper.
