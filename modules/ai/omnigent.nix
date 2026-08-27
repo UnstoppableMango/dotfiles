@@ -17,6 +17,25 @@ let
   port = 6767;
   serverUrl = "http://127.0.0.1:${toString port}";
 
+  # omnigent runs out of a uv-managed venv, so its TLS trust comes either from
+  # certifi (httpx, requests) or from OpenSSL's compiled-in defaults
+  # (websockets, and anything else on stdlib `ssl`). Neither reaches the
+  # system store on NixOS: `/etc/ssl/cert.pem` does not exist and
+  # `/etc/ssl/certs` carries no hashed symlinks, so `create_default_context()`
+  # loads zero CAs and every wss:// handshake the host daemon opens fails
+  # CERTIFICATE_VERIFY_FAILED. certifi's own bundle covers the public roots
+  # but never `security.pki.certificates` additions, so a host behind a
+  # private CA still fails on the paths that do work.
+  #
+  # One bundle carries both, so both env vars point at it. SSL_CERT_FILE
+  # redirects stdlib ssl and httpx; requests consults REQUESTS_CA_BUNDLE
+  # alone and ignores the former.
+  certEnv = {
+    SSL_CERT_FILE = cfg.omnigent.caBundle;
+    REQUESTS_CA_BUNDLE = cfg.omnigent.caBundle;
+  };
+  certEnvList = lib.mapAttrsToList (n: v: "${n}=${v}") certEnv;
+
   openRouter = cfg.omnigent.openRouter;
 
   # OpenRouter reaches the OpenAI-compatible Chat Completions surface at its
@@ -91,6 +110,24 @@ in
 
         Linux only: the launchd agent runs `omnigent start`, which hardcodes
         loopback.
+      '';
+    };
+
+    caBundle = lib.mkOption {
+      type = lib.types.str;
+      default =
+        if pkgs.stdenv.hostPlatform.isDarwin then
+          "/etc/ssl/cert.pem"
+        else
+          "/etc/ssl/certs/ca-certificates.crt";
+      description = ''
+        CA bundle the server and host daemon verify TLS against, exported as
+        both `SSL_CERT_FILE` and `REQUESTS_CA_BUNDLE`.
+
+        The default is the system store. On NixOS that is where
+        `security.pki.certificates` lands, so a private LAN CA declared there
+        is trusted without being restated here. Point this at a
+        `pkgs.cacert` path instead to limit the units to the public roots.
       '';
     };
 
@@ -213,6 +250,7 @@ in
               omnigentBin
               "start"
             ];
+            EnvironmentVariables = certEnv;
             RunAtLoad = true;
             KeepAlive = true;
             StandardOutPath = "${config.xdg.dataHome}/omnigent/server.log";
@@ -235,7 +273,7 @@ in
               # The server the host daemon spawns is marked as this user's
               # single-user local runtime. Without the same mark here the
               # daemon's tunnel registration is refused with a 403.
-              Environment = [ "OMNIGENT_LOCAL_SINGLE_USER=1" ];
+              Environment = [ "OMNIGENT_LOCAL_SINGLE_USER=1" ] ++ certEnvList;
               ExecStart = "%h/.local/bin/omnigent server --host ${cfg.omnigent.listenAddress} --port ${toString port}";
               Restart = "on-failure";
             };
@@ -252,6 +290,7 @@ in
               # Loopback whatever the server binds, since both units are the
               # same machine. `--non-interactive` keeps a daemon with no
               # terminal from stalling on the browser sign-in flow.
+              Environment = certEnvList;
               ExecStart = "%h/.local/bin/omnigent host --server ${serverUrl} --non-interactive";
               # `After` orders the start but does not wait for the socket, so
               # the first attempt can beat the server to it.
