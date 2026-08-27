@@ -23,6 +23,7 @@ in
     ./azure.nix
     ./brave-search.nix
     ./caveman.nix
+    ./checkout-root.nix
     ./chrome-devtools.nix
     ./cloudflare.nix
     ./containers.nix

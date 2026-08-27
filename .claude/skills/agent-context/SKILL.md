@@ -19,12 +19,13 @@ Writing to either fails, and an edit that appeared to succeed was written to the
 
 ## Pick the right scope
 
-| The rule applies to           | Put it in                                                                                          |
-| ----------------------------- | -------------------------------------------------------------------------------------------------- |
-| Every project, every agent    | `modules/ai/global-context.md`                                                                     |
-| This repo only                | `AGENTS.md` (`CLAUDE.md` and `.github/copilot-instructions.md` are one-line `@AGENTS.md` includes) |
-| One project, outside nix      | `~/.claude/projects/<slug>/memory/`                                                                |
-| A single task or conversation | Nowhere                                                                                            |
+| The rule applies to                  | Put it in                                                                                          |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| Every project, every agent           | `modules/ai/global-context.md`                                                                     |
+| Every repo checked out under `~/src` | `users/shared/checkout-root.md`, rendered to `~/src/AGENTS.md`                                     |
+| This repo only                       | `AGENTS.md` (`CLAUDE.md` and `.github/copilot-instructions.md` are one-line `@AGENTS.md` includes) |
+| One project, outside nix             | `~/.claude/projects/<slug>/memory/`                                                                |
+| A single task or conversation        | Nowhere                                                                                            |
 
 ## What belongs
 
