@@ -29,6 +29,8 @@ Avoid temporal or narrative language in docs and code comments (e.g. "now", "pre
 
 ## Nix
 
+Prefer `inherit (foo) bar;` over `bar = foo.bar;`.
+
 Reference flake `inputs` only inside `flake.nix`.
 The same goes for the `self` argument.
 Everything else (home-manager modules, NixOS modules, packages, overlays) takes what it needs as explicit arguments or module options, so it stays usable outside the flake that defines it.
