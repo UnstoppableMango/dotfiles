@@ -50,7 +50,9 @@ An edit that violates one of these contradicts the text sitting a few lines abov
 
 ## Where to put it in the file
 
-Sections, in order: a top-level bullet list, then `## English style`, `## Commit and PR conventions`, `## Bug fixing and review`, `## Docs and comments`, `## Nix`, `## Shell autoload issue`.
+Sections, in order: a top-level bullet list, then `## English style`, `## Commit and PR conventions`, `## Bug fixing and review`, `## Docs and comments`, `## Shell autoload issue`.
+
+Per-language rules (e.g. Nix) belong in that language's skill under `modules/ai/`, not here.
 
 - Short cross-cutting mechanics go in the top bullet list.
 - Anything else goes in the closest existing `## H2` section.

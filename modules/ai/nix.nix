@@ -33,6 +33,7 @@ in
         };
       };
       mcpServers.nix = mcpServer;
+      skills.nix = ./nix-skill;
     };
 
     programs.mcp.servers.nix = mcpServer;
@@ -45,6 +46,7 @@ in
         };
       };
       mcpServers.nix = mcpServer;
+      skills.nix = ./nix-skill;
     };
 
     home.packages = [

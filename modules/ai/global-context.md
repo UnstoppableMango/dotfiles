@@ -27,18 +27,6 @@ When a review or debugging session turns up multiple distinct bugs, file one foc
 
 Avoid temporal or narrative language in docs and code comments (e.g. "now", "previously", "this was changed to", "recently added"). Describe the current state only, as if it always existed. This avoids doc/comment rot and repeated cleanup passes.
 
-## Nix
-
-Prefer `inherit (foo) bar;` over `bar = foo.bar;`.
-
-Reference flake `inputs` only inside `flake.nix`.
-The same goes for the `self` argument.
-Everything else (home-manager modules, NixOS modules, packages, overlays) takes what it needs as explicit arguments or module options, so it stays usable outside the flake that defines it.
-
-This restriction is relaxed for flake modules (`flake-parts` modules and anything else evaluated as part of the flake outputs), where `inputs` and `self` are part of the module arguments by design.
-
-Any deviation needs a justification stated in the code or the PR.
-
 ## Shell autoload issue
 
 zsh with Prezto registers system commands (`make`, `diff`, and others) as autoloaded wrapper functions.
