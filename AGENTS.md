@@ -84,7 +84,7 @@ a feature to function, with no personal values:
 - `users/erik/` — Linux (x86_64) home config
 - `users/erasmussen/` — macOS (aarch64-darwin) home config
 
-Four home configurations are defined: `erik@darter`, `erik-hades`, and `erik@server` (all x86_64-linux; `server.nix` is a minimal headless profile — gnupg, shells, sops, ssh, toolchain only, no desktop/editor modules), and `erasmussen@Eriks-MacBook-Pro.local` (aarch64-darwin).
+Four home configurations are defined: `erik@darter`, `erik-hades`, and `erik@server` (all x86_64-linux; `server.nix` is a minimal headless profile — gnupg, shells, sops, ssh, toolchain only, no desktop/editor modules), and `erasmussen@Eriks-MacBook-Pro` (aarch64-darwin).
 
 `erik-hades` is build-only, and its name omits the `@` for that reason.
 Hades' home is activated by the nixos repo through the Home Manager NixOS module, which layers clan-generated material (the rosequartz kubeconfig and admin key) on top of `homeModules.erik`.

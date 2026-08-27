@@ -268,7 +268,7 @@
               ];
             };
 
-            "erasmussen@Eriks-MacBook-Pro.local" = homeManagerConfiguration {
+            "erasmussen@Eriks-MacBook-Pro" = homeManagerConfiguration {
               pkgs = legacyPackages.aarch64-darwin;
               extraSpecialArgs = { inherit inputs self; };
               modules = [

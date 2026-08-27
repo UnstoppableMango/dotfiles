@@ -213,12 +213,12 @@ let
     "erik@darter" = homeModuleTargets.erik;
     erik-hades = homeModuleTargets.erik;
     "erik@server" = homeModuleTargets.erikServer;
-    "erasmussen@Eriks-MacBook-Pro.local" = homeModuleTargets.erasmussen;
+    "erasmussen@Eriks-MacBook-Pro" = homeModuleTargets.erasmussen;
   };
   stylixConfigs = [
     "erik@darter"
     "erik-hades"
-    "erasmussen@Eriks-MacBook-Pro.local"
+    "erasmussen@Eriks-MacBook-Pro"
   ];
 
   wiringEdges =

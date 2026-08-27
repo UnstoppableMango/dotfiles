@@ -32,7 +32,7 @@
 
   # VERIFY: run `scutil --get LocalHostName` on the Mac - this is a guess
   # based on the existing homeConfiguration key
-  # ("erasmussen@Eriks-MacBook-Pro.local").
+  # ("erasmussen@Eriks-MacBook-Pro").
   networking.hostName = "Eriks-MacBook-Pro";
 
   # VERIFY: check the current recommended value in the nix-darwin manual for

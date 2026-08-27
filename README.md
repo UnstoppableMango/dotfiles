@@ -16,7 +16,7 @@ This repo manages [Home Manager](https://nix-community.github.io/home-manager/) 
 | ------------------------------------ | -------------- |
 | `erik@darter`                        | x86_64-linux   |
 | `erik-hades`                         | x86_64-linux   |
-| `erasmussen@Eriks-MacBook-Pro.local` | aarch64-darwin |
+| `erasmussen@Eriks-MacBook-Pro`       | aarch64-darwin |
 
 `erik-hades` is build-only.
 Hades' home is activated by the [nixos](https://github.com/UnstoppableMango/nixos) repo through the Home Manager NixOS module, so this entry exists to verify the config evaluates and builds, not to switch into.
