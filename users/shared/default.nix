@@ -1,5 +1,6 @@
 {
   imports = [
+    ./ai.nix
     ./git.nix
     ./neovim.nix
     ./kitty.nix

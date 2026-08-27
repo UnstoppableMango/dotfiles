@@ -43,15 +43,18 @@ Home Manager modules are grouped by category under `modules/`, aggregated by
 `modules/default.nix`, and imported by each user's home config in
 `users/<user>/default.nix` alongside `users/shared/` (personal config common
 to both identities: git identity/aliases, neovim's LSP/plugin choices, kitty
-colors, zed extensions, vscode's default-profile settings, k9s's skin, and
-the prezto/p10k setup) and identity-exclusive files (e.g. `users/erik/`'s
-`desktop.nix` for GNOME and `vscode-hades.nix` for the Hades VS Code
-profile, both gated behind host options set in `darter.nix`/`hades.nix`).
+colors, zed extensions, vscode's default-profile settings, k9s's skin, the
+`~/src` checkout-root document, and the prezto/p10k setup) and
+identity-exclusive files (e.g. `users/erik/`'s `desktop.nix` for GNOME and
+`vscode-hades.nix` for the Hades VS Code profile, both gated behind host
+options set in `darter.nix`/`hades.nix`).
 `modules/` itself stays generic — enable toggles and the mechanics needed for
 a feature to function, with no personal values:
 
 - `ai/` — claude-code, github-copilot-cli, cursor-cli (shared by both users).
   `global-context.md` is the user-level agent instructions, rendered to both `~/.claude/CLAUDE.md` and `~/.copilot/copilot-instructions.md`; `.claude/skills/agent-context/` covers how to change it.
+  `checkout-root.nix` renders `users/shared/checkout-root.md` to `~/src/AGENTS.md` with a `CLAUDE.md` include beside it, matching the pairing the repos underneath use, so conventions spanning the whole checkout root are stated once instead of per repo.
+  The module takes the document as an option (`dotfiles.ai.checkoutRoot.context`, null by default) and holds no content itself, so nothing in `modules/` assumes a checkout root exists.
   `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
   The OpenRouter key reaches that entry through an `auth_command` reading a `sops.secrets` path rather than `OPENROUTER_API_KEY` in the environment, since the systemd user unit running the server never sees a login shell (the same reasoning as `toolchain/git/opencommit.nix`).
   Enabled for erik only; erasmussen has no age key and cannot decrypt the secret.
