@@ -211,13 +211,13 @@ let
 
   homeConfigModule = {
     "erik@darter" = homeModuleTargets.erik;
-    "erik@hades" = homeModuleTargets.erik;
+    erik-hades = homeModuleTargets.erik;
     "erik@server" = homeModuleTargets.erikServer;
     "erasmussen@Eriks-MacBook-Pro.local" = homeModuleTargets.erasmussen;
   };
   stylixConfigs = [
     "erik@darter"
-    "erik@hades"
+    "erik-hades"
     "erasmussen@Eriks-MacBook-Pro.local"
   ];
 

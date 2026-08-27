@@ -41,8 +41,8 @@ end
 subgraph "flake.nix wiring"
     n_Eriks_MacBook_Pro["Eriks-MacBook-Pro"]
     n_erasmussen_Eriks_MacBook_Pro_local["erasmussen@Eriks-MacBook-Pro.local"]
+    n_erik_hades["erik-hades"]
     n_erik_darter["erik@darter"]
-    n_erik_hades["erik@hades"]
     n_erik_server["erik@server"]
     n_overlay__flake_nix__composed_["overlay (flake.nix, composed)"]
 end
@@ -142,23 +142,23 @@ end
   n_overlays_clan_nix --> n_overlay__flake_nix__composed_
   n_clan_core --> n_overlays_clan_nix
   n_home_manager --> n_erasmussen_Eriks_MacBook_Pro_local
-  n_home_manager --> n_erik_darter
   n_home_manager --> n_erik_hades
+  n_home_manager --> n_erik_darter
   n_home_manager --> n_erik_server
   n_erasmussen_Eriks_MacBook_Pro_local --> n_users_erasmussen
-  n_erik_darter --> n_users_erik
   n_erik_hades --> n_users_erik
+  n_erik_darter --> n_users_erik
   n_erik_server --> n_users_erik_server_nix
   n_hosts --> n_erasmussen_Eriks_MacBook_Pro_local
-  n_hosts --> n_erik_darter
   n_hosts --> n_erik_hades
+  n_hosts --> n_erik_darter
   n_hosts --> n_erik_server
   n_stylix --> n_erik_darter
   n_stylix --> n_erik_hades
   n_stylix --> n_erasmussen_Eriks_MacBook_Pro_local
   n_overlay__flake_nix__composed_ --> n_erasmussen_Eriks_MacBook_Pro_local
-  n_overlay__flake_nix__composed_ --> n_erik_darter
   n_overlay__flake_nix__composed_ --> n_erik_hades
+  n_overlay__flake_nix__composed_ --> n_erik_darter
   n_overlay__flake_nix__composed_ --> n_erik_server
   n_nix_darwin --> n_Eriks_MacBook_Pro
   n_Eriks_MacBook_Pro --> n_darwin_erasmussen
