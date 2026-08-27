@@ -20,9 +20,13 @@
       gpg.format = "openpgp";
     };
 
-    # rosequartz's admin cert is clan-generated and darter isn't a clan
-    # machine, so darter gets the OIDC context only, as a side file.
-    dotfiles.kubernetes.rosequartz.enable = true;
+    dotfiles = {
+      ai.omnigent.enable = false;
+
+      # rosequartz's admin cert is clan-generated and darter isn't a clan
+      # machine, so darter gets the OIDC context only, as a side file.
+      kubernetes.rosequartz.enable = true;
+    };
 
     # The first file is the writable hand-managed one, the second is
     # nix-managed - same shape as modules/ssh's UserKnownHostsFile. Keeping
