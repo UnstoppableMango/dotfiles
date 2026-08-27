@@ -28,7 +28,9 @@ make system         # update flake and rebuild NixOS at /etc/nixos (requires sud
 make update         # update flake inputs only
 ```
 
-Note: `make build` validates the local flake (`$PWD`), while `make home` operates on `~/.config/home-manager` (the installed config, typically a symlink to this repo).
+Note: `make build` validates the local flake (`$PWD`), while `make home` operates on `~/.config/home-manager`, a standalone flake whose only input is `github:UnstoppableMango/dotfiles`.
+`make home` therefore applies whatever is on `main`, so local edits reach it only after a commit and a push.
+To apply a local checkout instead, run `home-manager switch --flake $PWD -b hm-backup`.
 
 Environment variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC` (all have defaults).
 
@@ -49,6 +51,7 @@ profile, both gated behind host options set in `darter.nix`/`hades.nix`).
 a feature to function, with no personal values:
 
 - `ai/` — claude-code, github-copilot-cli, cursor-cli (shared by both users).
+  `global-context.md` is the user-level agent instructions, rendered to both `~/.claude/CLAUDE.md` and `~/.copilot/copilot-instructions.md`; `.claude/skills/agent-context/` covers how to change it.
   `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
   The OpenRouter key reaches that entry through an `auth_command` reading a `sops.secrets` path rather than `OPENROUTER_API_KEY` in the environment, since the systemd user unit running the server never sees a login shell (the same reasoning as `toolchain/git/opencommit.nix`).
   Enabled for erik only; erasmussen has no age key and cannot decrypt the secret.
