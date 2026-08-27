@@ -30,9 +30,14 @@ make update         # update flake inputs only
 
 Note: `make build` validates the local flake (`$PWD`), while `make home` operates on `~/.config/home-manager`, a standalone flake whose only input is `github:UnstoppableMango/dotfiles`.
 `make home` therefore applies whatever is on `main`, so local edits reach it only after a commit and a push.
-To apply a local checkout instead, run `home-manager switch --flake $PWD -b hm-backup`.
+To apply a local checkout instead, run `home-manager switch --flake $PWD#<config> -b hm-backup`.
+That is for darter only: hades is activated by the nixos repo, and `erik-hades` is named to keep `home-manager switch` from finding it (see Architecture below).
 
-Environment variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC` (all have defaults).
+`make build` builds the current host's configuration.
+It derives the name from `${USER}` and `hostname -s` rather than letting home-manager resolve it, since hades' entry is `erik-hades` and would not be found.
+Set `HOME_CONFIG` to build a different one, e.g. `make build HOME_CONFIG=erik@server`.
+
+Environment variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC`, `HOME_CONFIG` (all have defaults).
 
 CI runs `nix flake check --all-systems` then builds the `erik@darter` home configuration.
 
@@ -79,7 +84,12 @@ a feature to function, with no personal values:
 - `users/erik/` — Linux (x86_64) home config
 - `users/erasmussen/` — macOS (aarch64-darwin) home config
 
-Four home configurations are defined: `erik@darter`, `erik@hades`, and `erik@server` (all x86_64-linux; `server.nix` is a minimal headless profile — gnupg, shells, sops, ssh, toolchain only, no desktop/editor modules), and `erasmussen@Eriks-MacBook-Pro.local` (aarch64-darwin).
+Four home configurations are defined: `erik@darter`, `erik-hades`, and `erik@server` (all x86_64-linux; `server.nix` is a minimal headless profile — gnupg, shells, sops, ssh, toolchain only, no desktop/editor modules), and `erasmussen@Eriks-MacBook-Pro.local` (aarch64-darwin).
+
+`erik-hades` is build-only, and its name omits the `@` for that reason.
+Hades' home is activated by the nixos repo through the Home Manager NixOS module, which layers clan-generated material (the rosequartz kubeconfig and admin key) on top of `homeModules.erik`.
+A standalone activation rewrites the same sops-nix secrets directory without that material, leaving `~/.kube/config` dangling, so hades must not be reachable from `home-manager switch`, which resolves `$USER@$(hostname)`.
+Build it with `nix run home-manager -- build --flake .#erik-hades`.
 
 Overlays from multiple inputs (devctl, mynix, nil, nix-direnv, nix-vscode-extensions, ux) are composed in `flake.nix` and applied to nixpkgs. `zed.overlays.default` is currently commented out due to a `cargo-about` version conflict.
 

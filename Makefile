@@ -1,7 +1,15 @@
 SRC != find -path '*.nix' -printf '%P\n'
 
+# home-manager resolves a configuration implicitly as `$USER@$(hostname)`.
+# hades' entry is named `erik-hades` without the `@` so that lookup misses,
+# keeping a stray `switch` from clobbering the home the nixos repo owns.
+# `build` wants the current host either way, so reproduce the naming here.
+USER ?= $(shell id -un)
+HOST != hostname -s
+HOME_CONFIG ?= $(if $(filter hades,${HOST}),${USER}-${HOST},${USER}@${HOST})
+
 build:
-	home-manager build --flake ${CURDIR}
+	home-manager build --flake ${CURDIR}#${HOME_CONFIG}
 
 check:
 	nix flake check
