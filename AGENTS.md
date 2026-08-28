@@ -12,80 +12,9 @@ no identity baked in; personal preferences and identity (git email, editor
 LSP/plugin choices, terminal colors, GNOME desktop, etc.) live under
 `users/`, split into `users/shared/` (used by both identities) and
 per-identity files (`users/erik/`, `users/erasmussen/`).
+See "Class vs Instance Modules" below for the full rule and a checklist to
+apply before adding or moving a file.
 The actual NixOS system configs live at https://github.com/UnstoppableMango/nixos.
-
-## Common Commands
-
-All development tasks go through `make`:
-
-```sh
-make check          # nix flake check (validate syntax/config)
-make build          # build home-manager from local flake (validates changes)
-make fmt            # format code (nix fmt)
-make watch          # run checks on file changes (uses watchexec)
-make home           # update flake and switch home-manager at ~/.config/home-manager
-make system         # update flake and rebuild NixOS at /etc/nixos (requires sudo)
-make update         # update flake inputs only
-```
-
-Note: `make build` validates the local flake (`$PWD`), while `make home` operates on `~/.config/home-manager`, a standalone flake whose only input is `github:UnstoppableMango/dotfiles`.
-`make home` therefore applies whatever is on `main`, so local edits reach it only after a commit and a push.
-To apply a local checkout instead, run `home-manager switch --flake $PWD#<config> -b hm-backup`.
-That is for darter only: hades is activated by the nixos repo, and `erik-hades` is named to keep `home-manager switch` from finding it (see Architecture below).
-
-`make build` builds the current host's configuration.
-It derives the name from `${USER}` and `hostname -s` rather than letting home-manager resolve it, since hades' entry is `erik-hades` and would not be found.
-Set `HOME_CONFIG` to build a different one, e.g. `make build HOME_CONFIG=erik@server`.
-
-Environment variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC`, `HOME_CONFIG` (all have defaults).
-
-CI runs `nix flake check --all-systems` then builds the `erik@darter` home configuration.
-
-## Architecture
-
-The flake uses `flake-parts`.
-Home Manager modules are grouped by category under `modules/`, aggregated by
-`modules/default.nix`, and imported by each user's home config in
-`users/<user>/default.nix` alongside `users/shared/` (personal config common
-to both identities: git identity/aliases, neovim's LSP/plugin choices, kitty
-colors, zed extensions, vscode's default-profile settings, k9s's skin, the
-`~/src` checkout-root document, and the prezto/p10k setup) and
-identity-exclusive files (e.g. `users/erik/`'s `desktop.nix` for GNOME and
-`vscode-hades.nix` for the Hades VS Code profile, both gated behind host
-options set in `darter.nix`/`hades.nix`).
-`modules/` itself stays generic — enable toggles and the mechanics needed for
-a feature to function, with no personal values:
-
-- `ai/` — claude-code, github-copilot-cli, cursor-cli (shared by both users).
-  `global-context.md` is the user-level agent instructions, rendered to both `~/.claude/CLAUDE.md` and `~/.copilot/copilot-instructions.md`; `.claude/skills/agent-context/` covers how to change it.
-  `checkout-root.nix` renders `users/shared/checkout-root.md` to `~/src/AGENTS.md` with a `CLAUDE.md` include beside it, matching the pairing the repos underneath use, so conventions spanning the whole checkout root are stated once instead of per repo.
-  The module takes the document as an option (`dotfiles.ai.checkoutRoot.context`, null by default) and holds no content itself, so nothing in `modules/` assumes a checkout root exists.
-  `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
-  The OpenRouter key reaches that entry through an `auth_command` reading a `sops.secrets` path rather than `OPENROUTER_API_KEY` in the environment, since the systemd user unit running the server never sees a login shell (the same reasoning as `toolchain/git/opencommit.nix`).
-  Enabled for erik only; erasmussen has no age key and cannot decrypt the secret.
-- `automation/` — flake-update automation
-- `browsers/` — Brave
-- `editors/` — VS Code, Neovim (via nixvim), Zed, Helix, Emacs
-- `fonts/` — Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
-- `gnupg/` — gpg + gpg-agent (shared by both users; pinentry only on Linux)
-- `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)
-- `sops/` - shared sops-nix age key location (`~/.config/sops/age/keys.txt`), one module for both identities.
-  Each identity's secrets live under its own `users/<name>/secrets/`, scoped in `.sops.yaml` to that identity's own key(s); hades also decrypts clan-generated material from the nixos repo.
-- `ssh/` — SSH client config (shared by both users).
-  Host aliases come from the `hosts` flake input (https://github.com/UnstoppableMango/hosts).
-  The module takes the table as data (`dotfiles.ssh.hosts`, empty by default); `flake.nix` feeds it `inputs.hosts.lib.addresses`, so no module closes over `inputs` for it.
-  Anything importing `homeModules.erik` from outside this flake has to set it too, which the nixos repo does in `machines/hades/configuration.nix`.
-  That repo reads the same input for its `internet` clan service, so the two can't drift.
-  `HostKeyAlias` plus the `@cert-authority` entry in `~/.ssh/known_hosts_nix` mean cluster machines validate against the clan SSH CA instead of prompting on first connect.
-  Agent handling belongs to gnupg's gpg-agent, not here.
-- `stylix/` — Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
-- `terminals/` — Kitty, Ghostty
-- `toolchain/` — per-language dev tool configs: c, containers, dotnet, git (`dotfiles.git.repos` declaratively inits repos under the home directory on activation), go, javascript, kubernetes (with k9s, openshift, and rosequartz submodules), nix, ocaml, python.
-  `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its own defaults entirely once that file exists.
-  The file route rather than `OCO_API_KEY` in the environment, since the `prepare-commit-msg` hook also fires for editor and GUI commits that never see a login shell.
-  `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); the nixos repo supplies only the clan-generated CA and admin cert/key paths.
-- `users/erik/` — Linux (x86_64) home config
-- `users/erasmussen/` — macOS (aarch64-darwin) home config
 
 ## Class vs Instance Modules
 
@@ -132,6 +61,84 @@ and admin cert/key paths staying host-specific data supplied from outside.
 The `toolchain/kubernetes/` module itself grew `k9s/`, `openshift/`, and
 `rosequartz/` submodules as each tool's config outgrew a single file,
 aggregated through `default.nix`.
+
+## Common Commands
+
+All development tasks go through `make`:
+
+```sh
+make check          # nix flake check (validate syntax/config)
+make build          # build home-manager from local flake (validates changes)
+make fmt            # format code (nix fmt)
+make watch          # run checks on file changes (uses watchexec)
+make home           # update flake and switch home-manager at ~/.config/home-manager
+make system         # update flake and rebuild NixOS at /etc/nixos (requires sudo)
+make update         # update flake inputs only
+```
+
+Note: `make build` validates the local flake (`$PWD`), while `make home` operates on `~/.config/home-manager`, a standalone flake whose only input is `github:UnstoppableMango/dotfiles`.
+`make home` therefore applies whatever is on `main`, so local edits reach it only after a commit and a push.
+To apply a local checkout instead, run `home-manager switch --flake $PWD#<config> -b hm-backup`.
+That is for darter only: hades is activated by the nixos repo, and `erik-hades` is named to keep `home-manager switch` from finding it (see Architecture below).
+
+`make build` builds the current host's configuration.
+It derives the name from `${USER}` and `hostname -s` rather than letting home-manager resolve it, since hades' entry is `erik-hades` and would not be found.
+Set `HOME_CONFIG` to build a different one, e.g. `make build HOME_CONFIG=erik@server`.
+
+Environment variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC`, `HOME_CONFIG` (all have defaults).
+
+CI runs `nix flake check --all-systems` then builds the `erik@darter` home configuration.
+
+## Architecture
+
+The flake uses `flake-parts`.
+Home Manager modules are grouped by category under `modules/`, aggregated by
+`modules/default.nix`, and imported by each user's home config in
+`users/<user>/default.nix` alongside `users/shared/` (personal config common
+to both identities: git identity/aliases, neovim's LSP/plugin choices, kitty
+colors, zed extensions, vscode's default-profile settings, k9s's skin, the
+`~/src` checkout-root document, and the prezto/p10k setup) and
+identity-exclusive files (e.g. `users/erik/`'s `desktop.nix` for GNOME and
+`vscode-hades.nix` for the Hades VS Code profile, both gated behind host
+options set in `darter.nix`/`hades.nix`).
+`modules/` itself stays generic — enable toggles and the mechanics needed for
+a feature to function, with no personal values:
+
+- `ai/` — claude-code, github-copilot-cli, cursor-cli (shared by both users).
+  Each MCP integration and third-party service (aws, azure, cloudflare, figma,
+  slack, gossamer, per-language servers, etc.) gets its own `.nix` toggle file;
+  `moer/`, `nix-skill/`, and `tdd-orchestrator/` are skill submodules (a SKILL.md
+  plus agents), following the same one-file-per-concern pattern as the rest of
+  `modules/`.
+  `global-context.md` is the user-level agent instructions, rendered to both `~/.claude/CLAUDE.md` and `~/.copilot/copilot-instructions.md`; `.claude/skills/agent-context/` covers how to change it.
+  `checkout-root.nix` renders `users/shared/checkout-root.md` to `~/src/AGENTS.md` with a `CLAUDE.md` include beside it, matching the pairing the repos underneath use, so conventions spanning the whole checkout root are stated once instead of per repo.
+  The module takes the document as an option (`dotfiles.ai.checkoutRoot.context`, null by default) and holds no content itself, so nothing in `modules/` assumes a checkout root exists.
+  `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
+  The OpenRouter key reaches that entry through an `auth_command` reading a `sops.secrets` path rather than `OPENROUTER_API_KEY` in the environment, since the systemd user unit running the server never sees a login shell (the same reasoning as `toolchain/git/opencommit.nix`).
+  Enabled for erik only; erasmussen has no age key and cannot decrypt the secret.
+- `automation/` — flake-update automation
+- `browsers/` — Brave
+- `editors/` — VS Code, Neovim (via nixvim), Zed, Helix, Emacs, Obsidian
+- `fonts/` — Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
+- `gnupg/` — gpg + gpg-agent (shared by both users; pinentry only on Linux)
+- `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)
+- `sops/` - shared sops-nix age key location (`~/.config/sops/age/keys.txt`), one module for both identities.
+  Each identity's secrets live under its own `users/<name>/secrets/`, scoped in `.sops.yaml` to that identity's own key(s); hades also decrypts clan-generated material from the nixos repo.
+- `ssh/` — SSH client config (shared by both users).
+  Host aliases come from the `hosts` flake input (https://github.com/UnstoppableMango/hosts).
+  The module takes the table as data (`dotfiles.ssh.hosts`, empty by default); `flake.nix` feeds it `inputs.hosts.lib.addresses`, so no module closes over `inputs` for it.
+  Anything importing `homeModules.erik` from outside this flake has to set it too, which the nixos repo does in `machines/hades/configuration.nix`.
+  That repo reads the same input for its `internet` clan service, so the two can't drift.
+  `HostKeyAlias` plus the `@cert-authority` entry in `~/.ssh/known_hosts_nix` mean cluster machines validate against the clan SSH CA instead of prompting on first connect.
+  Agent handling belongs to gnupg's gpg-agent, not here.
+- `stylix/` — Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
+- `terminals/` — Kitty, Ghostty
+- `toolchain/` — per-language dev tool configs: c, containers, dotnet, git (`dotfiles.git.repos` declaratively inits repos under the home directory on activation), go, javascript, kubernetes (with k9s, openshift, and rosequartz submodules), nix, ocaml, python.
+  `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its own defaults entirely once that file exists.
+  The file route rather than `OCO_API_KEY` in the environment, since the `prepare-commit-msg` hook also fires for editor and GUI commits that never see a login shell.
+  `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); the nixos repo supplies only the clan-generated CA and admin cert/key paths.
+- `users/erik/` — Linux (x86_64) home config
+- `users/erasmussen/` — macOS (aarch64-darwin) home config
 
 Four home configurations are defined: `erik@darter`, `erik-hades`, and `erik@server` (all x86_64-linux; `server.nix` is a minimal headless profile — gnupg, shells, sops, ssh, toolchain only, no desktop/editor modules), and `erasmussen@Eriks-MacBook-Pro` (aarch64-darwin).
 
