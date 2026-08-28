@@ -87,6 +87,52 @@ a feature to function, with no personal values:
 - `users/erik/` — Linux (x86_64) home config
 - `users/erasmussen/` — macOS (aarch64-darwin) home config
 
+## Class vs Instance Modules
+
+Every file in this repo falls into one of two buckets, and keeping that split
+clean is the main defense against structural drift.
+`modules/` is the class bucket: it describes how a piece of software is
+configured, mechanically, with no identity baked in.
+Personalization enters a class module only as a `dotfiles.<x>.<y>` option
+(data), never as a literal value.
+`users/` is the instance bucket: it holds this person's actual values, split
+into `users/shared/` (both identities use the same value) and
+`users/<name>/` (identity-exclusive, often gated behind a host option such as
+`darter.nix`/`hades.nix`).
+
+Before adding or moving a file, run this checklist:
+
+1. Would a different person using this flake want a different value here? If
+   yes, it is an instance and belongs under `users/`. If everyone would want
+   the same mechanism, it is a class and belongs under `modules/`.
+2. Does the file hardcode a literal (an email, a color hex, a hostname, an
+   API key path, "this person's" editor choice)? That literal belongs in
+   `users/`, or the class module needs to grow an option that `users/`
+   supplies.
+3. Is the value identity-exclusive (only erik, only erasmussen) or shared by
+   both? That decides `users/<name>/` vs `users/shared/`.
+4. Is a module accreting config specific to one sub-tool (more than one or
+   two files for it)? Split it into its own submodule directory with a
+   `default.nix`, aggregated by the parent, rather than letting the parent
+   module grow multiple unrelated concerns.
+5. Would the value differ between machines/hosts for the same identity? Keep
+   it a host-gated option supplied from `users/`, not a per-host branch
+   hardcoded inside a class module.
+
+Signals that a change is about to cause drift: hardcoding a literal inside
+`modules/`; adding a second file for one sub-tool without splitting it into a
+submodule; putting identity-exclusive config in `users/shared/`; or putting a
+value both identities already share into only one `users/<name>/` file.
+
+Precedent: the sops key path and the rosequartz kubeconfig describe erik's
+user environment, not a clan machine, so they moved out of the nixos repo's
+`machines/hades/configuration.nix` into `modules/sops/` and
+`modules/toolchain/kubernetes/rosequartz/`, with only the clan-generated CA
+and admin cert/key paths staying host-specific data supplied from outside.
+The `toolchain/kubernetes/` module itself grew `k9s/`, `openshift/`, and
+`rosequartz/` submodules as each tool's config outgrew a single file,
+aggregated through `default.nix`.
+
 Four home configurations are defined: `erik@darter`, `erik-hades`, and `erik@server` (all x86_64-linux; `server.nix` is a minimal headless profile — gnupg, shells, sops, ssh, toolchain only, no desktop/editor modules), and `erasmussen@Eriks-MacBook-Pro` (aarch64-darwin).
 
 `erik-hades` is build-only, and its name omits the `@` for that reason.
