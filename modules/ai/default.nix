@@ -45,6 +45,7 @@ in
     ./omnigent.nix
     ./opencode.nix
     ./playwright.nix
+    ./remote-control.nix
     ./rust.nix
     ./slack.nix
     ./tdd-orchestrator.nix
