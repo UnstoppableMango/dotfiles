@@ -81,6 +81,11 @@ Note: `make build` validates the local flake (`$PWD`), while `make home` operate
 To apply a local checkout instead, run `home-manager switch --flake $PWD#<config> -b hm-backup`.
 That is for darter only: hades is activated by the nixos repo, and `erik-hades` is named to keep `home-manager switch` from finding it (see Architecture below).
 
+On hades, erik's home is installed through the Home Manager NixOS module, not as a standalone Home Manager install.
+There is no `home-manager` generation to switch there, so never suggest or run `home-manager switch` (or `make home`) for `erik-hades`; changes reach hades by landing on `main` and running `nixos-rebuild switch` from the [nixos](https://github.com/UnstoppableMango/nixos) repo.
+`make build` and `nix build .#homeConfigurations."erik-hades".activationPackage` are the only things to run against that configuration here.
+Darter is the standalone case and is the one the `home-manager switch` instructions above apply to.
+
 `make build` builds the current host's configuration.
 It derives the name from `${USER}` and `hostname -s` rather than letting home-manager resolve it, since hades' entry is `erik-hades` and would not be found.
 Set `HOME_CONFIG` to build a different one, e.g. `make build HOME_CONFIG=erik@server`.

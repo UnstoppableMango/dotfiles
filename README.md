@@ -21,6 +21,8 @@ This repo manages [Home Manager](https://nix-community.github.io/home-manager/) 
 `erik-hades` is build-only.
 Hades' home is activated by the [nixos](https://github.com/UnstoppableMango/nixos) repo through the Home Manager NixOS module, so this entry exists to verify the config evaluates and builds, not to switch into.
 Its name omits the `@` so a `home-manager switch` running on hades cannot resolve it from `$USER@$(hostname)`.
+Erik's home on hades is installed through the Home Manager NixOS module rather than as a standalone Home Manager install, so it is applied with `nixos-rebuild switch` from the nixos repo, never with `home-manager switch` or `make home`.
+`erik@darter` is the standalone configuration.
 
 ## Layout
 
