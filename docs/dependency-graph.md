@@ -51,7 +51,7 @@ subgraph "modules"
 end
 subgraph "modules/ai"
     n_modules_ai["modules/ai"]
-    n_modules_ai__collapsed_["31 leaf modules"]
+    n_modules_ai__collapsed_["33 leaf modules"]
 end
 subgraph "modules/automation"
     n_modules_automation["modules/automation"]
@@ -98,6 +98,7 @@ subgraph "modules/toolchain"
     n_modules_toolchain["modules/toolchain"]
     n_modules_toolchain__collapsed_["9 leaf modules"]
     n_modules_toolchain_git["modules/toolchain/git"]
+    n_modules_toolchain_git_git_spice_nix["modules/toolchain/git/git-spice.nix"]
     n_modules_toolchain_git_opencommit_nix["modules/toolchain/git/opencommit.nix"]
     n_modules_toolchain_git_repos_nix["modules/toolchain/git/repos.nix"]
 end
@@ -125,6 +126,7 @@ subgraph "users/erik"
 end
 subgraph "users/shared"
     n_users_shared["users/shared"]
+    n_users_shared_ai_nix["users/shared/ai.nix"]
     n_users_shared_git_nix["users/shared/git.nix"]
     n_users_shared_k9s_nix["users/shared/k9s.nix"]
     n_users_shared_kitty_nix["users/shared/kitty.nix"]
@@ -194,6 +196,7 @@ end
   n_modules --> n_modules_toolchain
   n_modules_toolchain --> n_modules_toolchain_git
   n_modules_toolchain_git --> n_modules_toolchain_git_repos_nix
+  n_modules_toolchain_git --> n_modules_toolchain_git_git_spice_nix
   n_modules_toolchain_git --> n_modules_toolchain_git_opencommit_nix
   n_modules_toolchain --> n_modules_toolchain_kubernetes
   n_modules_toolchain_kubernetes --> n_modules_toolchain_kubernetes_k9s
@@ -201,6 +204,7 @@ end
   n_modules_toolchain_kubernetes --> n_modules_toolchain_kubernetes_rosequartz
   n_users_erik --> n_modules
   n_users_erik --> n_users_shared
+  n_users_shared --> n_users_shared_ai_nix
   n_users_shared --> n_users_shared_git_nix
   n_users_shared --> n_users_shared_neovim_nix
   n_users_shared --> n_users_shared_kitty_nix
@@ -228,5 +232,5 @@ end
 
 Parents fanning out to more than 8 leaf modules are collapsed to one summary node above; full lists:
 
-- `modules/ai` (31): `modules/ai/adhd.nix`, `modules/ai/aws.nix`, `modules/ai/azure.nix`, `modules/ai/brave-search.nix`, `modules/ai/caveman.nix`, `modules/ai/chrome-devtools.nix`, `modules/ai/cloudflare.nix`, `modules/ai/containers.nix`, `modules/ai/context7.nix`, `modules/ai/csharp.nix`, `modules/ai/deepwiki.nix`, `modules/ai/figma.nix`, `modules/ai/fsharp.nix`, `modules/ai/gh-stack.nix`, `modules/ai/git-mcp.nix`, `modules/ai/go.nix`, `modules/ai/gossamer.nix`, `modules/ai/haskell.nix`, `modules/ai/kubernetes.nix`, `modules/ai/moer.nix`, `modules/ai/nix.nix`, `modules/ai/notion.nix`, `modules/ai/ocaml.nix`, `modules/ai/omnigent.nix`, `modules/ai/opencode.nix`, `modules/ai/playwright.nix`, `modules/ai/rust.nix`, `modules/ai/slack.nix`, `modules/ai/tdd-orchestrator.nix`, `modules/ai/terraform.nix`, `modules/ai/typescript.nix`
+- `modules/ai` (33): `modules/ai/adhd.nix`, `modules/ai/aws.nix`, `modules/ai/azure.nix`, `modules/ai/brave-search.nix`, `modules/ai/caveman.nix`, `modules/ai/checkout-root.nix`, `modules/ai/chrome-devtools.nix`, `modules/ai/cloudflare.nix`, `modules/ai/containers.nix`, `modules/ai/context7.nix`, `modules/ai/csharp.nix`, `modules/ai/deepwiki.nix`, `modules/ai/figma.nix`, `modules/ai/fsharp.nix`, `modules/ai/gh-stack.nix`, `modules/ai/git-mcp.nix`, `modules/ai/go.nix`, `modules/ai/gossamer.nix`, `modules/ai/haskell.nix`, `modules/ai/kubernetes.nix`, `modules/ai/moer.nix`, `modules/ai/nix.nix`, `modules/ai/notion.nix`, `modules/ai/ocaml.nix`, `modules/ai/omnigent.nix`, `modules/ai/opencode.nix`, `modules/ai/playwright.nix`, `modules/ai/remote-control.nix`, `modules/ai/rust.nix`, `modules/ai/slack.nix`, `modules/ai/tdd-orchestrator.nix`, `modules/ai/terraform.nix`, `modules/ai/typescript.nix`
 - `modules/toolchain` (9): `modules/toolchain/c`, `modules/toolchain/containers`, `modules/toolchain/dotnet`, `modules/toolchain/go`, `modules/toolchain/javascript`, `modules/toolchain/nix`, `modules/toolchain/ocaml`, `modules/toolchain/python`, `modules/toolchain/rust`
