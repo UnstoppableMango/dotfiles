@@ -5,6 +5,16 @@ Personal preferences and instructions for AI coding agents (Claude Code, GitHub 
 - Never use the em dash character (U+2014). Use a comma, period, or parentheses instead.
 - In markdown files, put each sentence on its own line. Let the renderer wrap text; don't hard-wrap manually.
 
+## Asking questions
+
+Ask questions often, and make each one specific.
+
+- Ask as soon as a choice comes up, before writing code that assumes an answer. A question raised after the work is done is too late.
+- Ask about one concrete decision at a time: name the file, the option, the tradeoff. Do not ask broad questions like "how should I approach this?"
+- List the candidate answers you see, recommendation first, so the reply can be a single word.
+- Use the interactive question tool when the harness provides one. Otherwise put the question on its own line at the end of the response.
+- Do not ask permission to proceed with work already requested, and do not ask what reading the code would answer. Check first, then ask about what is still open.
+
 ## English style
 
 - Avoid flourish. State things plainly rather than reaching for a dramatic or literary phrasing.
