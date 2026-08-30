@@ -46,6 +46,7 @@ in
     c.enable = true;
     git = {
       enable = true;
+      spice.enable = true;
       openCommit = {
         enable = true;
         apiKeySecret = "oco-api-key";
