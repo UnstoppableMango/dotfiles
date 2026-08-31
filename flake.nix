@@ -280,6 +280,17 @@
                 { dotfiles.eriksMacbookPro = true; }
               ];
             };
+
+            "erasmussen@Tractor-Zoom-Erik-Rasmussen.local" = homeManagerConfiguration {
+              pkgs = legacyPackages.aarch64-darwin;
+              extraSpecialArgs = { inherit inputs self; };
+              modules = [
+                { nixpkgs.overlays = [ overlay ]; }
+                { nixpkgs.config.allowUnfree = true; }
+                inputs.stylix.homeModules.stylix
+                self.homeModules.erasmussen
+              ];
+            };
           };
       };
 
