@@ -243,15 +243,7 @@
               modules = modules ++ [ { dotfiles.darter = true; } ];
             };
 
-            # Deliberately not named `erik@hades`: hades' home is owned by the
-            # nixos repo, which imports `homeModules.erik` through the
-            # home-manager NixOS module and layers clan-generated material (the
-            # rosequartz kubeconfig and admin key) on top. A standalone
-            # activation rewrites the same sops-nix secrets directory without
-            # those, leaving `~/.kube/config` dangling. `home-manager switch`
-            # resolves `$USER@$(hostname)`, so a name without the `@` cannot be
-            # picked up implicitly while staying buildable as a check.
-            erik-hades = homeManagerConfiguration {
+            "erik@hades" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs self; };
               modules = modules ++ [ { dotfiles.hades = true; } ];
@@ -289,6 +281,7 @@
                 { nixpkgs.config.allowUnfree = true; }
                 inputs.stylix.homeModules.stylix
                 self.homeModules.erasmussen
+                { dotfiles.eriksMacbookPro = true; }
               ];
             };
           };
