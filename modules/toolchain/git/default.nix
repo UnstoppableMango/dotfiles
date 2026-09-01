@@ -6,7 +6,6 @@
 }:
 {
   imports = [
-    ./repos.nix
     ./git-spice.nix
     ./opencommit.nix
   ];
