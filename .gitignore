@@ -7,3 +7,4 @@ result
 !.claude/skills/
 *.bak
 .envrc
+.DS_Store
