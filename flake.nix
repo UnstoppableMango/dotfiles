@@ -187,7 +187,7 @@
 
         homeModules = {
           erik = ./users/erik;
-          erikServer = ./users/erik/server.nix;
+          server = ./users/erik/server.nix;
           erasmussen = ./users/erasmussen;
         };
 
@@ -205,43 +205,35 @@
               dotfiles.ssh.hosts = inputs.hosts.lib.addresses;
             };
 
-            modules = [
-              sshHosts
+            common = [
               { nixpkgs.overlays = [ overlay ]; }
               inputs.stylix.homeModules.stylix
-              self.homeModules.erik
             ];
           in
           {
             "erik@darter" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs self; };
-              modules = modules ++ [ ./users/erik/darter.nix ];
+              modules = common ++ [
+                sshHosts
+                ./users/erik/darter.nix
+              ];
             };
 
             "erik@hades" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs self; };
-              modules = modules ++ [ ./users/erik/hades.nix ];
-            };
-
-            "erik@server" = homeManagerConfiguration {
-              pkgs = legacyPackages.x86_64-linux;
-              extraSpecialArgs = { inherit inputs; };
-              modules = [
+              modules = common ++ [
                 sshHosts
-                self.homeModules.erikServer
+                ./users/erik/hades.nix
               ];
             };
 
             "erasmussen@Tractor-Zoom-Erik-Rasmussen.local" = homeManagerConfiguration {
               pkgs = legacyPackages.aarch64-darwin;
               extraSpecialArgs = { inherit inputs self; };
-              modules = [
-                sshHosts
-                inputs.stylix.homeModules.stylix
-                self.homeModules.erasmussen
-                { dotfiles.tractorZoom = true; }
+              modules = common ++ [
+                ./users/erasmussen/tractor-zoom.nix
               ];
             };
           };

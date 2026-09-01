@@ -1,11 +1,10 @@
 {
   pkgs,
   lib,
-  config,
   ...
 }:
 {
-  config = lib.mkIf config.dotfiles.tractorZoom {
+  config = {
     programs.vscode.profiles.MacBook = {
       # https://github.com/microsoft/vscode-dotnettools/issues/2266#issuecomment-3571804122
       # NOTE: settings.json sets terminal.integrated.gpuAcceleration = "off" as

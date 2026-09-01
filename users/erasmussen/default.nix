@@ -6,7 +6,6 @@ in
   imports = [
     ../../modules
     ../shared
-    ./tractor-zoom.nix
   ];
 
   home = {
@@ -41,6 +40,7 @@ in
     containers.enable = true;
     containers.podmanAutostart = true;
     dotnet.enable = true;
+
     git = {
       enable = true;
       openCommit = {
