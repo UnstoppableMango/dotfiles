@@ -2,7 +2,10 @@ SRC != find -path '*.nix' -printf '%P\n'
 
 # Matches how home-manager resolves a configuration implicitly.
 USER ?= $(shell id -un)
-HOST != hostname -s
+DARWINREBUILD ?= darwin-rebuild
+# `$(shell ...)` rather than `!=`: macOS ships GNU Make 3.81, which predates
+# the `!=` shell assignment and would silently leave this empty.
+HOST ?= $(shell hostname -s)
 HOME_CONFIG ?= ${USER}@${HOST}
 
 build:
@@ -24,6 +27,23 @@ system:
 	sudo nix flake update --flake /etc/nixos
 	sudo nixos-rebuild switch --flake /etc/nixos
 
+# `#` opens a comment in a variable assignment but not in a recipe, so the
+# flake attribute path is spelled out in each recipe rather than hoisted.
+darwin-build:
+	nix build ${CURDIR}#darwinConfigurations.${HOST}.system --no-link
+
+# The only step here that needs a sudo window. Build first so the window is
+# spent on activation instead of on evaluating and downloading.
+darwin: darwin-build
+	sudo ${DARWINREBUILD} switch --flake ${CURDIR}#${HOST}
+
+# First activation, before ${DARWINREBUILD} is on PATH. Everything up to the
+# last line runs unprivileged, so the sudo window only covers activation.
+darwin-bootstrap: darwin-build
+	sudo "$$(nix build --no-link --print-out-paths \
+		${CURDIR}#darwinConfigurations.${HOST}.config.system.build.darwin-rebuild \
+	)/bin/darwin-rebuild" switch --flake ${CURDIR}#${HOST}
+
 format fmt:
 	nix fmt
 
@@ -36,4 +56,4 @@ flake.nix:
 p10k: # This doesn't actually work in make, but its copy-pastable
 	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/shells/zsh/.p10k.zsh p10k configure
 
-.PHONY: flake.lock
+.PHONY: flake.lock darwin darwin-build darwin-bootstrap

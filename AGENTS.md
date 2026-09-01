@@ -73,6 +73,9 @@ make fmt            # format code (nix fmt)
 make watch          # run checks on file changes (uses watchexec)
 make home           # update flake and switch home-manager at ~/.config/home-manager
 make system         # update flake and rebuild NixOS at /etc/nixos (requires sudo)
+make darwin-build     # build the current host's darwin system closure (no sudo)
+make darwin           # build, then darwin-rebuild switch the local flake (requires sudo)
+make darwin-bootstrap # first activation, before darwin-rebuild is on PATH (requires sudo)
 make update         # update flake inputs only
 ```
 
@@ -87,6 +90,11 @@ There is no `home-manager` generation to switch there, so never suggest or run `
 A standalone `home-manager switch` on hades resolves `erik@hades` and would rewrite the same sops-nix secrets directory without the clan-generated material the nixos repo layers on, leaving `~/.kube/config` dangling.
 Nothing in the naming prevents that, so it is a rule to follow rather than a guard to rely on.
 Darter is the standalone case and is the one the `home-manager switch` instructions above apply to.
+
+`make darwin` builds before it switches so the sudo window is spent on activation rather than on evaluating and downloading.
+It targets `darwinConfigurations.$(hostname -s)`, which matches the `scutil --get LocalHostName` that `darwin-rebuild` defaults to, and, unlike `make home`, it reads the local checkout, so darwin changes apply without a push.
+`make darwin-bootstrap` is the same thing for the first run, resolving `darwin-rebuild` out of the built closure instead of PATH.
+`darwin-rebuild switch` refuses to run as a non-root user and does not elevate itself, so the `sudo` prefix is required rather than incidental.
 
 `make build` builds the current host's configuration, resolved as `$USER@$(hostname -s)`.
 Set `HOME_CONFIG` to build a different one, e.g. `make build HOME_CONFIG=erik@server`.
@@ -157,9 +165,22 @@ a feature to function, with no personal values:
 
 Four home configurations are defined: `erik@darter`, `erik@hades`, and `erik@server` (all x86_64-linux; `server.nix` is a minimal headless profile — gnupg, shells, sops, ssh, toolchain only, no desktop/editor modules), and `erasmussen@Tractor-Zoom-Erik-Rasmussen.local` (aarch64-darwin).
 
-`darwinModules.erasmussen` is exported but has no consumer.
-The Mac is a work machine with limited sudo, so `darwin-rebuild` cannot write to `/etc` and the home config is a standalone Home Manager install.
-The module stays for a Mac that does grant admin rights; nothing in the flake evaluates it today.
+The Mac runs a split install: `darwinConfigurations."Tractor-Zoom-Erik-Rasmussen"` (from `darwinModules.erasmussen`, i.e. `darwin/erasmussen/`) owns the system layer, and Home Manager stays a standalone install activated separately.
+Home Manager is deliberately not wired in as a nix-darwin module, because that would make every home change cost a `darwin-rebuild switch`.
+The account is not in the `admin` group and sudo is granted in five minute windows, so the split keeps `sudo` to system-layer changes only.
+
+`darwin/erasmussen/` is the instance bucket for that layer, mirroring `users/erasmussen/`; the class/instance rule above applies to it unchanged.
+`modules/darwin/` is _not_ its class counterpart: those are Home Manager modules that happen to be darwin-only (`launch-services.nix`), imported through `modules/default.nix` into the home config.
+A generic nix-darwin module would belong in a new `darwin/modules/`, not in `modules/`, since the two module systems cannot share an import tree.
+
+Two things follow from `nix.enable = true` there:
+nix-darwin owns `/etc/nix/nix.conf` and the daemon, so substituters and `trusted-users` are declarative and no longer need a sudo window to change.
+The first `darwin-rebuild switch` renames the installer's `/etc/nix/nix.conf` to `nix.conf.before-nix-darwin` on its own (its hash is in nix-darwin's `knownSha256Hashes`), so no manual move is needed.
+
+Homebrew is a prerequisite, not something nix-darwin installs: `homebrew.enable = true` only runs `brew bundle` against an existing install.
+`homebrew.caskArgs.appdir = "~/Applications"` because `brew bundle` runs as the unprivileged account during activation and `/Applications` is writable only by the `admin` group.
+Ghostty comes from a cask because nixpkgs' `ghostty` is Linux-only; `modules/terminals/ghostty` sets `programs.ghostty.package` to `null` on darwin so Home Manager writes `~/.config/ghostty/config` for an app it does not install.
+Shell integration keys off `$GHOSTTY_RESOURCES_DIR`, which the app exports at runtime, so it survives the missing package.
 
 `docs/onboarding.md` is the checklist for bringing up a new machine: Nix install, flake entry, keys (1Password on macOS, GPG on Linux, sops age key either way), first activation, and where Home Manager puts macOS `.app` bundles.
 Update it whenever one of those steps changes, since it is the only place the ordering is written down.

@@ -12,6 +12,10 @@ in
     inherit username;
     homeDirectory = "/Users/${username}";
 
+    # nix-darwin's homebrew module drives `brew bundle` by absolute path and
+    # never touches PATH, so `cci` and friends need this to be reachable.
+    sessionPath = [ "/opt/homebrew/bin" ];
+
     packages = with pkgs; [
       buf
       clan-cli
@@ -33,7 +37,10 @@ in
     neovim.enable = true;
     vscode.enable = true;
     zsh.enable = true;
-    ghostty.enable = false; # They prefer to distribute via brew right now
+    # The app itself comes from the Homebrew cask in darwin/erasmussen; the
+    # module sets programs.ghostty.package to null on darwin, so Home Manager
+    # only writes ~/.config/ghostty/config for it.
+    ghostty.enable = true;
     kitty.enable = true;
     zed.enable = true;
     c.enable = true;

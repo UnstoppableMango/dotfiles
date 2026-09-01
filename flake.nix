@@ -194,6 +194,17 @@
         nixvimModules.erik = ./users/shared/nixvim-config.nix;
         darwinModules.erasmussen = ./darwin/erasmussen;
 
+        # Split install: nix-darwin owns the system layer (Homebrew, the nix
+        # daemon) and Home Manager stays standalone, so only `darwin-rebuild
+        # switch` needs a sudo window.
+        darwinConfigurations."Tractor-Zoom-Erik-Rasmussen" = inputs.nix-darwin.lib.darwinSystem {
+          specialArgs = { inherit inputs self; };
+          modules = [
+            { nixpkgs.overlays = [ overlay ]; }
+            self.darwinModules.erasmussen
+          ];
+        };
+
         homeConfigurations =
           let
             inherit (inputs.home-manager.lib) homeManagerConfiguration;
