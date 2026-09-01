@@ -42,6 +42,7 @@
         hashicorp.terraform
         haskell.haskell
         humao.rest-client
+        igochkov.vscode-ebnf
         ionide.ionide-fake
         ionide.ionide-fsharp
         # NOTE: pkgs.vscode-marketplace resolves resharper-code to 0.0.2, an
