@@ -210,10 +210,13 @@
             inherit (inputs.home-manager.lib) homeManagerConfiguration;
             inherit (inputs.nixpkgs) legacyPackages;
 
-            common = [
+            common = with inputs; [
               { nixpkgs.overlays = [ overlay ]; }
-              inputs.stylix.homeModules.stylix
-              { dotfiles.ssh.hosts = inputs.hosts.lib.addresses; }
+              stylix.homeModules.stylix
+              nixvim.homeModules.nixvim
+              sops-nix.homeManagerModules.sops
+              nix2git.homeModules.nix2git
+              { dotfiles.ssh.hosts = hosts.lib.addresses; }
             ];
           in
           {
