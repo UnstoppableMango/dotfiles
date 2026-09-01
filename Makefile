@@ -2,7 +2,10 @@ SRC != find -path '*.nix' -printf '%P\n'
 
 # Matches how home-manager resolves a configuration implicitly.
 USER ?= $(shell id -un)
-DARWINREBUILD ?= darwin-rebuild
+# Absolute path: darwin-rebuild only exists inside an activated nix-darwin
+# system, and it is not on PATH under `sudo` on a fresh login shell.
+# Use `make darwin-bootstrap` for the first activation, when it exists nowhere.
+DARWINREBUILD ?= /run/current-system/sw/bin/darwin-rebuild
 # `$(shell ...)` rather than `!=`: macOS ships GNU Make 3.81, which predates
 # the `!=` shell assignment and would silently leave this empty.
 HOST ?= $(shell hostname -s)

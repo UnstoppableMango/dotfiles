@@ -48,13 +48,18 @@
     # the bundles Home Manager copies there.
     caskArgs.appdir = "~/Applications";
 
-    taps = [
-      "SFDO-Tooling/homebrew-sfdo" # cumulusci is not in homebrew-core
-    ];
+    # Nothing here yet. If a non-official tap is ever added, it needs
+    # `{ name = "..."; trusted = true; }` rather than a bare string: Homebrew
+    # 6.0 turned on HOMEBREW_REQUIRE_TAP_TRUST, which refuses to evaluate an
+    # untrusted tap's Ruby and aborts activation rather than prompting.
+    # `brews` and `casks` already default to `trusted = true`, but an
+    # unqualified name carries no tap, so trust has to come from the tap entry.
+    taps = [ ];
 
-    brews = [
-      "cumulusci" # Salesforce CumulusCI, provides `cci`
-    ];
+    # CumulusCI is deliberately absent: sfdo-tooling/sfdo's `cumulusci` formula
+    # was disabled upstream on 2022-10-27, and it now ships through PyPI only.
+    # `programs.uv.tool.packages` in users/erasmussen installs it instead.
+    brews = [ ];
 
     casks = [
       # nixpkgs' ghostty is Linux-only, so the app comes from Homebrew while

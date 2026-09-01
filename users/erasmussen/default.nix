@@ -79,7 +79,7 @@ in
     nix.enable = true;
     openshift.enable = false;
     ocaml.enable = true;
-    python.enable = true;
+    python.enable = true; # also the uv that programs.uv.tool below rides on
     sops.enable = true;
     fonts.enable = true;
     ssh.enable = true;
@@ -97,6 +97,18 @@ in
   programs = {
     # Let Home Manager install and manage itself
     home-manager.enable = true;
+
+    # Salesforce CumulusCI, which provides `cci`. It is not in nixpkgs and its
+    # Homebrew formula was disabled upstream in 2022, leaving PyPI as the only
+    # route, so Home Manager drives `uv tool install` on activation instead of
+    # the tool landing in home.packages. Executables go to ~/.local/bin, which
+    # modules/toolchain/python already puts on PATH.
+    #
+    # This list merges with modules/ai/omnigent.nix, which declares omnigent
+    # through the same option, so the declared set already covers everything
+    # installed. `tool.prune` stays off anyway, so an ad-hoc `uv tool install`
+    # survives the next activation instead of being silently reverted.
+    uv.tool.packages = [ "cumulusci" ];
 
     grep.enable = true;
     htop.enable = true;
