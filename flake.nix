@@ -205,23 +205,10 @@
         homeModules = {
           erik = ./users/erik;
           server = ./users/erik/server.nix;
-          erasmussen = ./users/erasmussen;
           shared = ./users/shared;
         };
 
         nixvimModules.erik = ./users/shared/nixvim-config.nix;
-        darwinModules.erasmussen = ./darwin/erasmussen;
-
-        # Split install: nix-darwin owns the system layer (Homebrew, the nix
-        # daemon) and Home Manager stays standalone, so only `darwin-rebuild
-        # switch` needs a sudo window.
-        darwinConfigurations."Tractor-Zoom-Erik-Rasmussen" = inputs.nix-darwin.lib.darwinSystem {
-          specialArgs = { inherit inputs self; };
-          modules = [
-            { nixpkgs.overlays = [ overlay ]; }
-            self.darwinModules.erasmussen
-          ];
-        };
 
         homeConfigurations =
           let
@@ -255,14 +242,6 @@
               modules = common ++ [
                 sshHosts
                 ./users/erik/hades.nix
-              ];
-            };
-
-            "erasmussen@Tractor-Zoom-Erik-Rasmussen.local" = homeManagerConfiguration {
-              pkgs = legacyPackages.aarch64-darwin;
-              extraSpecialArgs = { inherit inputs self; };
-              modules = common ++ [
-                ./users/erasmussen/tractor-zoom.nix
               ];
             };
           };
