@@ -6,7 +6,7 @@ in
   imports = [
     ../../modules
     ../shared
-    ./eriks-macbook-pro.nix
+    ./tractor-zoom.nix
   ];
 
   home = {
@@ -53,7 +53,19 @@ in
         };
       };
     };
-    gnupg.enable = true;
+
+    # 1Password owns SSH keys and commit signing on this machine, so gpg-agent
+    # would only contend for SSH_AUTH_SOCK. macOS also has no pinentry wired up
+    # in modules/gnupg, which leaves gpg with no way to prompt for a passphrase.
+    gnupg.enable = false;
+    onePassword = {
+      enable = true;
+      # TODO: paste the public half of the 1Password SSH key here. Until it is
+      # set, git has no signing key and `commit.gpgsign = true` (users/shared)
+      # will reject commits. See docs/onboarding.md.
+      signingKey = null;
+    };
+
     go.enable = true;
     javascript.enable = true;
     kubernetes.enable = true;
@@ -111,14 +123,6 @@ in
     #   enableZshIntegration = true;
     #   enableKittyIntegration = config.dotfiles.kitty.enable;
     # };
-  };
-
-  programs.git = {
-    settings = {
-      user = {
-        signingkey = "E4BD93BB75AEC2AC";
-      };
-    };
   };
 
   # This value determines the Home Manager release that your configuration is

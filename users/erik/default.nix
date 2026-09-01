@@ -6,8 +6,8 @@ in
   imports = [
     ../../modules
     ../shared
-    ./darter.nix
-    ./hades.nix
+    ./direnv.nix
+    ./git.nix
   ];
 
   home = {
@@ -40,25 +40,11 @@ in
         apiKeySecret = "openrouter-api-key";
       };
     };
-    emacs.enable = true;
+
     neovim.enable = true;
     zsh.enable = true;
     c.enable = true;
-    git = {
-      enable = true;
-      spice.enable = true;
-      openCommit = {
-        enable = true;
-        apiKeySecret = "oco-api-key";
-        settings = {
-          OCO_AI_PROVIDER = "anthropic";
-          OCO_MODEL = "claude-sonnet-4-6";
-          OCO_OMIT_SCOPE = false;
-          OCO_GITPUSH = false;
-          OCO_HOOK_AUTO_UNCOMMENT = true;
-        };
-      };
-    };
+
     go.enable = true;
     gnupg.enable = true;
     javascript.enable = true;
@@ -113,26 +99,6 @@ in
     # to build in nixpkgs (SSL error message regex mismatch in test_verify).
     # Re-enable once upstream is fixed.
     yt-dlp.enable = false;
-
-    direnv = {
-      enable = true;
-      # enableBashIntegration = true;
-      # enableZshIntegration = true;
-      nix-direnv.enable = true;
-
-      # Tempted... we'll see if it keeps annoying me
-      silent = false;
-
-      # Pulumi repos use mise
-      mise.enable = true;
-    };
-
-    # direnv-instant = {
-    #   enable = true;
-    #   enableBashIntegration = true;
-    #   enableZshIntegration = true;
-    #   enableKittyIntegration = config.dotfiles.kitty.enable;
-    # };
   };
 
   # This value determines the Home Manager release that your configuration is

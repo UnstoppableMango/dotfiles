@@ -66,8 +66,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Agent/forwarding is provided by gnupg's gpg-agent
-    # (services.gpg-agent.enableSshSupport = true; see modules/gnupg).
+    # Agent/forwarding comes from elsewhere: gpg-agent
+    # (services.gpg-agent.enableSshSupport = true; see modules/gnupg) or
+    # 1Password's agent socket (see modules/onepassword), one per machine.
     # This module only manages client behavior - no secret material,
     # no sops-nix/agenix.
     programs.ssh = {

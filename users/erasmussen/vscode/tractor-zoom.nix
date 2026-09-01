@@ -5,7 +5,7 @@
   ...
 }:
 {
-  config = lib.mkIf config.dotfiles.eriksMacbookPro {
+  config = lib.mkIf config.dotfiles.tractorZoom {
     programs.vscode.profiles.MacBook = {
       # https://github.com/microsoft/vscode-dotnettools/issues/2266#issuecomment-3571804122
       # NOTE: settings.json sets terminal.integrated.gpuAcceleration = "off" as
@@ -18,7 +18,7 @@
       # https://github.com/anthropics/claude-code/issues/59163
       # https://github.com/anthropics/claude-code/issues/59539
       # https://github.com/anthropics/claude-code/issues/8618
-      userSettings = lib.importJSON ./eriks-macbook-pro.settings.json;
+      userSettings = lib.importJSON ./tractor-zoom.settings.json;
       enableMcpIntegration = true;
 
       extensions = with pkgs.vscode-marketplace; [

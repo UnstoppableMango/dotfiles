@@ -6,6 +6,7 @@
     ./editors
     ./fonts
     ./gnupg
+    ./onepassword
     ./shells
     ./sops
     ./ssh

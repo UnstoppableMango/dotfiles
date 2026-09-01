@@ -79,15 +79,16 @@ make update         # update flake inputs only
 Note: `make build` validates the local flake (`$PWD`), while `make home` operates on `~/.config/home-manager`, a standalone flake whose only input is `github:UnstoppableMango/dotfiles`.
 `make home` therefore applies whatever is on `main`, so local edits reach it only after a commit and a push.
 To apply a local checkout instead, run `home-manager switch --flake $PWD#<config> -b hm-backup`.
-That is for darter only: hades is activated by the nixos repo, and `erik-hades` is named to keep `home-manager switch` from finding it (see Architecture below).
+That is for darter only: hades is activated by the nixos repo (see Architecture below).
 
 On hades, erik's home is installed through the Home Manager NixOS module, not as a standalone Home Manager install.
-There is no `home-manager` generation to switch there, so never suggest or run `home-manager switch` (or `make home`) for `erik-hades`; changes reach hades by landing on `main` and running `nixos-rebuild switch` from the [nixos](https://github.com/UnstoppableMango/nixos) repo.
-`make build` and `nix build .#homeConfigurations."erik-hades".activationPackage` are the only things to run against that configuration here.
+There is no `home-manager` generation to switch there, so never suggest or run `home-manager switch` (or `make home`) for `erik@hades`; changes reach hades by landing on `main` and running `nixos-rebuild switch` from the [nixos](https://github.com/UnstoppableMango/nixos) repo.
+`make build` and `nix build .#homeConfigurations."erik@hades".activationPackage` are the only things to run against that configuration here.
+A standalone `home-manager switch` on hades resolves `erik@hades` and would rewrite the same sops-nix secrets directory without the clan-generated material the nixos repo layers on, leaving `~/.kube/config` dangling.
+Nothing in the naming prevents that, so it is a rule to follow rather than a guard to rely on.
 Darter is the standalone case and is the one the `home-manager switch` instructions above apply to.
 
-`make build` builds the current host's configuration.
-It derives the name from `${USER}` and `hostname -s` rather than letting home-manager resolve it, since hades' entry is `erik-hades` and would not be found.
+`make build` builds the current host's configuration, resolved as `$USER@$(hostname -s)`.
 Set `HOME_CONFIG` to build a different one, e.g. `make build HOME_CONFIG=erik@server`.
 
 Environment variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC`, `HOME_CONFIG` (all have defaults).
@@ -125,7 +126,11 @@ a feature to function, with no personal values:
 - `browsers/` — Brave
 - `editors/` — VS Code, Neovim (via nixvim), Zed, Helix, Emacs, Obsidian
 - `fonts/` — Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
-- `gnupg/` — gpg + gpg-agent (shared by both users; pinentry only on Linux)
+- `gnupg/` — gpg + gpg-agent (pinentry only on Linux, so macOS has no way to prompt for a passphrase and does not enable this module)
+- `onepassword/` — 1Password CLI, the SSH agent socket, and SSH-format git commit signing through `op-ssh-sign`.
+  The desktop app owns both the socket and the signing helper and is not installable from nixpkgs on macOS, so the module configures an app installed by hand rather than installing anything but the CLI.
+  `dotfiles.onePassword.signingKey` takes the public half of the key as identity data from `users/`; the module holds no key material.
+  Its SSH agent is exclusive with gpg-agent's `enableSshSupport` (both claim `SSH_AUTH_SOCK`), and an assertion fails the build on the overlap instead of letting it show up as a key that never offers itself.
 - `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)
 - `sops/` - shared sops-nix age key location (`~/.config/sops/age/keys.txt`), one module for both identities.
   Each identity's secrets live under its own `users/<name>/secrets/`, scoped in `.sops.yaml` to that identity's own key(s); hades also decrypts clan-generated material from the nixos repo.
@@ -145,12 +150,19 @@ a feature to function, with no personal values:
 - `users/erik/` — Linux (x86_64) home config
 - `users/erasmussen/` — macOS (aarch64-darwin) home config
 
-Four home configurations are defined: `erik@darter`, `erik-hades`, and `erik@server` (all x86_64-linux; `server.nix` is a minimal headless profile — gnupg, shells, sops, ssh, toolchain only, no desktop/editor modules), and `erasmussen@Eriks-MacBook-Pro` (aarch64-darwin).
+Four home configurations are defined: `erik@darter`, `erik@hades`, and `erik@server` (all x86_64-linux; `server.nix` is a minimal headless profile — gnupg, shells, sops, ssh, toolchain only, no desktop/editor modules), and `erasmussen@Tractor-Zoom-Erik-Rasmussen.local` (aarch64-darwin).
 
-`erik-hades` is build-only, and its name omits the `@` for that reason.
+`darwinModules.erasmussen` is exported but has no consumer.
+The Mac is a work machine with limited sudo, so `darwin-rebuild` cannot write to `/etc` and the home config is a standalone Home Manager install.
+The module stays for a Mac that does grant admin rights; nothing in the flake evaluates it today.
+
+`docs/onboarding.md` is the checklist for bringing up a new machine: Nix install, flake entry, keys (1Password on macOS, GPG on Linux, sops age key either way), first activation, and where Home Manager puts macOS `.app` bundles.
+Update it whenever one of those steps changes, since it is the only place the ordering is written down.
+
+`erik@hades` is build-only.
 Hades' home is activated by the nixos repo through the Home Manager NixOS module, which layers clan-generated material (the rosequartz kubeconfig and admin key) on top of `homeModules.erik`.
-A standalone activation rewrites the same sops-nix secrets directory without that material, leaving `~/.kube/config` dangling, so hades must not be reachable from `home-manager switch`, which resolves `$USER@$(hostname)`.
-Build it with `nix run home-manager -- build --flake .#erik-hades`.
+A standalone activation rewrites the same sops-nix secrets directory without that material, leaving `~/.kube/config` dangling, so never `switch` this configuration.
+Build it with `nix run home-manager -- build --flake .#'erik@hades'`.
 
 Overlays from multiple inputs (devctl, mynix, nil, nix-direnv, nix-vscode-extensions, ux) are composed in `flake.nix` and applied to nixpkgs. `zed.overlays.default` is currently commented out due to a `cargo-about` version conflict.
 

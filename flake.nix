@@ -155,12 +155,6 @@
     let
       clan = import ./overlays/clan.nix { inherit (inputs) clan-core; };
 
-      # modules/ssh takes its host table as data instead of closing over the
-      # flake's inputs, so the wiring lives here, where inputs are in scope.
-      sshHosts = {
-        dotfiles.ssh.hosts = inputs.hosts.lib.addresses;
-      };
-
       overlay = inputs.nixpkgs.lib.composeManyExtensions (
         with inputs;
         [
@@ -197,40 +191,21 @@
           erasmussen = ./users/erasmussen;
         };
 
-        # A raw nixvim submodule (not a home-manager module), shared by both
-        # identities' personal neovim config (users/shared/neovim.nix) and
-        # perSystem's standalone `packages.nixvim` build below.
         nixvimModules.erik = ./users/shared/nixvim-config.nix;
-
         darwinModules.erasmussen = ./darwin/erasmussen;
-
-        darwinConfigurations."Eriks-MacBook-Pro" = inputs.nix-darwin.lib.darwinSystem {
-          modules = [
-            { nixpkgs.overlays = [ overlay ]; }
-            self.darwinModules.erasmussen
-            inputs.home-manager.darwinModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = { inherit inputs self; };
-              home-manager.sharedModules = [
-                sshHosts
-                inputs.stylix.homeModules.stylix
-                { dotfiles.eriksMacbookPro = true; }
-              ];
-              home-manager.users.erasmussen = self.homeModules.erasmussen;
-            }
-          ];
-        };
 
         homeConfigurations =
           let
             inherit (inputs.home-manager.lib) homeManagerConfiguration;
             inherit (inputs.nixpkgs) legacyPackages;
 
+            # modules/ssh takes its host table as data instead of closing over the
+            # flake's inputs, so the wiring lives here, where inputs are in scope.
+            sshHosts = {
+              dotfiles.ssh.hosts = inputs.hosts.lib.addresses;
+            };
+
             modules = [
-              { nixpkgs.overlays = [ overlay ]; }
-              { nixpkgs.config.allowUnfree = true; }
               sshHosts
               inputs.stylix.homeModules.stylix
               self.homeModules.erik
@@ -253,23 +228,8 @@
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs; };
               modules = [
-                { nixpkgs.overlays = [ overlay ]; }
-                { nixpkgs.config.allowUnfree = true; }
                 sshHosts
                 self.homeModules.erikServer
-              ];
-            };
-
-            "erasmussen@Eriks-MacBook-Pro" = homeManagerConfiguration {
-              pkgs = legacyPackages.aarch64-darwin;
-              extraSpecialArgs = { inherit inputs self; };
-              modules = [
-                { nixpkgs.overlays = [ overlay ]; }
-                { nixpkgs.config.allowUnfree = true; }
-                sshHosts
-                inputs.stylix.homeModules.stylix
-                self.homeModules.erasmussen
-                { dotfiles.eriksMacbookPro = true; }
               ];
             };
 
@@ -277,11 +237,10 @@
               pkgs = legacyPackages.aarch64-darwin;
               extraSpecialArgs = { inherit inputs self; };
               modules = [
-                { nixpkgs.overlays = [ overlay ]; }
-                { nixpkgs.config.allowUnfree = true; }
+                sshHosts
                 inputs.stylix.homeModules.stylix
                 self.homeModules.erasmussen
-                { dotfiles.eriksMacbookPro = true; }
+                { dotfiles.tractorZoom = true; }
               ];
             };
           };

@@ -1,12 +1,9 @@
 SRC != find -path '*.nix' -printf '%P\n'
 
-# home-manager resolves a configuration implicitly as `$USER@$(hostname)`.
-# hades' entry is named `erik-hades` without the `@` so that lookup misses,
-# keeping a stray `switch` from clobbering the home the nixos repo owns.
-# `build` wants the current host either way, so reproduce the naming here.
+# Matches how home-manager resolves a configuration implicitly.
 USER ?= $(shell id -un)
 HOST != hostname -s
-HOME_CONFIG ?= $(if $(filter hades,${HOST}),${USER}-${HOST},${USER}@${HOST})
+HOME_CONFIG ?= ${USER}@${HOST}
 
 build:
 	home-manager build --flake ${CURDIR}#${HOME_CONFIG}
@@ -36,12 +33,7 @@ flake.lock: ${SRC}
 flake.nix:
 	nix flake init
 
-graph: docs/dependency-graph.md
-
-docs/dependency-graph.md: ${SRC} flake.nix scripts/dep-graph.nix
-	nix eval --impure --raw --file scripts/dep-graph.nix > $@
-
 p10k: # This doesn't actually work in make, but its copy-pastable
 	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/shells/zsh/.p10k.zsh p10k configure
 
-.PHONY: flake.lock graph
+.PHONY: flake.lock

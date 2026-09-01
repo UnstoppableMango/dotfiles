@@ -12,15 +12,17 @@ This repo manages [Home Manager](https://nix-community.github.io/home-manager/) 
 
 ## Home configurations
 
-| Configuration                  | System         |
-| ------------------------------ | -------------- |
-| `erik@darter`                  | x86_64-linux   |
-| `erik-hades`                   | x86_64-linux   |
-| `erasmussen@Eriks-MacBook-Pro` | aarch64-darwin |
+| Configuration                                  | System         |
+| ---------------------------------------------- | -------------- |
+| `erik@darter`                                  | x86_64-linux   |
+| `erik@hades`                                   | x86_64-linux   |
+| `erik@server`                                  | x86_64-linux   |
+| `erasmussen@Tractor-Zoom-Erik-Rasmussen.local` | aarch64-darwin |
 
-`erik-hades` is build-only.
+Setting up a new machine is written down in [docs/onboarding.md](docs/onboarding.md).
+
+`erik@hades` is build-only.
 Hades' home is activated by the [nixos](https://github.com/UnstoppableMango/nixos) repo through the Home Manager NixOS module, so this entry exists to verify the config evaluates and builds, not to switch into.
-Its name omits the `@` so a `home-manager switch` running on hades cannot resolve it from `$USER@$(hostname)`.
 Erik's home on hades is installed through the Home Manager NixOS module rather than as a standalone Home Manager install, so it is applied with `nixos-rebuild switch` from the nixos repo, never with `home-manager switch` or `make home`.
 `erik@darter` is the standalone configuration.
 
@@ -33,6 +35,7 @@ Category modules live under `modules/`, imported as `flake.modules.flake`:
 - `desktops/gnome/` - GNOME
 - `editors/` - VS Code, Neovim (nixvim), Zed, Helix, Emacs
 - `gnupg/` - gpg + gpg-agent, pinentry on Linux
+- `onepassword/` - 1Password CLI, SSH agent socket, and SSH commit signing
 - `shells/zsh/` - Zsh (Prezto, or oh-my-zsh via `dotfiles.zsh.ohMyZsh.enable`), Powerlevel10k
 - `sops/` - sops-nix age key location for erik
 - `terminals/` - Kitty, Ghostty
