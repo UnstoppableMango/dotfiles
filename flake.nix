@@ -197,6 +197,7 @@
         overlays.default = overlay;
 
         homeModules = {
+          dotfiles = ./modules;
           erik = ./users/erik;
           server = ./users/erik/server.nix;
           shared = ./users/shared;
