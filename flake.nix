@@ -32,7 +32,6 @@
       inputs.flake-parts.follows = "flake-parts";
       inputs.sops-nix.follows = "sops-nix";
       inputs.treefmt-nix.follows = "treefmt-nix";
-      inputs.nix-darwin.follows = "nix-darwin";
     };
 
     sops-nix = {
@@ -159,11 +158,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
       inputs.systems.follows = "systems";
-    };
-
-    nix-darwin = {
-      url = "github:nix-darwin/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
