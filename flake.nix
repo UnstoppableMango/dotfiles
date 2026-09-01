@@ -209,34 +209,23 @@
             inherit (inputs.home-manager.lib) homeManagerConfiguration;
             inherit (inputs.nixpkgs) legacyPackages;
 
-            # modules/ssh takes its host table as data instead of closing over the
-            # flake's inputs, so the wiring lives here, where inputs are in scope.
-            sshHosts = {
-              dotfiles.ssh.hosts = inputs.hosts.lib.addresses;
-            };
-
             common = [
               { nixpkgs.overlays = [ overlay ]; }
               inputs.stylix.homeModules.stylix
+              { dotfiles.ssh.hosts = inputs.hosts.lib.addresses; }
             ];
           in
           {
             "erik@darter" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs self; };
-              modules = common ++ [
-                sshHosts
-                ./users/erik/darter.nix
-              ];
+              modules = common ++ [ ./users/erik/darter.nix ];
             };
 
             "erik@hades" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs self; };
-              modules = common ++ [
-                sshHosts
-                ./users/erik/hades.nix
-              ];
+              modules = common ++ [ ./users/erik/hades.nix ];
             };
           };
       };
