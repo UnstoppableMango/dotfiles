@@ -124,6 +124,11 @@ a feature to function, with no personal values:
   Enabled for erik only; erasmussen has no age key and cannot decrypt the secret.
 - `automation/` — flake-update automation
 - `browsers/` — Brave
+- `darwin/`: macOS-only mechanics.
+  `launch-services.nix` registers the app bundles under `~/Applications/Home Manager Apps` with Launch Services (`lsregister`, which backs `open -a`, the Dock, and Launchpad) and the Spotlight metadata index (`mdimport`, which backs Cmd+Space) on every activation.
+  Home Manager copies the bundles there but tells neither, and rsync writes them with normalized timestamps, so the fsevents that would trigger an automatic reindex do not reliably fire and an app can sit fully installed yet unreachable from every launcher.
+  Both commands only refresh an index, so the activation entry warns instead of failing.
+  Defaults to on for darwin and evaluates to nothing elsewhere.
 - `editors/` — VS Code, Neovim (via nixvim), Zed, Helix, Emacs, Obsidian
 - `fonts/` — Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
 - `gnupg/` — gpg + gpg-agent (pinentry only on Linux, so macOS has no way to prompt for a passphrase and does not enable this module)

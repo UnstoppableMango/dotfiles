@@ -3,6 +3,7 @@
     ./ai
     ./automation
     ./browsers
+    ./darwin
     ./editors
     ./fonts
     ./gnupg
