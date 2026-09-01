@@ -207,6 +207,7 @@
 
             modules = [
               sshHosts
+              { nixpkgs.overlays = [ overlay ]; }
               inputs.stylix.homeModules.stylix
               self.homeModules.erik
             ];
@@ -215,13 +216,13 @@
             "erik@darter" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs self; };
-              modules = modules ++ [ { dotfiles.darter = true; } ];
+              modules = modules ++ [ ./users/erik/darter.nix ];
             };
 
             "erik@hades" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs self; };
-              modules = modules ++ [ { dotfiles.hades = true; } ];
+              modules = modules ++ [ ./users/erik/hades.nix ];
             };
 
             "erik@server" = homeManagerConfiguration {
