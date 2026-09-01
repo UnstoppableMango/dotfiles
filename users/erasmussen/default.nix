@@ -86,6 +86,15 @@ in
     stylix.enable = true;
   };
 
+  # gitlab.com/unmango/nix/2git, imported by modules/toolchain/git/repos.nix.
+  # `git init` only: a path that already holds a repository is left alone, and
+  # nothing here is ever cloned or fetched. The checkout root's layout is
+  # `~/src/<host>/<owner>/<repo>`, so entries follow that.
+  nix2git = {
+    enable = true;
+    repositories = { };
+  };
+
   # Edit with `sops users/erasmussen/secrets/<file>.yaml`.
   sops.secrets = {
     "oco-api-key" = {
@@ -98,16 +107,6 @@ in
     # Let Home Manager install and manage itself
     home-manager.enable = true;
 
-    # Salesforce CumulusCI, which provides `cci`. It is not in nixpkgs and its
-    # Homebrew formula was disabled upstream in 2022, leaving PyPI as the only
-    # route, so Home Manager drives `uv tool install` on activation instead of
-    # the tool landing in home.packages. Executables go to ~/.local/bin, which
-    # modules/toolchain/python already puts on PATH.
-    #
-    # This list merges with modules/ai/omnigent.nix, which declares omnigent
-    # through the same option, so the declared set already covers everything
-    # installed. `tool.prune` stays off anyway, so an ad-hoc `uv tool install`
-    # survives the next activation instead of being silently reverted.
     uv.tool.packages = [ "cumulusci" ];
 
     grep.enable = true;

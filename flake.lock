@@ -635,6 +635,38 @@
         "type": "github"
       }
     },
+    "nix2git": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "systems": [
+          "systems"
+        ],
+        "treefmt-nix": [
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788115318,
+        "narHash": "sha256-SfkxeezcvNi74L7zMpqIP5gezsbMpq+KFt7waTM331o=",
+        "owner": "unmango",
+        "repo": "nix%2F2git",
+        "rev": "6986e6e3871af7662a67417ed73c7777340ca333",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "unmango",
+        "repo": "nix%2F2git",
+        "type": "gitlab"
+      }
+    },
     "nixd": {
       "inputs": {
         "flake-parts": [
@@ -790,6 +822,7 @@
         "nix-direnv": "nix-direnv",
         "nix-init": "nix-init",
         "nix-vscode-extensions": "nix-vscode-extensions",
+        "nix2git": "nix2git",
         "nixd": "nixd",
         "nixpkgs": "nixpkgs_2",
         "nixvim": "nixvim",

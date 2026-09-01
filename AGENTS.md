@@ -156,7 +156,7 @@ a feature to function, with no personal values:
   Agent handling belongs to gnupg's gpg-agent, not here.
 - `stylix/` — Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
 - `terminals/` — Kitty, Ghostty
-- `toolchain/` — per-language dev tool configs: c, containers, dotnet, git (`dotfiles.git.repos` declaratively inits repos under the home directory on activation), go, javascript, kubernetes (with k9s, openshift, and rosequartz submodules), nix, ocaml, python.
+- `toolchain/` — per-language dev tool configs: c, containers, dotnet, git (`repos.nix` imports the nix2git home-manager module from https://gitlab.com/unmango/nix/2git, whose `nix2git.repositories` runs `git init` for declared paths under the home directory that do not exist yet, and never clones, rewrites, or deletes), go, javascript, kubernetes (with k9s, openshift, and rosequartz submodules), nix, ocaml, python.
   `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its own defaults entirely once that file exists.
   The file route rather than `OCO_API_KEY` in the environment, since the `prepare-commit-msg` hook also fires for editor and GUI commits that never see a login shell.
   `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); the nixos repo supplies only the clan-generated CA and admin cert/key paths.
