@@ -1,5 +1,4 @@
 {
-  self,
   lib,
   config,
   ...
@@ -12,6 +11,6 @@
   # modules/editors/neovim/default.nix stays fully generic and never reaches
   # into users/.
   config = lib.mkIf config.dotfiles.neovim.enable {
-    programs.nixvim.imports = [ self.nixvimModules.erik ];
+    programs.nixvim.imports = [ ./nixvim-config.nix ];
   };
 }
