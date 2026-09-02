@@ -198,13 +198,31 @@
 
         homeModules = {
           dotfiles = ./modules;
+
+          # The profiles, as named bundles of enable toggles carrying no
+          # identity. `base` imports ./modules, so it is the only one an
+          # outside consumer strictly needs; the rest layer on top of it.
+          #
+          # Flat rather than nested under a `profiles` attribute because
+          # home-manager's flakeModule types this option as
+          # `attrsOf deferredModule`, which collapses a nested set into one
+          # module whose `imports` are all five at once.
+          base = ./profiles/base.nix;
+          dev = ./profiles/dev.nix;
+          ai = ./profiles/ai.nix;
+          graphical = ./profiles/graphical.nix;
+          workstation = ./profiles/workstation.nix;
+
+          # Erik's identity, and the three machines that compose it with the
+          # profiles above. A consumer building a different person wants
+          # `dotfiles` and the profiles, not these.
           erik = ./home;
           darter = ./hosts/darter.nix;
           hades = ./hosts/hades.nix;
           server = ./hosts/server.nix;
         };
 
-        nixvimModules.erik = ./home/nixvim-config.nix;
+        nixvimModules.default = ./modules/neovim/nixvim-config.nix;
 
         homeConfigurations =
           let
@@ -229,6 +247,45 @@
               nix2git.homeModules.nix2git
               { dotfiles.ssh.hosts = hosts.lib.addresses; }
             ];
+
+            # A home configuration with no identity in it: profiles only, plus
+            # the account fields Home Manager requires. Nothing from `home/`.
+            #
+            # No machine is named `generic` and no person is either. These
+            # exist so `homeModules.profiles.*` is built here rather than only
+            # breaking in whatever flake consumes it, which is the same reason
+            # `erik@server` exists. The darwin one is also the only consumer
+            # the darwin branches in `modules/` have had since the darwin host
+            # was removed.
+            generic =
+              system: homeDirectory: extraProfiles:
+              homeManagerConfiguration {
+                pkgs = legacyPackages.${system};
+                extraSpecialArgs = { inherit inputs self; };
+                modules =
+                  common
+                  ++ [
+                    ./profiles/base.nix
+                    ./profiles/dev.nix
+                    ./profiles/ai.nix
+                  ]
+                  ++ extraProfiles
+                  ++ [
+                    {
+                      home = {
+                        username = "generic";
+                        inherit homeDirectory;
+                        stateVersion = "25.05";
+                      };
+
+                      # profiles/ai.nix points omnigent at a sops secret that
+                      # only `home/` declares, and the module asserts the name
+                      # resolves. Identity-free means no secrets, so the
+                      # OpenRouter wiring stays off here.
+                      dotfiles.ai.omnigent.openRouter.enable = inputs.nixpkgs.lib.mkForce false;
+                    }
+                  ];
+              };
           in
           {
             "erik@darter" = homeManagerConfiguration {
@@ -251,6 +308,25 @@
               extraSpecialArgs = { inherit inputs self; };
               modules = common ++ [ ./hosts/server.nix ];
             };
+
+            "generic@x86_64-linux" = generic "x86_64-linux" "/home/generic" [
+              ./profiles/workstation.nix
+            ];
+
+            # `workstation` is a Linux desktop session (gnome, brave); darwin
+            # takes `graphical` plus the cross-platform GUI tools from it.
+            "generic@aarch64-darwin" = generic "aarch64-darwin" "/Users/generic" [
+              ./profiles/graphical.nix
+              {
+                dotfiles = {
+                  ghostty.enable = true;
+                  helix.enable = true;
+                  kitty.enable = true;
+                  vscode.enable = true;
+                  zed.enable = true;
+                };
+              }
+            ];
           };
       };
 
@@ -267,7 +343,7 @@
               inherit system;
               modules = [
                 { nixpkgs.overlays = [ overlay ]; }
-                self.nixvimModules.erik
+                self.nixvimModules.default
               ];
             }).config.build.package;
 

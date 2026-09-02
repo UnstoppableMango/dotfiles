@@ -7,6 +7,7 @@
 {
   imports = [
     ./oh-my-zsh
+    ./prezto
   ];
 
   options.dotfiles.zsh.enable = lib.mkEnableOption "zsh";

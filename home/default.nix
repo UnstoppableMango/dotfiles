@@ -8,10 +8,8 @@
     ./gnome.nix
     ./k9s.nix
     ./kitty.nix
-    ./neovim.nix
     ./vscode
     ./zed.nix
-    ./zsh/prezto.nix
   ];
 
   home.packages = with pkgs; [

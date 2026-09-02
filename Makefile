@@ -36,6 +36,6 @@ flake.nix:
 	nix flake init
 
 p10k: # This doesn't actually work in make, but its copy-pastable
-	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/home/zsh/.p10k.zsh p10k configure
+	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/modules/zsh/prezto/.p10k.zsh p10k configure
 
 .PHONY: flake.lock

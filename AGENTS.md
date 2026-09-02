@@ -45,6 +45,15 @@ a class of machine, so it sits in `home/account.nix`; `hosts/server.nix` imports
 that one file directly because it takes the account without the rest of the
 personal layer.
 
+An opinionated value is not automatically identity.
+A curated set that any consumer of this flake would plausibly want (the nixvim
+LSP and plugin list, the Powerlevel10k prompt config, the Zed extension list)
+belongs in `modules/` as an **option default**, not as a literal in `home/`.
+`home/` keeps only what a second person would definitely want different: the
+git email, kitty colors, the GNOME dconf tree, the k9s skin, and the secrets.
+The test is not "did someone choose this?" but "would the next person have to
+change it?"
+
 Before adding or moving a file, run this checklist:
 
 1. Would a different person using this flake want a different value here? If
@@ -72,10 +81,16 @@ anything other than toggles.
 There is deliberately no "shared across identities" layer. This repo had one
 when it also configured a second identity (`erasmussen`, on macOS). With that
 identity gone, `users/shared/` was an abstraction over a set of size one, and
-its contents now live in `home/`. Do not reintroduce it for a second identity
-without a second identity actually existing; if one appears, `home/` becomes
-`home/<name>/` and `profiles/` stays as it is, because a profile never held an
-identity in the first place.
+its contents now live in `home/`.
+
+A second identity does not come back here. It lives in its own flake and
+consumes `homeModules.dotfiles` and `homeModules.{base,dev,ai,graphical,workstation}`, supplying its own
+account, secrets, and (on macOS) nix-darwin system layer. That is why the
+reusable half of the old `users/shared/` ended up in `modules/` behind options
+rather than in a new shared directory: an export is the sharing mechanism, so
+the layer is unnecessary. `home/` therefore stays flat rather than becoming
+`home/<name>/`, and `profiles/` is unaffected either way, because a profile
+never held an identity in the first place.
 
 Precedent: the sops key path and the rosequartz kubeconfig describe erik's
 user environment, not a clan machine, so they moved out of the nixos repo's
@@ -140,10 +155,14 @@ is the tradeoff for not maintaining a list.
 option set. Everything is `mkIf`-gated, so importing a module a host does not
 use costs nothing.
 
-`home/default.nix` collects erik's personal config: git identity/aliases,
-neovim's LSP/plugin choices, kitty colors, zed extensions, vscode's
-default-profile settings, k9s's skin, GNOME dconf taste, the `~/src`
-checkout-root document, and the prezto/p10k setup.
+`home/default.nix` collects erik's personal config: git identity/aliases, kitty
+colors, vscode's default-profile settings, k9s's skin, GNOME dconf taste, the
+`~/src` checkout-root document, and the sops secrets.
+The nixvim configuration, the prezto/p10k setup, and the Zed extension list
+used to sit here too; they are option defaults in `modules/neovim`,
+`modules/zsh/prezto`, and `modules/zed` now, reachable to anyone consuming the
+flake and overridable through `dotfiles.neovim.defaultConfig`,
+`dotfiles.zsh.p10kConfig`, and `dotfiles.zed.extensions`.
 `home/vscode/hades.nix` is the one file `home/default.nix` does not import,
 because that VS Code profile exists on hades alone; `hosts/hades.nix` imports it
 directly.
@@ -169,6 +188,13 @@ and dotnet, and its desktop package list.
 kubernetes. It deliberately does not import the rest of `home/`: the personal
 layer declares sops secrets encrypted to erik's laptop keys, which a server has
 no reason to hold.
+Server does get prezto and Powerlevel10k, because `base` sets
+`dotfiles.zsh.enable` and that toggle is the prezto toggle. It used to get a
+bare zsh instead, but only because prezto happened to live in `home/`, which
+server skips. That was an accident of layering rather than a decision about
+headless machines, and it went away when prezto moved into `modules/`. A
+headless host that genuinely wants no prompt sets
+`dotfiles.zsh.p10kConfig = null`.
 
 `modules/` itself stays generic — enable toggles and the mechanics needed for
 a feature to function, with no personal values:
@@ -191,14 +217,22 @@ a feature to function, with no personal values:
   Home Manager copies the bundles there but tells neither, and rsync writes them with normalized timestamps, so the fsevents that would trigger an automatic reindex do not reliably fire and an app can sit fully installed yet unreachable from every launcher.
   Both commands only refresh an index, so the activation entry warns instead of failing.
   Defaults to on for darwin and evaluates to nothing elsewhere.
-- `vscode/`, `neovim/` (via nixvim), `zed/`, `helix/`, `emacs/`, `obsidian/` — editors
+- `vscode/`, `neovim/` (via nixvim), `zed/`, `helix/`, `emacs/`, `obsidian/` — editors.
+  `neovim/nixvim-config.nix` is the curated LSP and plugin set, imported when
+  `dotfiles.neovim.defaultConfig` is on and exported as `nixvimModules.default`
+  so `packages.nixvim` builds the same configuration standalone.
+  `zed/` carries the extension list as the `dotfiles.zed.extensions` default.
 - `fonts/` — Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
 - `gnupg/` — gpg + gpg-agent (pinentry only on Linux, so macOS has no way to prompt for a passphrase and does not enable this module)
 - `onepassword/` — 1Password CLI, the SSH agent socket, and SSH-format git commit signing through `op-ssh-sign`.
   The desktop app owns both the socket and the signing helper and is not installable from nixpkgs on macOS, so the module configures an app installed by hand rather than installing anything but the CLI.
   `dotfiles.onePassword.signingKey` takes the public half of the key as identity data from `home/`; the module holds no key material.
   Its SSH agent is exclusive with gpg-agent's `enableSshSupport` (both claim `SSH_AUTH_SOCK`), and an assertion fails the build on the overlap instead of letting it show up as a key that never offers itself.
-- `zsh/` — Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k
+- `zsh/` — Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`;
+  Powerlevel10k. `prezto/` is a submodule holding the framework config and the
+  bundled `.p10k.zsh`, which `dotfiles.zsh.p10kConfig` points at and a consumer
+  can replace or set null. Both submodules follow `dotfiles.zsh.enable`, so a
+  host that turns zsh on gets a framework rather than a bare shell.
 - `sops/` - sops-nix age key location (`~/.config/sops/age/keys.txt`).
   Secrets live under `home/secrets/`, encrypted in `.sops.yaml` to erik's darter and hades keys so one file decrypts on both; hades also decrypts clan-generated material from the nixos repo.
 - `ssh/` — SSH client config.
@@ -224,11 +258,25 @@ a feature to function, with no personal values:
   `enabled-extensions` list. The dconf preferences that go with it are taste and
   live in `home/gnome.nix`.
 
-Three home configurations are built: `erik@darter`, `erik@hades`, and
-`erik@server`, all x86_64-linux.
+Five home configurations are built: `erik@darter`, `erik@hades`, and
+`erik@server` on x86_64-linux, plus `generic@x86_64-linux` and
+`generic@aarch64-darwin`.
 No machine is actually named `server`; that entry exists so `hosts/server.nix`
 is covered by `nix flake check` rather than only breaking in whatever flake
 consumes `homeModules.server`.
+
+The two `generic@*` entries are the same idea one layer out: profiles only, no
+`home/`, and an inline account with a throwaway username, so the
+`homeModules.{base,dev,ai,graphical,workstation}` exports are built here rather than only breaking in
+somebody else's flake. `generic@aarch64-darwin` is also the only consumer the
+darwin branches in `modules/` (ghostty's null package, the 1Password agent
+socket, the containers defaults, omnigent's launchd unit, `launch-services/`)
+have had since the darwin host was removed.
+`nix flake check` does not evaluate `homeConfigurations`, so CI builds them
+explicitly. That takes two jobs: `check` on `ubuntu-latest` for the linux
+configurations, and `darwin` on `macos-latest` (Apple Silicon, so
+aarch64-darwin) for the darwin one, which gets a real build rather than an
+evaluation.
 
 `erik@hades` is build-only.
 Hades' home is activated by the nixos repo through the Home Manager NixOS module, which layers clan-generated material (the rosequartz kubeconfig and admin key) on top of `homeModules.erik`.
