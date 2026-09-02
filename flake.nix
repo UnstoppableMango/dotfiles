@@ -211,8 +211,17 @@
             inherit (inputs.home-manager.lib) homeManagerConfiguration;
             inherit (inputs.nixpkgs) legacyPackages;
 
+            # `nixpkgs.*` belongs to whoever owns the nixpkgs instance. A
+            # standalone home configuration owns its own, so these are set here.
+            # Under the Home Manager NixOS module with `useGlobalPkgs`, the
+            # system owns it and Home Manager warns that these are ignored, so
+            # nothing under `modules/` or `users/` may set them; hades gets both
+            # from the nixos repo instead.
             common = with inputs; [
-              { nixpkgs.overlays = [ overlay ]; }
+              {
+                nixpkgs.overlays = [ overlay ];
+                nixpkgs.config.allowUnfree = true;
+              }
               stylix.homeModules.stylix
               nixvim.homeModules.nixvim
               sops-nix.homeManagerModules.sops
