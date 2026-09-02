@@ -8,18 +8,16 @@
 [Nix](https://nixos.org) has consumed my dotfiles.
 `main` is not stable, my NixOS system configurations live over at [UnstoppableMango/nixos](https://github.com/UnstoppableMango/nixos).
 
-This repo manages [Home Manager](https://nix-community.github.io/home-manager/) configs for two users with [flake-parts](https://flake.parts/), using the "Dendritic Pattern": modules are grouped by category (browsers, editors, shells, ...) instead of by user.
+This repo manages my [Home Manager](https://nix-community.github.io/home-manager/) config with [flake-parts](https://flake.parts/), using the "Dendritic Pattern": modules are grouped by category (browsers, editors, shells, ...) rather than by machine.
 
 ## Home configurations
 
-| Configuration                                  | System         |
-| ---------------------------------------------- | -------------- |
-| `erik@darter`                                  | x86_64-linux   |
-| `erik@hades`                                   | x86_64-linux   |
-| `erik@server`                                  | x86_64-linux   |
-| `erasmussen@Tractor-Zoom-Erik-Rasmussen.local` | aarch64-darwin |
+| Configuration | System       |
+| ------------- | ------------ |
+| `erik@darter` | x86_64-linux |
+| `erik@hades`  | x86_64-linux |
 
-Setting up a new machine is written down in [docs/onboarding.md](docs/onboarding.md).
+`homeModules.server` is a minimal headless profile exported for other flakes; it is not instantiated here.
 
 `erik@hades` is build-only.
 Hades' home is activated by the [nixos](https://github.com/UnstoppableMango/nixos) repo through the Home Manager NixOS module, so this entry exists to verify the config evaluates and builds, not to switch into.
@@ -41,7 +39,7 @@ Category modules live under `modules/`, imported as `flake.modules.flake`:
 - `terminals/` - Kitty, Ghostty
 - `toolchain/` - c, containers, dotnet, git, go, javascript, kubernetes (incl. the rosequartz kubeconfig), nix, ocaml, python
 
-Per-user home configs live under `users/erik/` and `users/erasmussen/`.
+Personal config and per-host files live under `users/erik/`.
 
 ## Development
 
