@@ -80,9 +80,9 @@ identity in the first place.
 Precedent: the sops key path and the rosequartz kubeconfig describe erik's
 user environment, not a clan machine, so they moved out of the nixos repo's
 `machines/hades/configuration.nix` into `modules/sops/` and
-`modules/toolchain/kubernetes/rosequartz/`, with only the clan-generated CA
+`modules/kubernetes/rosequartz/`, with only the clan-generated CA
 and admin cert/key paths staying host-specific data supplied from outside.
-The `toolchain/kubernetes/` module itself grew `k9s/`, `openshift/`, and
+The `kubernetes/` module itself grew `k9s/`, `openshift/`, and
 `rosequartz/` submodules as each tool's config outgrew a single file,
 aggregated through `default.nix`.
 
@@ -127,10 +127,18 @@ CI runs `nix flake check --all-systems` then builds the `erik@darter` home confi
 ## Architecture
 
 The flake uses `flake-parts`.
-Home Manager modules are grouped by category under `modules/` and aggregated by
-`modules/default.nix`, which `profiles/base.nix` imports once so every host gets
-the whole option set. Everything is `mkIf`-gated, so importing a module a host
-does not use costs nothing.
+`modules/` is flat: one directory per piece of software, each with a
+`default.nix`. There is no category layer, because deciding whether git was a
+`toolchain/` or a top-level concern, or whether kitty was `terminals/` or part
+of the shell setup, was a question with no correct answer and a different answer
+each time.
+`modules/default.nix` imports every subdirectory that has a `default.nix`, read
+from disk rather than listed, so adding a module is creating the directory and
+nothing else. Dropping a directory in there enables its options repo-wide, which
+is the tradeoff for not maintaining a list.
+`profiles/base.nix` imports `../modules` once, so every host gets the whole
+option set. Everything is `mkIf`-gated, so importing a module a host does not
+use costs nothing.
 
 `home/default.nix` collects erik's personal config: git identity/aliases,
 neovim's LSP/plugin choices, kitty colors, zed extensions, vscode's
@@ -175,22 +183,22 @@ a feature to function, with no personal values:
   `checkout-root.nix` renders `home/checkout-root.md` to `~/src/AGENTS.md` with a `CLAUDE.md` include beside it, matching the pairing the repos underneath use, so conventions spanning the whole checkout root are stated once instead of per repo.
   The module takes the document as an option (`dotfiles.ai.checkoutRoot.context`, null by default) and holds no content itself, so nothing in `modules/` assumes a checkout root exists.
   `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
-  The OpenRouter key reaches that entry through an `auth_command` reading a `sops.secrets` path rather than `OPENROUTER_API_KEY` in the environment, since the systemd user unit running the server never sees a login shell (the same reasoning as `toolchain/git/opencommit.nix`).
-- `automation/` — flake-update automation
-- `browsers/` — Brave
-- `darwin/`: macOS-only mechanics, currently unreached — no darwin configuration is defined.
+  The OpenRouter key reaches that entry through an `auth_command` reading a `sops.secrets` path rather than `OPENROUTER_API_KEY` in the environment, since the systemd user unit running the server never sees a login shell (the same reasoning as `git/opencommit.nix`).
+- `flake-update/` — flake-update automation
+- `brave/` — Brave
+- `launch-services/`: macOS-only, currently unreached — no darwin configuration is defined.
   `launch-services.nix` registers the app bundles under `~/Applications/Home Manager Apps` with Launch Services (`lsregister`, which backs `open -a`, the Dock, and Launchpad) and the Spotlight metadata index (`mdimport`, which backs Cmd+Space) on every activation.
   Home Manager copies the bundles there but tells neither, and rsync writes them with normalized timestamps, so the fsevents that would trigger an automatic reindex do not reliably fire and an app can sit fully installed yet unreachable from every launcher.
   Both commands only refresh an index, so the activation entry warns instead of failing.
   Defaults to on for darwin and evaluates to nothing elsewhere.
-- `editors/` — VS Code, Neovim (via nixvim), Zed, Helix, Emacs, Obsidian
+- `vscode/`, `neovim/` (via nixvim), `zed/`, `helix/`, `emacs/`, `obsidian/` — editors
 - `fonts/` — Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
 - `gnupg/` — gpg + gpg-agent (pinentry only on Linux, so macOS has no way to prompt for a passphrase and does not enable this module)
 - `onepassword/` — 1Password CLI, the SSH agent socket, and SSH-format git commit signing through `op-ssh-sign`.
   The desktop app owns both the socket and the signing helper and is not installable from nixpkgs on macOS, so the module configures an app installed by hand rather than installing anything but the CLI.
   `dotfiles.onePassword.signingKey` takes the public half of the key as identity data from `home/`; the module holds no key material.
   Its SSH agent is exclusive with gpg-agent's `enableSshSupport` (both claim `SSH_AUTH_SOCK`), and an assertion fails the build on the overlap instead of letting it show up as a key that never offers itself.
-- `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)
+- `zsh/` — Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k
 - `sops/` - sops-nix age key location (`~/.config/sops/age/keys.txt`).
   Secrets live under `home/secrets/`, encrypted in `.sops.yaml` to erik's darter and hades keys so one file decrypts on both; hades also decrypts clan-generated material from the nixos repo.
 - `ssh/` — SSH client config.
@@ -201,8 +209,10 @@ a feature to function, with no personal values:
   `HostKeyAlias` plus the `@cert-authority` entry in `~/.ssh/known_hosts_nix` mean cluster machines validate against the clan SSH CA instead of prompting on first connect.
   Agent handling belongs to gnupg's gpg-agent, not here.
 - `stylix/` — Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
-- `terminals/` — Kitty, Ghostty
-- `toolchain/` — per-language dev tool configs: c, containers, dotnet, git (`repos.nix` imports the nix2git home-manager module from https://gitlab.com/unmango/nix/2git, whose `nix2git.repositories` runs `git init` for declared paths under the home directory that do not exist yet, and never clones, rewrites, or deletes), go, javascript, kubernetes (with k9s, openshift, and rosequartz submodules), nix, ocaml, python.
+- `kitty/`, `ghostty/` — terminals
+- `c/`, `containers/`, `dotnet/`, `git/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` — per-language dev tooling.
+  `git/repos.nix` imports the nix2git home-manager module from https://gitlab.com/unmango/nix/2git, whose `nix2git.repositories` runs `git init` for declared paths under the home directory that do not exist yet, and never clones, rewrites, or deletes.
+  `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
   `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its own defaults entirely once that file exists.
   The file route rather than `OCO_API_KEY` in the environment, since the `prepare-commit-msg` hook also fires for editor and GUI commits that never see a login shell.
   `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); the nixos repo supplies only the clan-generated CA and admin cert/key paths.
@@ -210,7 +220,7 @@ a feature to function, with no personal values:
   `docker compose` and `docker buildx` are linked into `~/.docker/cli-plugins` because the CLI resolves subcommands there rather than from PATH.
   `REGISTRY_AUTH_FILE` points podman, skopeo, and buildah at `~/.docker/config.json`, so one `docker login` serves both (`dotfiles.containers.sharedAuth`).
   `dotfiles.containers.podmanSocket` and `.userRegistryConfig` default to `targets.genericLinux.enable`: non-NixOS hosts get the rootless `podman.socket`/`podman.service` user units and `~/.config/containers/{policy.json,registries.conf}`, which the podman package carries no defaults for, while NixOS hosts keep the system layer's units and `/etc/containers` authoritative.
-- `desktop/gnome/` — the GNOME option, the extension packages, and the derived
+- `gnome/` — the GNOME option, the extension packages, and the derived
   `enabled-extensions` list. The dconf preferences that go with it are taste and
   live in `home/gnome.nix`.
 
