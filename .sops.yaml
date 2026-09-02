@@ -1,9 +1,8 @@
 # erik's keys mirror the nixos repo's clan user `erik` (sops/users/erik/key.json).
-# erasmussen's key is local to this repo and scoped to its own secrets path.
+# One key per machine, both on every secret, so the same file decrypts anywhere.
 keys:
   - &erik_darter age16yu7pqrmwd3m7jrs5pdh2rd2z4lzskc2ywftqngtssgkd8vj54us875q6t
   - &erik_hades age1jnndq4jl03mc7f5vtlyh24rr6e2pxe8y9nlk6yt9ztpmpahqhuwqmz639k
-  - &erasmussen_macbook age1y0vqekk68w2lkpdkl8f7gnkwy50gnayyyxpqvg3tnhye25xk7fxsvkutd3
 
 creation_rules:
   - path_regex: users/erik/secrets/[^/]+\.yaml$
@@ -11,8 +10,3 @@ creation_rules:
       - age:
           - *erik_darter
           - *erik_hades
-
-  - path_regex: users/erasmussen/secrets/[^/]+\.yaml$
-    key_groups:
-      - age:
-          - *erasmussen_macbook

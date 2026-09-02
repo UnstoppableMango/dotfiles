@@ -3,7 +3,7 @@
 Guidance for AI agents operating anywhere under `~/src`.
 
 This file is a symlink into the Nix store, written by home-manager.
-Edit `users/shared/checkout-root.md` in `github.com/UnstoppableMango/dotfiles` and rebuild; edits here will not stick.
+Edit `users/erik/checkout-root.md` in `github.com/UnstoppableMango/dotfiles` and rebuild; edits here will not stick.
 
 `~/src` is not a repository.
 It is a checkout root holding ~100 independent git repos.

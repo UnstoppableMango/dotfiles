@@ -5,9 +5,15 @@ in
 {
   imports = [
     ../../modules
-    ../shared
+    ./ai.nix
     ./direnv.nix
     ./git.nix
+    ./k9s.nix
+    ./kitty.nix
+    ./neovim.nix
+    ./vscode
+    ./zed.nix
+    ./zsh/prezto.nix
   ];
 
   home = {
