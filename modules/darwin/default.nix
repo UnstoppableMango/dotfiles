@@ -1,5 +1,0 @@
-{
-  imports = [
-    ./launch-services.nix
-  ];
-}
