@@ -16,8 +16,8 @@ in
 
     podmanSocket = lib.mkOption {
       type = lib.types.bool;
-      default = pkgs.stdenv.isLinux && config.targets.genericLinux.enable;
-      defaultText = lib.literalExpression "pkgs.stdenv.isLinux && config.targets.genericLinux.enable";
+      default = pkgs.stdenv.hostPlatform.isLinux && config.targets.genericLinux.enable;
+      defaultText = lib.literalExpression "pkgs.stdenv.hostPlatform.isLinux && config.targets.genericLinux.enable";
       description = ''
         Run the rootless podman API socket as a user systemd unit.
         Defaults on for non-NixOS Linux, where nothing else supplies the unit.
@@ -38,8 +38,8 @@ in
 
     userRegistryConfig = lib.mkOption {
       type = lib.types.bool;
-      default = pkgs.stdenv.isLinux && config.targets.genericLinux.enable;
-      defaultText = lib.literalExpression "pkgs.stdenv.isLinux && config.targets.genericLinux.enable";
+      default = pkgs.stdenv.hostPlatform.isLinux && config.targets.genericLinux.enable;
+      defaultText = lib.literalExpression "pkgs.stdenv.hostPlatform.isLinux && config.targets.genericLinux.enable";
       description = ''
         Write `policy.json` and `registries.conf` under `~/.config/containers`.
         The podman package carries no defaults of its own and reads them from
