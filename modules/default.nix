@@ -4,6 +4,7 @@
     ./automation
     ./browsers
     ./darwin
+    ./desktop
     ./editors
     ./fonts
     ./gnupg

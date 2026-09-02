@@ -198,12 +198,13 @@
 
         homeModules = {
           dotfiles = ./modules;
-          erik = ./users/erik;
-          server = ./users/erik/server.nix;
-          hades = ./users/erik/hades.nix;
+          erik = ./home;
+          darter = ./hosts/darter.nix;
+          hades = ./hosts/hades.nix;
+          server = ./hosts/server.nix;
         };
 
-        nixvimModules.erik = ./users/erik/nixvim-config.nix;
+        nixvimModules.erik = ./home/nixvim-config.nix;
 
         homeConfigurations =
           let
@@ -214,7 +215,8 @@
             # standalone home configuration owns its own, so these are set here.
             # Under the Home Manager NixOS module with `useGlobalPkgs`, the
             # system owns it and Home Manager warns that these are ignored, so
-            # nothing under `modules/` or `users/` may set them; hades gets both
+            # nothing under `modules/` or the home/profiles/hosts tree may set
+            # them; hades gets both
             # from the nixos repo instead.
             common = with inputs; [
               {
@@ -232,13 +234,22 @@
             "erik@darter" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs self; };
-              modules = common ++ [ ./users/erik/darter.nix ];
+              modules = common ++ [ ./hosts/darter.nix ];
             };
 
             "erik@hades" = homeManagerConfiguration {
               pkgs = legacyPackages.x86_64-linux;
               extraSpecialArgs = { inherit inputs self; };
-              modules = common ++ [ ./users/erik/hades.nix ];
+              modules = common ++ [ ./hosts/hades.nix ];
+            };
+
+            # No machine is named `server`. This exists so `hosts/server.nix`
+            # is built by `nix flake check` like the other two, rather than
+            # being an export that only breaks in whatever flake consumes it.
+            "erik@server" = homeManagerConfiguration {
+              pkgs = legacyPackages.x86_64-linux;
+              extraSpecialArgs = { inherit inputs self; };
+              modules = common ++ [ ./hosts/server.nix ];
             };
           };
       };

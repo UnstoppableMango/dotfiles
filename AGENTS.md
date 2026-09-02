@@ -7,10 +7,19 @@ This file provides guidance to AI agents when working with code in this reposito
 This is a Nix-based dotfiles repository using Home Manager and flake-parts.
 It manages the home configuration for one user, `erik`, across several Linux
 hosts.
-`modules/` holds generic, reusable, option-driven software configuration with
-no identity baked in; personal preferences and identity (git email, editor
-LSP/plugin choices, terminal colors, GNOME desktop, etc.) live under
-`users/erik/`.
+Four top-level directories, in dependency order:
+
+- `modules/` - generic, reusable, option-driven software configuration, with no
+  identity baked in. Declares `dotfiles.*` options; sets no personal values.
+- `home/` - erik's identity and taste: git email, editor LSP/plugin choices,
+  terminal colors, GNOME dconf, secrets. Consumes `dotfiles.*`; declares none.
+- `profiles/` - named bundles of `dotfiles.*` toggles (`base`, `dev`, `ai`,
+  `graphical`, `workstation`). No values, only which modules a class of machine
+  turns on.
+- `hosts/` - one file per machine (`darter`, `hades`, `server`). The only
+  entrypoints. Each imports the profiles it wants plus whatever is true of that
+  machine alone.
+
 See "Class vs Instance Modules" below for the full rule and a checklist to
 apply before adding or moving a file.
 The actual NixOS system configs live at https://github.com/UnstoppableMango/nixos.
@@ -23,37 +32,45 @@ clean is the main defense against structural drift.
 configured, mechanically, with no identity baked in.
 Personalization enters a class module only as a `dotfiles.<x>.<y>` option
 (data), never as a literal value.
-`users/erik/` is the instance bucket: it holds this person's actual values.
-A value that every host shares sits in a plain file imported by
-`users/erik/default.nix`; a value that differs per machine is a host-gated
-option set from `darter.nix`/`hades.nix`/`server.nix`.
+`home/` is the instance bucket: it holds this person's actual values, and every
+file in it is gated on the `dotfiles.*` option its module declares, so importing
+it costs nothing on a host that has the feature switched off.
+`profiles/` and `hosts/` hold no values at all, only composition: a profile says
+which modules a class of machine turns on, and a host says which profiles it is
+plus what is true of it alone (a signing key, a kubeconfig path, a package it
+alone installs).
 
 Before adding or moving a file, run this checklist:
 
 1. Would a different person using this flake want a different value here? If
-   yes, it is an instance and belongs under `users/erik/`. If everyone would
-   want the same mechanism, it is a class and belongs under `modules/`.
+   yes, it is an instance and belongs under `home/`. If everyone would want the
+   same mechanism, it is a class and belongs under `modules/`.
 2. Does the file hardcode a literal (an email, a color hex, a hostname, an
    API key path, "this person's" editor choice)? That literal belongs in
-   `users/erik/`, or the class module needs to grow an option that
-   `users/erik/` supplies.
-3. Is a module accreting config specific to one sub-tool (more than one or
+   `home/`, or the class module needs to grow an option that `home/` supplies.
+3. Is it an `enable` toggle rather than a value? Toggles belong in `profiles/`,
+   grouped by the kind of machine that wants them, not in `home/`. If no
+   existing profile fits and more than one host would want the group, add a
+   profile; if exactly one host wants it, set it in that host file.
+4. Is a module accreting config specific to one sub-tool (more than one or
    two files for it)? Split it into its own submodule directory with a
    `default.nix`, aggregated by the parent, rather than letting the parent
    module grow multiple unrelated concerns.
-4. Would the value differ between machines/hosts? Keep it a host-gated option
-   supplied from the host file, not a per-host branch hardcoded inside a class
-   module.
+5. Would the value differ between machines? It goes in `hosts/<machine>.nix`,
+   never as a per-host branch inside a class module.
 
 Signals that a change is about to cause drift: hardcoding a literal inside
-`modules/`; adding a second file for one sub-tool without splitting it into a
-submodule; or putting a value every host shares into a single host file.
+`modules/`; declaring a `dotfiles.*` option outside `modules/`; a host file
+that sets a value rather than composing profiles; or a profile that sets
+anything other than toggles.
 
 There is deliberately no "shared across identities" layer. This repo had one
 when it also configured a second identity (`erasmussen`, on macOS). With that
 identity gone, `users/shared/` was an abstraction over a set of size one, and
-its contents now live directly in `users/erik/`. Do not reintroduce it for a
-second identity without a second identity actually existing.
+its contents now live in `home/`. Do not reintroduce it for a second identity
+without a second identity actually existing; if one appears, `home/` becomes
+`home/<name>/` and `profiles/` stays as it is, because a profile never held an
+identity in the first place.
 
 Precedent: the sops key path and the rosequartz kubeconfig describe erik's
 user environment, not a clan machine, so they moved out of the nixos repo's
@@ -92,7 +109,7 @@ Darter is the standalone case and is the one the `home-manager switch` instructi
 
 That split also fixes who may set `nixpkgs.*`.
 Whoever creates the nixpkgs instance owns `nixpkgs.overlays` and `nixpkgs.config`; under the Home Manager NixOS module with `useGlobalPkgs = true` that is the system, and Home Manager warns that any `nixpkgs.*` set inside the home configuration is ignored.
-So nothing under `modules/` or `users/` sets them.
+So nothing under `modules/`, `home/`, `profiles/`, or `hosts/` sets them.
 `flake.nix`'s `common` list supplies both to the standalone configurations, and the nixos repo supplies them to hades.
 
 `make build` builds the current host's configuration, resolved as `$USER@$(hostname -s)`.
@@ -105,14 +122,40 @@ CI runs `nix flake check --all-systems` then builds the `erik@darter` home confi
 ## Architecture
 
 The flake uses `flake-parts`.
-Home Manager modules are grouped by category under `modules/`, aggregated by
-`modules/default.nix`, and imported by `users/erik/default.nix` alongside
-erik's own personal config: git identity/aliases, neovim's LSP/plugin choices,
-kitty colors, zed extensions, vscode's default-profile settings, k9s's skin,
-the `~/src` checkout-root document, and the prezto/p10k setup.
-Host-exclusive files sit beside them (`desktop.nix` for GNOME, `vscode/hades.nix`
-for the Hades VS Code profile), gated behind host options set in
-`darter.nix`/`hades.nix`.
+Home Manager modules are grouped by category under `modules/` and aggregated by
+`modules/default.nix`, which `profiles/base.nix` imports once so every host gets
+the whole option set. Everything is `mkIf`-gated, so importing a module a host
+does not use costs nothing.
+
+`home/default.nix` collects erik's personal config: git identity/aliases,
+neovim's LSP/plugin choices, kitty colors, zed extensions, vscode's
+default-profile settings, k9s's skin, GNOME dconf taste, the `~/src`
+checkout-root document, and the prezto/p10k setup.
+`home/vscode/hades.nix` is the one file `home/default.nix` does not import,
+because that VS Code profile exists on hades alone; `hosts/hades.nix` imports it
+directly.
+
+The profiles are:
+
+- `base` - the account, `stateVersion`, Home Manager managing itself, and the
+  git/gnupg/nix/sops/ssh/zsh floor plus the small CLI tools no machine is usable
+  without. Imports `../modules`. Every host takes it.
+- `dev` - language toolchains and neovim (c, containers, go, javascript,
+  kubernetes, python).
+- `ai` - the agent CLIs and the omnigent OpenRouter wiring. Split from `dev`
+  because omnigent needs a decryptable secret not every host holds.
+- `graphical` - fonts, stylix, obsidian: the floor once a display exists.
+- `workstation` - imports `graphical` and adds the full desktop session
+  (gnome, brave, vscode, zed, helix, kitty, ghostty).
+
+`hosts/darter.nix` is `base + dev + ai + graphical` plus `targets.genericLinux`,
+its signing key, and the rosequartz KUBECONFIG.
+`hosts/hades.nix` is `base + dev + ai + workstation` plus its signing key, ocaml
+and dotnet, and its desktop package list.
+`hosts/server.nix` is `base` plus containers and kubernetes, and deliberately
+does not import `home/`: the personal layer declares sops secrets encrypted to
+erik's laptop keys, which a server has no reason to hold.
+
 `modules/` itself stays generic — enable toggles and the mechanics needed for
 a feature to function, with no personal values:
 
@@ -123,7 +166,7 @@ a feature to function, with no personal values:
   plus agents), following the same one-file-per-concern pattern as the rest of
   `modules/`.
   `global-context.md` is the user-level agent instructions, rendered to both `~/.claude/CLAUDE.md` and `~/.copilot/copilot-instructions.md`; `.claude/skills/agent-context/` covers how to change it.
-  `checkout-root.nix` renders `users/erik/checkout-root.md` to `~/src/AGENTS.md` with a `CLAUDE.md` include beside it, matching the pairing the repos underneath use, so conventions spanning the whole checkout root are stated once instead of per repo.
+  `checkout-root.nix` renders `home/checkout-root.md` to `~/src/AGENTS.md` with a `CLAUDE.md` include beside it, matching the pairing the repos underneath use, so conventions spanning the whole checkout root are stated once instead of per repo.
   The module takes the document as an option (`dotfiles.ai.checkoutRoot.context`, null by default) and holds no content itself, so nothing in `modules/` assumes a checkout root exists.
   `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
   The OpenRouter key reaches that entry through an `auth_command` reading a `sops.secrets` path rather than `OPENROUTER_API_KEY` in the environment, since the systemd user unit running the server never sees a login shell (the same reasoning as `toolchain/git/opencommit.nix`).
@@ -139,11 +182,11 @@ a feature to function, with no personal values:
 - `gnupg/` — gpg + gpg-agent (pinentry only on Linux, so macOS has no way to prompt for a passphrase and does not enable this module)
 - `onepassword/` — 1Password CLI, the SSH agent socket, and SSH-format git commit signing through `op-ssh-sign`.
   The desktop app owns both the socket and the signing helper and is not installable from nixpkgs on macOS, so the module configures an app installed by hand rather than installing anything but the CLI.
-  `dotfiles.onePassword.signingKey` takes the public half of the key as identity data from `users/`; the module holds no key material.
+  `dotfiles.onePassword.signingKey` takes the public half of the key as identity data from `home/`; the module holds no key material.
   Its SSH agent is exclusive with gpg-agent's `enableSshSupport` (both claim `SSH_AUTH_SOCK`), and an assertion fails the build on the overlap instead of letting it show up as a key that never offers itself.
 - `shells/` — Zsh (Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k)
 - `sops/` - sops-nix age key location (`~/.config/sops/age/keys.txt`).
-  Secrets live under `users/erik/secrets/`, encrypted in `.sops.yaml` to erik's darter and hades keys so one file decrypts on both; hades also decrypts clan-generated material from the nixos repo.
+  Secrets live under `home/secrets/`, encrypted in `.sops.yaml` to erik's darter and hades keys so one file decrypts on both; hades also decrypts clan-generated material from the nixos repo.
 - `ssh/` — SSH client config.
   Host aliases come from the `hosts` flake input (https://github.com/UnstoppableMango/hosts).
   The module takes the table as data (`dotfiles.ssh.hosts`, empty by default); `flake.nix` feeds it `inputs.hosts.lib.addresses`, so no module closes over `inputs` for it.
@@ -161,11 +204,15 @@ a feature to function, with no personal values:
   `docker compose` and `docker buildx` are linked into `~/.docker/cli-plugins` because the CLI resolves subcommands there rather than from PATH.
   `REGISTRY_AUTH_FILE` points podman, skopeo, and buildah at `~/.docker/config.json`, so one `docker login` serves both (`dotfiles.containers.sharedAuth`).
   `dotfiles.containers.podmanSocket` and `.userRegistryConfig` default to `targets.genericLinux.enable`: non-NixOS hosts get the rootless `podman.socket`/`podman.service` user units and `~/.config/containers/{policy.json,registries.conf}`, which the podman package carries no defaults for, while NixOS hosts keep the system layer's units and `/etc/containers` authoritative.
-- `users/erik/` — erik's home config: identity, taste, and the per-host files
-  (`darter.nix`, `hades.nix`, `server.nix`)
+- `desktop/gnome/` — the GNOME option, the extension packages, and the derived
+  `enabled-extensions` list. The dconf preferences that go with it are taste and
+  live in `home/gnome.nix`.
 
-Two home configurations are built here, `erik@darter` and `erik@hades`, both x86_64-linux.
-`homeModules.server` (`users/erik/server.nix`) is a minimal headless profile — gnupg, shells, sops, ssh, toolchain only, no desktop or editor modules — exported for other flakes to consume rather than instantiated as a `homeConfiguration`.
+Three home configurations are built: `erik@darter`, `erik@hades`, and
+`erik@server`, all x86_64-linux.
+No machine is actually named `server`; that entry exists so `hosts/server.nix`
+is covered by `nix flake check` rather than only breaking in whatever flake
+consumes `homeModules.server`.
 
 `erik@hades` is build-only.
 Hades' home is activated by the nixos repo through the Home Manager NixOS module, which layers clan-generated material (the rosequartz kubeconfig and admin key) on top of `homeModules.erik`.

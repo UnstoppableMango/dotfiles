@@ -16,8 +16,9 @@ This repo manages my [Home Manager](https://nix-community.github.io/home-manager
 | ------------- | ------------ |
 | `erik@darter` | x86_64-linux |
 | `erik@hades`  | x86_64-linux |
+| `erik@server` | x86_64-linux |
 
-`homeModules.server` is a minimal headless profile exported for other flakes; it is not instantiated here.
+No machine is named `server`; that entry exists so the headless profile is covered by `nix flake check`.
 
 `erik@hades` is build-only.
 Hades' home is activated by the [nixos](https://github.com/UnstoppableMango/nixos) repo through the Home Manager NixOS module, so this entry exists to verify the config evaluates and builds, not to switch into.
@@ -26,11 +27,16 @@ Erik's home on hades is installed through the Home Manager NixOS module rather t
 
 ## Layout
 
-Category modules live under `modules/`, imported as `flake.modules.flake`:
+- `modules/` - option-driven software config, no identity
+- `home/` - my identity and taste, consuming those options
+- `profiles/` - named toggle bundles: `base`, `dev`, `ai`, `graphical`, `workstation`
+- `hosts/` - one file per machine, composing profiles
+
+Category modules live under `modules/`:
 
 - `ai/` - Claude Code, GitHub Copilot CLI, Cursor CLI
 - `browsers/` - Brave
-- `desktops/gnome/` - GNOME
+- `desktop/gnome/` - GNOME
 - `editors/` - VS Code, Neovim (nixvim), Zed, Helix, Emacs
 - `gnupg/` - gpg + gpg-agent, pinentry on Linux
 - `onepassword/` - 1Password CLI, SSH agent socket, and SSH commit signing
@@ -38,8 +44,6 @@ Category modules live under `modules/`, imported as `flake.modules.flake`:
 - `sops/` - sops-nix age key location for erik
 - `terminals/` - Kitty, Ghostty
 - `toolchain/` - c, containers, dotnet, git, go, javascript, kubernetes (incl. the rosequartz kubeconfig), nix, ocaml, python
-
-Personal config and per-host files live under `users/erik/`.
 
 ## Development
 
