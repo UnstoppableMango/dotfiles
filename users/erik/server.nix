@@ -23,6 +23,7 @@ in
 
   dotfiles = {
     zsh.enable = true;
+    containers.enable = true;
     git.enable = true;
     gnupg.enable = true;
     kubernetes.enable = true;

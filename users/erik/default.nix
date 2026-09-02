@@ -46,6 +46,7 @@ in
     neovim.enable = true;
     zsh.enable = true;
     c.enable = true;
+    containers.enable = true;
 
     go.enable = true;
     gnupg.enable = true;

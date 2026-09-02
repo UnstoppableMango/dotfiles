@@ -22,7 +22,6 @@
     helix.enable = true;
     ghostty.enable = true;
     kitty.enable = true;
-    containers.enable = true;
     ocaml.enable = true;
     dotnet.enable = true;
   };
