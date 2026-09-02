@@ -91,6 +91,11 @@ A standalone `home-manager switch` on hades resolves `erik@hades` and would rewr
 Nothing in the naming prevents that, so it is a rule to follow rather than a guard to rely on.
 Darter is the standalone case and is the one the `home-manager switch` instructions above apply to.
 
+That split also fixes who may set `nixpkgs.*`.
+Whoever creates the nixpkgs instance owns `nixpkgs.overlays` and `nixpkgs.config`; under the Home Manager NixOS module with `useGlobalPkgs = true` that is the system, and Home Manager warns that any `nixpkgs.*` set inside the home configuration is ignored.
+So nothing under `modules/` or `users/` sets them.
+`flake.nix`'s `common` list supplies both to the standalone configurations, and the nixos repo supplies them to hades.
+
 `make darwin` builds before it switches so the sudo window is spent on activation rather than on evaluating and downloading.
 It targets `darwinConfigurations.$(hostname -s)`, which matches the `scutil --get LocalHostName` that `darwin-rebuild` defaults to, and, unlike `make home`, it reads the local checkout, so darwin changes apply without a push.
 `make darwin-bootstrap` is the same thing for the first run, resolving `darwin-rebuild` out of the built closure instead of PATH.
