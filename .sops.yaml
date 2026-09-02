@@ -5,7 +5,7 @@ keys:
   - &erik_hades age1jnndq4jl03mc7f5vtlyh24rr6e2pxe8y9nlk6yt9ztpmpahqhuwqmz639k
 
 creation_rules:
-  - path_regex: users/erik/secrets/[^/]+\.yaml$
+  - path_regex: home/secrets/[^/]+\.yaml$
     key_groups:
       - age:
           - *erik_darter

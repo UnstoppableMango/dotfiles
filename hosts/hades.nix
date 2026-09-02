@@ -4,9 +4,12 @@
 }:
 {
   imports = [
-    ./default.nix
-    ./desktop.nix
-    ./vscode/hades.nix
+    ../home
+    ../home/vscode/hades.nix
+    ../profiles/base.nix
+    ../profiles/dev.nix
+    ../profiles/ai.nix
+    ../profiles/workstation.nix
   ];
 
   programs.git.settings = {
@@ -15,13 +18,6 @@
   };
 
   dotfiles = {
-    gnome.enable = true;
-    brave.enable = true;
-    vscode.enable = true;
-    zed.enable = true;
-    helix.enable = true;
-    ghostty.enable = true;
-    kitty.enable = true;
     ocaml.enable = true;
     dotnet.enable = true;
   };

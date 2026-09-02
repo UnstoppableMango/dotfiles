@@ -7,7 +7,13 @@ let
   inherit (config.home) homeDirectory;
 in
 {
-  imports = [ ./default.nix ];
+  imports = [
+    ../home
+    ../profiles/base.nix
+    ../profiles/dev.nix
+    ../profiles/ai.nix
+    ../profiles/graphical.nix
+  ];
 
   # darter runs standalone Home Manager on Pop!_OS (not NixOS). This patches
   # XDG_DATA_DIRS and session variables so HM-installed man pages, shell
