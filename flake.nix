@@ -201,6 +201,7 @@
           erik = ./users/erik;
           server = ./users/erik/server.nix;
           shared = ./users/shared;
+          hades = ./users/erik/hades.nix;
         };
 
         nixvimModules.erik = ./users/shared/nixvim-config.nix;
