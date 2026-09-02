@@ -656,17 +656,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1788115318,
-        "narHash": "sha256-SfkxeezcvNi74L7zMpqIP5gezsbMpq+KFt7waTM331o=",
+        "lastModified": 1788330861,
+        "narHash": "sha256-4zNiI9e5QMjSv06v5OTusjmlHyJrzQzf6aij0haarPo=",
         "owner": "unmango",
-        "repo": "nix%2F2git",
-        "rev": "6986e6e3871af7662a67417ed73c7777340ca333",
-        "type": "gitlab"
+        "repo": "nix2git",
+        "rev": "4f600e851153eda0bd6dce20098cd0ae028695a7",
+        "type": "github"
       },
       "original": {
         "owner": "unmango",
-        "repo": "nix%2F2git",
-        "type": "gitlab"
+        "repo": "nix2git",
+        "type": "github"
       }
     },
     "nixd": {

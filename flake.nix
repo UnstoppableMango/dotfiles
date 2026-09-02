@@ -131,12 +131,8 @@
       inputs.treefmt-nix.follows = "treefmt-nix";
     };
 
-    # `2git` lives in the `nix` subgroup. A flake reference reads the second
-    # path segment as the repository name, so the subgroup separator has to
-    # survive into the GitLab API path as `%2F`. The flakeref parser decodes
-    # one layer of percent-encoding, hence `%252F` rather than `%2F`.
     nix2git = {
-      url = "gitlab:unmango/nix%252F2git";
+      url = "github:unmango/nix2git";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
       inputs.home-manager.follows = "home-manager";
