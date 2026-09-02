@@ -28,8 +28,8 @@ Erik's home on hades is installed through the Home Manager NixOS module rather t
 ## Layout
 
 - `modules/` - option-driven software config, no identity
-- `home/` - my identity and taste, consuming those options
-- `profiles/` - named toggle bundles: `base`, `dev`, `ai`, `graphical`, `workstation`
+- `home/` - my identity and taste (including the account), consuming those options
+- `profiles/` - enable toggles only, bundled by machine class: `base`, `dev`, `ai`, `graphical`, `workstation`
 - `hosts/` - one file per machine, composing profiles
 
 Category modules live under `modules/`:

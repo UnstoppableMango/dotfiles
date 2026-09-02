@@ -1,9 +1,14 @@
 { pkgs, lib, ... }:
 {
   # Headless: `base` only, plus the two toolchains a box that runs containers
-  # actually needs. No `home`, because the personal layer carries sops secrets
-  # encrypted to erik's laptop keys, which a server has no reason to hold.
-  imports = [ ../profiles/base.nix ];
+  # actually needs. The account comes from `home/account.nix` directly rather
+  # than from all of `home/`, because the rest of the personal layer carries
+  # sops secrets encrypted to erik's laptop keys that a server has no reason to
+  # hold.
+  imports = [
+    ../home/account.nix
+    ../profiles/base.nix
+  ];
 
   home.packages = with pkgs; [
     nano

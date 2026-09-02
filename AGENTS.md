@@ -11,11 +11,12 @@ Four top-level directories, in dependency order:
 
 - `modules/` - generic, reusable, option-driven software configuration, with no
   identity baked in. Declares `dotfiles.*` options; sets no personal values.
-- `home/` - erik's identity and taste: git email, editor LSP/plugin choices,
-  terminal colors, GNOME dconf, secrets. Consumes `dotfiles.*`; declares none.
-- `profiles/` - named bundles of `dotfiles.*` toggles (`base`, `dev`, `ai`,
-  `graphical`, `workstation`). No values, only which modules a class of machine
-  turns on.
+- `home/` - erik's identity and taste: the account itself, git email, editor
+  LSP/plugin choices, terminal colors, GNOME dconf, secrets. Consumes
+  `dotfiles.*`; declares none.
+- `profiles/` - named bundles of enable toggles (`base`, `dev`, `ai`,
+  `graphical`, `workstation`). Only which modules a class of machine turns on,
+  never what they are set to.
 - `hosts/` - one file per machine (`darter`, `hades`, `server`). The only
   entrypoints. Each imports the profiles it wants plus whatever is true of that
   machine alone.
@@ -35,10 +36,14 @@ Personalization enters a class module only as a `dotfiles.<x>.<y>` option
 `home/` is the instance bucket: it holds this person's actual values, and every
 file in it is gated on the `dotfiles.*` option its module declares, so importing
 it costs nothing on a host that has the feature switched off.
-`profiles/` and `hosts/` hold no values at all, only composition: a profile says
-which modules a class of machine turns on, and a host says which profiles it is
-plus what is true of it alone (a signing key, a kubeconfig path, a package it
-alone installs).
+`profiles/` and `hosts/` hold no personal values, only composition: a profile is
+enable toggles and nothing else, saying which modules a class of machine turns
+on, and a host says which profiles it is plus what is true of it alone (a
+signing key, a kubeconfig path, a package it alone installs).
+The account (`home.username`, `homeDirectory`, `stateVersion`) is identity, not
+a class of machine, so it sits in `home/account.nix`; `hosts/server.nix` imports
+that one file directly because it takes the account without the rest of the
+personal layer.
 
 Before adding or moving a file, run this checklist:
 
@@ -137,9 +142,9 @@ directly.
 
 The profiles are:
 
-- `base` - the account, `stateVersion`, Home Manager managing itself, and the
-  git/gnupg/nix/sops/ssh/zsh floor plus the small CLI tools no machine is usable
-  without. Imports `../modules`. Every host takes it.
+- `base` - Home Manager managing itself, the git/gnupg/nix/sops/ssh/zsh floor,
+  and the small CLI tools no machine is usable without. Imports `../modules`.
+  Every host takes it.
 - `dev` - language toolchains and neovim (c, containers, go, javascript,
   kubernetes, python).
 - `ai` - the agent CLIs and the omnigent OpenRouter wiring. Split from `dev`
@@ -152,9 +157,10 @@ The profiles are:
 its signing key, and the rosequartz KUBECONFIG.
 `hosts/hades.nix` is `base + dev + ai + workstation` plus its signing key, ocaml
 and dotnet, and its desktop package list.
-`hosts/server.nix` is `base` plus containers and kubernetes, and deliberately
-does not import `home/`: the personal layer declares sops secrets encrypted to
-erik's laptop keys, which a server has no reason to hold.
+`hosts/server.nix` is `home/account.nix` plus `base`, containers, and
+kubernetes. It deliberately does not import the rest of `home/`: the personal
+layer declares sops secrets encrypted to erik's laptop keys, which a server has
+no reason to hold.
 
 `modules/` itself stays generic — enable toggles and the mechanics needed for
 a feature to function, with no personal values:

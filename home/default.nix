@@ -1,6 +1,7 @@
 { pkgs, ... }:
 {
   imports = [
+    ./account.nix
     ./ai.nix
     ./direnv.nix
     ./git.nix
