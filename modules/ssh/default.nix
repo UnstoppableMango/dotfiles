@@ -4,6 +4,11 @@ let
 
   managedKnownHosts = ".ssh/known_hosts_nix";
 
+  # Glob, not a plain path: a non-matching glob is ignored, while a missing
+  # plain Include target is an error. So the directory can be empty or absent.
+  localConfigDir = ".ssh/config.d";
+  localConfigGlob = "${localConfigDir}/*.conf";
+
   certAuthorityLines = lib.mapAttrsToList (
     pattern: key: "@cert-authority ${pattern} ${key}"
   ) cfg.certAuthorities;
@@ -77,12 +82,28 @@ in
       # home-manager's implicit defaults are deprecated, set them explicitly.
       enableDefaultConfig = false;
 
+      # Read before every block below, and ssh keeps the first value it obtains
+      # for a parameter, so a file dropped here overrides what follows. That is
+      # the seam for config this repo must not carry: a second account's key,
+      # a client's jump host, anything whose existence is not public.
+      includes = [ "~/${localConfigGlob}" ];
+
       settings = hostBlocks // {
         "*" = {
           Compression = true;
           ControlMaster = "auto";
           # %C hashes the connection tuple, so the socket path can't blow past
           # the ~104 character limit on unix domain sockets.
+          #
+          # That tuple is host, port, and remote user. It does not include the
+          # identity, and ssh offers no token that does, so two connections to
+          # the same host as the same remote user share one socket even when
+          # they were told to use different keys. The second one silently
+          # inherits whoever the first authenticated as; against a forge where
+          # every account is git@, that means pushing as the wrong identity.
+          # Anything that overrides IdentityFile must therefore override
+          # ControlPath too, whether it comes from a block in ${localConfigDir}
+          # or from git's core.sshCommand.
           ControlPath = "~/.ssh/master-%C";
           ControlPersist = "10m";
           AddKeysToAgent = "yes";
