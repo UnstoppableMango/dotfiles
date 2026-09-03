@@ -225,8 +225,12 @@
 
           # kitty colors, k9s skin, zed settings, and the ai checkout-root
           # doc carry no identity (no username, email, or host-specific
-          # value), so they are exported on their own for an identity that
-          # wants this taste without the rest of `home/`.
+          # value); this flips the four dotfiles.profile.* toggles
+          # (modules/profile/) that apply them, so it's exported on its own
+          # for an identity that wants the whole bundle without the rest of
+          # `home/`. A consumer that wants only one piece can instead set a
+          # single dotfiles.profile.<tool>.enable directly against
+          # `homeModules.dotfiles`, without this export at all.
           taste = ./home/taste.nix;
 
           # The whole host file, since the nixos repo's Home Manager NixOS

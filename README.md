@@ -47,6 +47,7 @@ Erik's home on hades is installed through the Home Manager NixOS module rather t
 - `c/`, `containers/`, `dotnet/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - language toolchains
 - `gnome/`, `fonts/`, `stylix/` - desktop, fonts, theming
 - `flake-update/`, `launch-services/` - automation, and macOS Launch Services registration
+- `profile/` - singular, not to be confused with the top-level `profiles/` above. `dotfiles.profile.*`, erik's per-tool taste toggles; read by `kitty/`, `kubernetes/k9s/`, `zed/`, and `ai/checkout-root.nix` to decide whether to layer erik's curated values on top of their own defaults
 
 ## Consuming from another flake
 
@@ -93,7 +94,7 @@ Add this repo as an input and compose `homeModules.{base,dev,ai,graphical,workst
 
 A profile sets its toggles at normal priority, so turning one back off takes `lib.mkForce` (`dotfiles.gnupg.enable = lib.mkForce false;`) rather than a plain `false`, which is a conflict.
 `homeModules.dotfiles` is the raw option set if you would rather pick toggles yourself than take a profile.
-`homeModules.taste` is the one piece of `home/` that is published: kitty colors, the k9s skin, zed settings, and the ai checkout-root doc, which carry no identity of their own.
+`homeModules.taste` is the one piece of `home/` that is published: it flips the four `dotfiles.profile.<tool>.enable` toggles (kitty colors, the k9s skin, zed settings, the ai checkout-root doc), which carry no identity of their own. Those toggles live in `modules/profile/`, so they are already reachable through `homeModules.dotfiles`; a consumer who wants only one piece of the taste can set a single toggle directly instead of importing `homeModules.taste`.
 `homeModules.hades` and everything else under `home/` and `hosts/` are my identity and my machines; they are not meant to be consumed.
 
 Defaults that are mine rather than everyone's, and that you will probably want to override:

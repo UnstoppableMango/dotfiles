@@ -30,10 +30,16 @@ in
     };
   };
 
-  config = lib.mkIf (cfg.enable && root.context != null) {
-    home.file = {
-      "${root.path}/AGENTS.md".source = root.context;
-      "${root.path}/CLAUDE.md".text = "@AGENTS.md\n";
-    };
-  };
+  config = lib.mkMerge [
+    (lib.mkIf (cfg.enable && root.context != null) {
+      home.file = {
+        "${root.path}/AGENTS.md".source = root.context;
+        "${root.path}/CLAUDE.md".text = "@AGENTS.md\n";
+      };
+    })
+
+    (lib.mkIf config.dotfiles.profile.ai.enable {
+      dotfiles.ai.checkoutRoot.context = lib.mkDefault ./checkout-root.md;
+    })
+  ];
 }
