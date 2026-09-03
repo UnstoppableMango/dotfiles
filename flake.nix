@@ -207,8 +207,11 @@
           dotfiles = ./modules;
 
           # The profiles, as named bundles of enable toggles carrying no
-          # identity. `base` imports ./modules, so it is the only one an
-          # outside consumer strictly needs; the rest layer on top of it.
+          # identity, published so a third party building a home config from
+          # scratch (see README.md) has a starting point instead of hand-
+          # picking `dotfiles.*` toggles. `base` imports ./modules, so it is
+          # the only one an outside consumer strictly needs; the rest layer
+          # on top of it.
           #
           # Flat rather than nested under a `profiles` attribute because
           # home-manager's flakeModule types this option as
@@ -220,27 +223,17 @@
           graphical = ./profiles/graphical.nix;
           workstation = ./profiles/workstation.nix;
 
-          # Erik's preferences (git identity/aliases, kitty colors, k9s skin,
-          # GNOME dconf taste, ai/vscode/zed, secrets), including `account.nix`
-          # for the account mechanics (`homeDirectory` etc.) and a `username`
-          # default of "erik" set via `mkDefault` so a consumer can override
-          # it without a conflict. `account` exports `account.nix` on its own,
-          # which carries no identity itself; `hosts/server.nix` uses it
-          # directly and sets its own username since it skips the rest of
-          # `home/`. A consumer building a different person wants `dotfiles`
-          # and the profiles, not either of these.
-          erik = ./home;
-          account = ./home/account.nix;
-
           # kitty colors, k9s skin, zed settings, and the ai checkout-root
           # doc carry no identity (no username, email, or host-specific
           # value), so they are exported on their own for an identity that
           # wants this taste without the rest of `home/`.
           taste = ./home/taste.nix;
 
-          darter = ./hosts/darter.nix;
+          # The whole host file, since the nixos repo's Home Manager NixOS
+          # integration wants hades' full configuration (home/ plus the
+          # profiles plus hades' own overrides) as a single import; see
+          # machines/hades/configuration.nix in that repo.
           hades = ./hosts/hades.nix;
-          server = ./hosts/server.nix;
         };
 
         nixvimModules.default = ./modules/neovim/nixvim-config.nix;

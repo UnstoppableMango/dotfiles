@@ -46,7 +46,7 @@ it takes the account without the rest of the personal layer.
 `account.nix` itself carries no identity: `homeDirectory` derives from
 whatever `home.username` ends up being (`lib.mkDefault "/home/${config.home.username}"`),
 and it sets no username at all. `home/default.nix` supplies the "erik"
-default as `home.username = lib.mkDefault "erik";`, so `homeModules.erik`
+default as `home.username = lib.mkDefault "erik";`, so `home/default.nix`
 (which imports `account.nix`) can still be composed with a different username
 without a conflicting-definitions error, and `hosts/server.nix` sets its own
 username explicitly since it skips `home/default.nix`.
@@ -90,13 +90,14 @@ identity gone, `users/shared/` was an abstraction over a set of size one, and
 its contents now live in `home/`.
 
 A second identity does not come back here. It lives in its own flake and
-consumes `homeModules.dotfiles` and `homeModules.{base,dev,ai,graphical,workstation}`, supplying its own
-account, secrets, and (on macOS) nix-darwin system layer. That is why the
-reusable half of the old `users/shared/` ended up in `modules/` behind options
-rather than in a new shared directory: an export is the sharing mechanism, so
-the layer is unnecessary. `home/` therefore stays flat rather than becoming
-`home/<name>/`, and `profiles/` is unaffected either way, because a profile
-never held an identity in the first place.
+consumes `homeModules.dotfiles`, supplying its own `dotfiles.*` toggles,
+account, secrets, and (on macOS) nix-darwin system layer, rather than the
+`base`/`dev`/`ai`/`graphical`/`workstation` profiles those toggles mirror.
+That is why the reusable half of the old `users/shared/` ended up in
+`modules/` behind options rather than in a new shared directory: an export is
+the sharing mechanism, so the layer is unnecessary. `home/` therefore stays
+flat rather than becoming `home/<name>/`, and `profiles/` is unaffected
+either way, because a profile never held an identity in the first place.
 
 `homeModules.taste` is the one narrow exception: kitty colors, the k9s skin,
 zed settings, and the ai checkout-root doc are erik's literal preferences, but
@@ -173,10 +174,11 @@ use costs nothing.
 vscode's default-profile settings, GNOME dconf taste, the sops secrets, and
 the `home.username` default, plus `home/taste.nix` for the identity-free
 kitty colors, k9s skin, zed settings, and `~/src` checkout-root document.
-`flake.nix` exports the whole thing as `homeModules.erik`, and exports
-`home/account.nix` and `home/taste.nix` on their own as `homeModules.account`
-and `homeModules.taste`, for a consumer that wants only the identity-free
-account mechanics or personal taste, respectively.
+`flake.nix` exports `home/taste.nix` on its own as `homeModules.taste`, for a
+consumer that wants only the identity-free taste; `home/default.nix` and
+`home/account.nix` are reached by relative import (`hosts/darter.nix`,
+`hosts/hades.nix`, `hosts/server.nix`) rather than exported, since nothing
+outside this repo imports either by name.
 The nixvim configuration, the prezto/p10k setup, and the Zed extension list
 used to sit here too; they are option defaults in `modules/neovim`,
 `modules/zsh/prezto`, and `modules/zed` now, reachable to anyone consuming the
@@ -257,8 +259,7 @@ a feature to function, with no personal values:
 - `ssh/` — SSH client config.
   Host aliases come from the `hosts` flake input (https://github.com/UnstoppableMango/hosts).
   The module takes the table as data (`dotfiles.ssh.hosts`, empty by default); `flake.nix` feeds it `inputs.hosts.lib.addresses`, so no module closes over `inputs` for it.
-  Anything importing `homeModules.erik` from outside this flake has to set it too, which the nixos repo does in `machines/hades/configuration.nix`.
-  That repo reads the same input for its `internet` clan service, so the two can't drift.
+  The nixos repo's `machines/hades/configuration.nix` imports `homeModules.hades` and does not currently set `dotfiles.ssh.hosts` itself, so hades' Home Manager environment gets the empty default rather than the `hosts` flake input's addresses, even though that repo follows the same `hosts` input for its `internet` clan service.
   `HostKeyAlias` plus the `@cert-authority` entry in `~/.ssh/known_hosts_nix` mean cluster machines validate against the clan SSH CA instead of prompting on first connect.
   Agent handling belongs to gnupg's gpg-agent, not here.
 - `stylix/` — Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
@@ -281,13 +282,14 @@ Five home configurations are built: `erik@darter`, `erik@hades`, and
 `erik@server` on x86_64-linux, plus `generic@x86_64-linux` and
 `generic@aarch64-darwin`.
 No machine is actually named `server`; that entry exists so `hosts/server.nix`
-is covered by `nix flake check` rather than only breaking in whatever flake
-consumes `homeModules.server`.
+is covered by `nix flake check` rather than only breaking whenever someone
+next touches it.
 
 The two `generic@*` entries are the same idea one layer out: profiles only, no
 `home/`, and an inline account with a throwaway username, so the
-`homeModules.{base,dev,ai,graphical,workstation}` exports are built here rather than only breaking in
-somebody else's flake. `generic@aarch64-darwin` is also the only consumer the
+`homeModules.{base,dev,ai,graphical,workstation}` exports are built here
+rather than only breaking in somebody else's flake.
+`generic@aarch64-darwin` is also the only consumer the
 darwin branches in `modules/` (ghostty's null package, the 1Password agent
 socket, the containers defaults, omnigent's launchd unit, `launch-services/`)
 have had since the darwin host was removed.
@@ -298,7 +300,7 @@ aarch64-darwin) for the darwin one, which gets a real build rather than an
 evaluation.
 
 `erik@hades` is build-only.
-Hades' home is activated by the nixos repo through the Home Manager NixOS module, which layers clan-generated material (the rosequartz kubeconfig and admin key) on top of `homeModules.erik`.
+Hades' home is activated by the nixos repo through the Home Manager NixOS module, which imports `homeModules.hades` and layers clan-generated material (the rosequartz kubeconfig and admin key) on top of it.
 A standalone activation rewrites the same sops-nix secrets directory without that material, leaving `~/.kube/config` dangling, so never `switch` this configuration.
 Build it with `nix run home-manager -- build --flake .#'erik@hades'`.
 
