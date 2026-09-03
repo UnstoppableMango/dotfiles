@@ -12,13 +12,17 @@ This repo manages my [Home Manager](https://nix-community.github.io/home-manager
 
 ## Home configurations
 
-| Configuration | System       |
-| ------------- | ------------ |
-| `erik@darter` | x86_64-linux |
-| `erik@hades`  | x86_64-linux |
-| `erik@server` | x86_64-linux |
+| Configuration            | System         |
+| ------------------------ | -------------- |
+| `erik@darter`            | x86_64-linux   |
+| `erik@hades`             | x86_64-linux   |
+| `erik@server`            | x86_64-linux   |
+| `generic@x86_64-linux`   | x86_64-linux   |
+| `generic@aarch64-darwin` | aarch64-darwin |
 
 No machine is named `server`; that entry exists so the headless profile is covered by `nix flake check`.
+Neither is any machine or person named `generic`.
+Those two build the profiles with no identity attached, so the exports below stay working for somebody who is not me instead of only breaking in their flake.
 
 `erik@hades` is build-only.
 Hades' home is activated by the [nixos](https://github.com/UnstoppableMango/nixos) repo through the Home Manager NixOS module, so this entry exists to verify the config evaluates and builds, not to switch into.
@@ -32,18 +36,79 @@ Erik's home on hades is installed through the Home Manager NixOS module rather t
 - `profiles/` - enable toggles only, bundled by machine class: `base`, `dev`, `ai`, `graphical`, `workstation`
 - `hosts/` - one file per machine, composing profiles
 
-Category modules live under `modules/`:
+`modules/` is flat: one directory per piece of software, each with a `default.nix`, imported by existing rather than by being listed.
 
-- `ai/` - Claude Code, GitHub Copilot CLI, Cursor CLI
-- `browsers/` - Brave
-- `desktop/gnome/` - GNOME
-- `editors/` - VS Code, Neovim (nixvim), Zed, Helix, Emacs
-- `gnupg/` - gpg + gpg-agent, pinentry on Linux
-- `onepassword/` - 1Password CLI, SSH agent socket, and SSH commit signing
-- `shells/zsh/` - Zsh (Prezto, or oh-my-zsh via `dotfiles.zsh.ohMyZsh.enable`), Powerlevel10k
-- `sops/` - sops-nix age key location for erik
-- `terminals/` - Kitty, Ghostty
-- `toolchain/` - c, containers, dotnet, git, go, javascript, kubernetes (incl. the rosequartz kubeconfig), nix, ocaml, python
+- `ai/` - Claude Code, GitHub Copilot CLI, Cursor CLI, and the per-service MCP toggles
+- `brave/`, `obsidian/` - browser and notes
+- `vscode/`, `neovim/` (nixvim), `zed/`, `helix/`, `emacs/` - editors
+- `kitty/`, `ghostty/` - terminals
+- `zsh/` - Prezto and Powerlevel10k, or oh-my-zsh via `dotfiles.zsh.ohMyZsh.enable`
+- `git/`, `gnupg/`, `onepassword/`, `sops/`, `ssh/` - identity and secret plumbing
+- `c/`, `containers/`, `dotnet/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - language toolchains
+- `gnome/`, `fonts/`, `stylix/` - desktop, fonts, theming
+- `flake-update/`, `launch-services/` - automation, and macOS Launch Services registration
+
+## Consuming from another flake
+
+The modules and profiles carry no identity, so another person can build a home configuration out of them.
+Add this repo as an input and compose `homeModules.{base,dev,ai,graphical,workstation}` with your own account:
+
+```nix
+{
+  inputs.dotfiles.url = "github:UnstoppableMango/dotfiles";
+
+  outputs =
+    { nixpkgs, home-manager, dotfiles, ... }@inputs:
+    {
+      homeConfigurations."you@yourmachine" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+        modules = [
+          # `pkgs.gossamer` is referenced by modules/zed and the nixvim
+          # config, so the overlay is not optional.
+          {
+            nixpkgs.overlays = [ dotfiles.overlays.default ];
+            nixpkgs.config.allowUnfree = true;
+          }
+
+          # These four are what the `dotfiles.*` options build on.
+          inputs.stylix.homeModules.stylix
+          inputs.nixvim.homeModules.nixvim
+          inputs.sops-nix.homeManagerModules.sops
+          inputs.nix2git.homeModules.nix2git
+
+          # `base` imports ./modules, so it is the only one you strictly need.
+          dotfiles.homeModules.base
+          dotfiles.homeModules.dev
+
+          {
+            home.username = "you";
+            home.homeDirectory = "/Users/you";
+            home.stateVersion = "25.05";
+          }
+        ];
+      };
+    };
+}
+```
+
+A profile sets its toggles at normal priority, so turning one back off takes `lib.mkForce` (`dotfiles.gnupg.enable = lib.mkForce false;`) rather than a plain `false`, which is a conflict.
+`homeModules.dotfiles` is the raw option set if you would rather pick toggles yourself than take a profile.
+`homeModules.erik` and the three host modules are my identity and my machines; they are not meant to be consumed.
+
+Defaults that are mine rather than everyone's, and that you will probably want to override:
+
+| Option                             | Default                                     |
+| ---------------------------------- | ------------------------------------------- |
+| `dotfiles.ssh.hosts`               | `{}`, fed `inputs.hosts.lib.addresses` here |
+| `dotfiles.ssh.hostKeyAliasDomain`  | `thecluster.io`                             |
+| `dotfiles.ssh.certAuthorities`     | the clan SSH CA public key                  |
+| `dotfiles.kubernetes.rosequartz.*` | my cluster's VIP, CA, and OIDC issuer       |
+| `dotfiles.neovim.defaultConfig`    | `true`, the bundled nixvim config           |
+| `dotfiles.zsh.p10kConfig`          | the bundled `.p10k.zsh`                     |
+| `dotfiles.zed.extensions`          | the bundled extension list                  |
+
+`profiles/ai.nix` points omnigent at a sops secret named `openrouter-api-key`, and the module asserts that the name resolves.
+Declare it, or set `dotfiles.ai.omnigent.openRouter.enable = false`.
 
 ## Development
 

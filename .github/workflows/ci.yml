@@ -29,3 +29,35 @@ jobs:
           nix run home-manager -- build \
           --flake ${{ github.workspace }}#erik@darter \
           --no-out-link
+
+      # The identity-free configuration. `nix flake check` does not evaluate
+      # homeConfigurations, so without this the profile exports would only
+      # break in whatever flake consumes them. The darwin half is the `darwin`
+      # job below.
+      - run: |
+          nix run home-manager -- build \
+          --flake ${{ github.workspace }}#generic@x86_64-linux \
+          --no-out-link
+
+  # `generic@aarch64-darwin` is the only consumer the darwin branches in
+  # `modules/` have had since the darwin host was removed, so it gets a real
+  # build on a real mac rather than an evaluation on the linux runner.
+  # `macos-latest` is Apple Silicon, which is the aarch64-darwin this builds.
+  darwin:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31.10.6
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@5f2d7c5294214f71b873db4b969586b980625e71 # v17
+        with:
+          name: unstoppablemango
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: |
+          nix run home-manager -- build \
+          --flake ${{ github.workspace }}#generic@aarch64-darwin \
+          --no-out-link
