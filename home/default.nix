@@ -7,14 +7,11 @@
   # `mkDefault` a consumer can override without a conflict.
   imports = [
     ./account.nix
-    ./ai.nix
     ./direnv.nix
     ./git.nix
     ./gnome.nix
-    ./k9s.nix
-    ./kitty.nix
+    ./taste.nix
     ./vscode
-    ./zed.nix
   ];
 
   home.username = lib.mkDefault "erik";

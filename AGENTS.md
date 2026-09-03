@@ -98,6 +98,14 @@ the layer is unnecessary. `home/` therefore stays flat rather than becoming
 `home/<name>/`, and `profiles/` is unaffected either way, because a profile
 never held an identity in the first place.
 
+`homeModules.taste` is the one narrow exception: kitty colors, the k9s skin,
+zed settings, and the ai checkout-root doc are erik's literal preferences, but
+they carry no identity data of their own (no username, email, or host-specific
+value), so the same person's other identity can take them as-is instead of
+re-declaring them. This is not a reopening of the shared layer; it is a single
+export of four files that happen to need no change between identities, same as
+any other `homeModules.*` export.
+
 Precedent: the sops key path and the rosequartz kubeconfig describe erik's
 user environment, not a clan machine, so they moved out of the nixos repo's
 `machines/hades/configuration.nix` into `modules/sops/` and
@@ -161,12 +169,14 @@ is the tradeoff for not maintaining a list.
 option set. Everything is `mkIf`-gated, so importing a module a host does not
 use costs nothing.
 
-`home/default.nix` collects erik's personal config: git identity/aliases, kitty
-colors, vscode's default-profile settings, k9s's skin, GNOME dconf taste, the
-`~/src` checkout-root document, the sops secrets, and the `home.username`
-default. `flake.nix` exports it as `homeModules.erik` and exports
-`home/account.nix` on its own as `homeModules.account`, for a consumer that
-wants only the identity-free account mechanics.
+`home/default.nix` collects erik's personal config: git identity/aliases,
+vscode's default-profile settings, GNOME dconf taste, the sops secrets, and
+the `home.username` default, plus `home/taste.nix` for the identity-free
+kitty colors, k9s skin, zed settings, and `~/src` checkout-root document.
+`flake.nix` exports the whole thing as `homeModules.erik`, and exports
+`home/account.nix` and `home/taste.nix` on their own as `homeModules.account`
+and `homeModules.taste`, for a consumer that wants only the identity-free
+account mechanics or personal taste, respectively.
 The nixvim configuration, the prezto/p10k setup, and the Zed extension list
 used to sit here too; they are option defaults in `modules/neovim`,
 `modules/zsh/prezto`, and `modules/zed` now, reachable to anyone consuming the

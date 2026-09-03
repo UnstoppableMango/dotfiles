@@ -231,6 +231,13 @@
           # and the profiles, not either of these.
           erik = ./home;
           account = ./home/account.nix;
+
+          # kitty colors, k9s skin, zed settings, and the ai checkout-root
+          # doc carry no identity (no username, email, or host-specific
+          # value), so they are exported on their own for an identity that
+          # wants this taste without the rest of `home/`.
+          taste = ./home/taste.nix;
+
           darter = ./hosts/darter.nix;
           hades = ./hosts/hades.nix;
           server = ./hosts/server.nix;
