@@ -155,12 +155,22 @@
       inputs.flake-parts.follows = "flake-parts";
       inputs.systems.follows = "systems";
     };
+
+    tdl = {
+      url = "github:UnstoppableMango/tdl";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.gomod2nix.follows = "gomod2nix";
+      inputs.systems.follows = "systems";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+    };
   };
 
   outputs =
     inputs@{ flake-parts, self, ... }:
     let
       clan = import ./overlays/clan.nix { inherit (inputs) clan-core; };
+      tdlPkg = import ./overlays/tdl.nix { inherit (inputs) tdl; };
 
       overlay = inputs.nixpkgs.lib.composeManyExtensions (
         with inputs;
@@ -171,6 +181,7 @@
           nix-direnv.overlays.default
           nix-vscode-extensions.overlays.default
           clan.overlays.default
+          tdlPkg.overlays.default
 
           # cargo-about pin conflict is resolved upstream (zed's own nix/build.nix
           # now vendors cargo-about via fetchFromGitHub), but a new mismatch surfaced:

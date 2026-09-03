@@ -10,5 +10,6 @@
     kubernetes.enable = true;
     neovim.enable = true;
     python.enable = true;
+    tdl.enable = true;
   };
 }
