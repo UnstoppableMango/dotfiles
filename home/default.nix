@@ -1,5 +1,10 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
+  # Erik's preferences: git identity/aliases, kitty colors, k9s skin, GNOME
+  # dconf taste, the ai/vscode/zed setup, and the sops secrets. `account.nix`
+  # is generic account mechanics with no identity of its own, so the only
+  # erik-specific bit here is the username default below, and it's an
+  # `mkDefault` a consumer can override without a conflict.
   imports = [
     ./account.nix
     ./ai.nix
@@ -11,6 +16,8 @@
     ./vscode
     ./zed.nix
   ];
+
+  home.username = lib.mkDefault "erik";
 
   home.packages = with pkgs; [
     buf

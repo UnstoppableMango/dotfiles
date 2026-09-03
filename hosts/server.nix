@@ -4,11 +4,14 @@
   # actually needs. The account comes from `home/account.nix` directly rather
   # than from all of `home/`, because the rest of the personal layer carries
   # sops secrets encrypted to erik's laptop keys that a server has no reason to
-  # hold.
+  # hold. `account.nix` carries no identity of its own, so the username is set
+  # here rather than inherited from `home/default.nix`'s default.
   imports = [
     ../home/account.nix
     ../profiles/base.nix
   ];
+
+  home.username = "erik";
 
   home.packages = with pkgs; [
     nano

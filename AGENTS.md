@@ -40,10 +40,16 @@ it costs nothing on a host that has the feature switched off.
 enable toggles and nothing else, saying which modules a class of machine turns
 on, and a host says which profiles it is plus what is true of it alone (a
 signing key, a kubeconfig path, a package it alone installs).
-The account (`home.username`, `homeDirectory`, `stateVersion`) is identity, not
-a class of machine, so it sits in `home/account.nix`; `hosts/server.nix` imports
-that one file directly because it takes the account without the rest of the
-personal layer.
+The account is identity, not a class of machine, so it sits in
+`home/account.nix`; `hosts/server.nix` imports that one file directly because
+it takes the account without the rest of the personal layer.
+`account.nix` itself carries no identity: `homeDirectory` derives from
+whatever `home.username` ends up being (`lib.mkDefault "/home/${config.home.username}"`),
+and it sets no username at all. `home/default.nix` supplies the "erik"
+default as `home.username = lib.mkDefault "erik";`, so `homeModules.erik`
+(which imports `account.nix`) can still be composed with a different username
+without a conflicting-definitions error, and `hosts/server.nix` sets its own
+username explicitly since it skips `home/default.nix`.
 
 An opinionated value is not automatically identity.
 A curated set that any consumer of this flake would plausibly want (the nixvim
@@ -157,7 +163,10 @@ use costs nothing.
 
 `home/default.nix` collects erik's personal config: git identity/aliases, kitty
 colors, vscode's default-profile settings, k9s's skin, GNOME dconf taste, the
-`~/src` checkout-root document, and the sops secrets.
+`~/src` checkout-root document, the sops secrets, and the `home.username`
+default. `flake.nix` exports it as `homeModules.erik` and exports
+`home/account.nix` on its own as `homeModules.account`, for a consumer that
+wants only the identity-free account mechanics.
 The nixvim configuration, the prezto/p10k setup, and the Zed extension list
 used to sit here too; they are option defaults in `modules/neovim`,
 `modules/zsh/prezto`, and `modules/zed` now, reachable to anyone consuming the

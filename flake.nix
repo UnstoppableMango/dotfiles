@@ -220,10 +220,17 @@
           graphical = ./profiles/graphical.nix;
           workstation = ./profiles/workstation.nix;
 
-          # Erik's identity, and the three machines that compose it with the
-          # profiles above. A consumer building a different person wants
-          # `dotfiles` and the profiles, not these.
+          # Erik's preferences (git identity/aliases, kitty colors, k9s skin,
+          # GNOME dconf taste, ai/vscode/zed, secrets), including `account.nix`
+          # for the account mechanics (`homeDirectory` etc.) and a `username`
+          # default of "erik" set via `mkDefault` so a consumer can override
+          # it without a conflict. `account` exports `account.nix` on its own,
+          # which carries no identity itself; `hosts/server.nix` uses it
+          # directly and sets its own username since it skips the rest of
+          # `home/`. A consumer building a different person wants `dotfiles`
+          # and the profiles, not either of these.
           erik = ./home;
+          account = ./home/account.nix;
           darter = ./hosts/darter.nix;
           hades = ./hosts/hades.nix;
           server = ./hosts/server.nix;

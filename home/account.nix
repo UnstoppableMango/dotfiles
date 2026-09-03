@@ -1,15 +1,11 @@
-{ ... }:
-let
-  username = "erik";
-in
+{ config, lib, ... }:
 {
-  # Who the account is. Identity, so it lives here rather than in a profile:
-  # a profile describes a class of machine, and the person logged into it is
-  # not a property of the class. `hosts/server.nix` imports this file directly
-  # because it takes the account without the rest of the personal layer.
+  # Account mechanics, no identity: `homeDirectory` derives from whatever
+  # `home.username` ends up being, so this composes under any account.
+  # `home/default.nix` supplies the "erik" default; `hosts/server.nix` sets
+  # its own directly since it imports this file without the rest of `home/`.
   home = {
-    inherit username;
-    homeDirectory = "/home/${username}";
+    homeDirectory = lib.mkDefault "/home/${config.home.username}";
 
     sessionVariables.DO_NOT_TRACK = "1";
 
