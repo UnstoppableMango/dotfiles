@@ -12,6 +12,16 @@
     git.enable = true;
     gnupg.enable = true;
     nix.enable = true;
+
+    # CLI only: gpg-agent already owns SSH_AUTH_SOCK (gnupg.enable above sets
+    # enableSshSupport), and the two are mutually exclusive per the module's
+    # own assertion. Signing stays on GPG until a host opts into
+    # `dotfiles.onePassword.signingKey`.
+    onePassword = {
+      enable = true;
+      sshAgent = false;
+    };
+
     sops.enable = true;
     ssh.enable = true;
     zsh.enable = true;
