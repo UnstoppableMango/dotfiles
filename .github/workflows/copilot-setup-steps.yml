@@ -12,7 +12,7 @@ on:
 jobs:
   copilot-setup-steps:
     # It broke atm
-    # runs-on: dotfiles-runners
+    # runs-on: thecluster
     runs-on: ubuntu-latest
     permissions:
       contents: read
