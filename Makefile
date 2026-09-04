@@ -1,11 +1,22 @@
 SRC != find -path '*.nix' -printf '%P\n'
 
-# Matches how home-manager resolves a configuration implicitly.
-USER ?= $(shell id -un)
 # `$(shell ...)` rather than `!=`: macOS ships GNU Make 3.81, which predates
 # the `!=` shell assignment and would silently leave this empty.
 HOST ?= $(shell hostname -s)
-HOME_CONFIG ?= ${USER}@${HOST}
+UNAME_S := $(shell uname -s)
+
+# The most specific home configuration for the current host: darwin builds
+# the identity-free generic config, darter/hades build their own named
+# config, and any other Linux box falls back to erik@server.
+ifeq (${UNAME_S},Darwin)
+HOME_CONFIG ?= generic@aarch64-darwin
+else ifeq (${HOST},darter)
+HOME_CONFIG ?= erik@darter
+else ifeq (${HOST},hades)
+HOME_CONFIG ?= erik@hades
+else
+HOME_CONFIG ?= erik@server
+endif
 
 build:
 	home-manager build --flake ${CURDIR}#${HOME_CONFIG}
