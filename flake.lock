@@ -163,11 +163,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787544734,
-        "narHash": "sha256-Bc6uWtOkhMb6qPfGo58t11nC33GngKLmnRW3NE+DkvQ=",
+        "lastModified": 1788636246,
+        "narHash": "sha256-qRiPz9nZ0gmkeChHPc/FfJSNtTEtMQXkdOzm/4lTk/A=",
         "owner": "unmango",
         "repo": "devctl",
-        "rev": "b087d1207e03dfdfe91850d0aed3853677ef60b3",
+        "rev": "c7b0f53d8e15f916315dba5cc89247122b733dae",
         "type": "github"
       },
       "original": {
