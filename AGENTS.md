@@ -187,8 +187,9 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   Agent handling belongs to gnupg's gpg-agent, not here.
 - `stylix/` - Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
 - `kitty/`, `ghostty/` - terminals
-- `c/`, `containers/`, `dotnet/`, `git/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/`, `tdl/` - per-language dev tooling.
-  `tdl/` is a single package install for the type description language compiler, from the `tdl` input via `overlays/tdl.nix`.
+- `c/`, `containers/`, `dotnet/`, `git/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - per-language dev tooling.
+  There is no `tdl/` module: the tdl flake exports its own `homeModules.tdl` declaring `programs.tdl.*` (the CLI plus the VS Code extension), so `flake.nix` adds that module to `common` and `profiles/dev.nix` sets `programs.tdl.enable` rather than this repo re-declaring a `dotfiles.tdl` toggle over `pkgs.tdl`.
+  A consumer of `homeModules.dev` imports `tdl.homeModules.tdl` the same way they import stylix, nixvim, and nix2git; `homeModules.dotfiles` stays self-contained, since nothing under `modules/` references the option.
   `git/repos.nix` imports the nix2git home-manager module from https://github.com/unmango/nix2git, whose `nix2git.repositories` runs `git init` for declared paths under the home directory that do not exist yet, and never clones, rewrites, or deletes.
   `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
   `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its defaults entirely once that file exists.
@@ -216,10 +217,11 @@ Hades' home is activated by the nixos repo through the Home Manager NixOS module
 A standalone activation rewrites the same sops-nix secrets directory without that material, leaving `~/.kube/config` dangling, so never `switch` this configuration.
 Build it with `nix run home-manager -- build --flake .#'erik@hades'`.
 
-Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-extensions) are composed in `flake.nix` and applied to nixpkgs, alongside the local ones from `overlays/`.
+Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-extensions, tdl) are composed in `flake.nix` and applied to nixpkgs, alongside the local ones from `overlays/`.
 `zed.overlays.default` is commented out: nixpkgs' livekit-libwebrtc is out of sync with zed 0.217.3's expected webrtc API (`no type named 'AudioDeviceSink' in namespace 'webrtc'`).
 
-`overlays/` holds the ones that are not a bare re-export of a flake input: `clan.nix` and `tdl.nix` adapt an input's packages, and `vscode.nix` symlinks `node_modules.asar.unpacked` into the built product, without which oniguruma never loads and every file renders untokenized.
+`tdl.overlays.default` composes gomod2nix's overlay in (tdl is built with its `buildGoApplication`), so `buildGoApplication` and `mkGoEnv` land in `pkgs` alongside `tdl` and `vscode-tdl`.
+`overlays/` holds the ones that are not a bare re-export of a flake input: `clan.nix` adapts an input's packages, and `vscode.nix` symlinks `node_modules.asar.unpacked` into the built product, without which oniguruma never loads and every file renders untokenized.
 Software with no nixpkgs package and no upstream flake is packaged in https://github.com/unmango/pkgs and reaches this flake through the `mangopkgs` overlay, so a module can take it as a `package` option default the same as any nixpkgs attribute.
 There is no `pkgs/` directory here.
 

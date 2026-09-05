@@ -171,7 +171,6 @@
     inputs@{ flake-parts, self, ... }:
     let
       clan = import ./overlays/clan.nix { inherit (inputs) clan-core; };
-      tdlPkg = import ./overlays/tdl.nix { inherit (inputs) tdl; };
       vscodePkg = import ./overlays/vscode.nix;
 
       overlay = inputs.nixpkgs.lib.composeManyExtensions (
@@ -182,8 +181,11 @@
           nil.overlays.default
           nix-direnv.overlays.default
           nix-vscode-extensions.overlays.default
+          # Composes gomod2nix's overlay in, since tdl is built with its
+          # buildGoApplication, so buildGoApplication and mkGoEnv land in pkgs
+          # alongside `tdl` and `vscode-tdl`.
+          tdl.overlays.default
           clan.overlays.default
-          tdlPkg.overlays.default
           vscodePkg.overlays.default
 
           # cargo-about pin conflict is resolved upstream (zed's own nix/build.nix
@@ -266,6 +268,7 @@
               nixvim.homeModules.nixvim
               sops-nix.homeManagerModules.sops
               nix2git.homeModules.nix2git
+              tdl.homeModules.tdl
               { dotfiles.ssh.hosts = hosts.lib.addresses; }
             ];
 

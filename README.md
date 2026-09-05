@@ -77,6 +77,9 @@ Add this repo as an input and compose `homeModules.{base,dev,ai,graphical,workst
           inputs.sops-nix.homeManagerModules.sops
           inputs.nix2git.homeModules.nix2git
 
+          # `dev` sets `programs.tdl.enable`, which this module declares.
+          inputs.tdl.homeModules.tdl
+
           # `base` imports ./modules, so it is the only one you strictly need.
           dotfiles.homeModules.base
           dotfiles.homeModules.dev
