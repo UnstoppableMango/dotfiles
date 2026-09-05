@@ -10,6 +10,7 @@
   config = lib.mkIf config.dotfiles.javascript.enable {
     home.packages = with pkgs; [
       fnm
+      zx
     ];
 
     programs.zsh.initContent = lib.mkIf config.dotfiles.zsh.enable ''
