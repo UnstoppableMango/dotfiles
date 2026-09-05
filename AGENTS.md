@@ -163,7 +163,7 @@ Whoever creates the nixpkgs instance owns `nixpkgs.overlays` and `nixpkgs.config
 So nothing under `modules/`, `home/`, `profiles/`, or `hosts/` sets them.
 `flake.nix`'s `common` list supplies both to the standalone configurations, and the nixos repo supplies them to hades.
 
-`make build` builds the current host's configuration, resolved as `$USER@$(hostname -s)`.
+`make build` builds a configuration picked from `hostname -s`: darter and hades build their own, macOS builds `generic@aarch64-darwin`, and any other Linux box falls back to `erik@server`.
 Set `HOME_CONFIG` to build a different one, e.g. `make build HOME_CONFIG=erik@hades`.
 
 Environment variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC`, `HOME_CONFIG` (all have defaults).
@@ -187,7 +187,8 @@ option set. Everything is `mkIf`-gated, so importing a module a host does not
 use costs nothing.
 
 `home/default.nix` collects erik's personal config: git identity/aliases,
-vscode's default-profile settings, GNOME dconf taste, the sops secrets, and
+vscode's default-profile settings, GNOME dconf taste, the direnv/nix-direnv
+setup, the sops secrets, and
 the `home.username` default, plus `home/taste.nix`, which flips the four
 `dotfiles.profile.<tool>.enable` toggles that make `modules/kitty`,
 `modules/kubernetes/k9s`, `modules/zed`, and `modules/ai/checkout-root.nix`
@@ -291,7 +292,8 @@ a feature to function, with no personal values:
   Agent handling belongs to gnupg's gpg-agent, not here.
 - `stylix/` — Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
 - `kitty/`, `ghostty/` — terminals
-- `c/`, `containers/`, `dotnet/`, `git/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` — per-language dev tooling.
+- `c/`, `containers/`, `dotnet/`, `git/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/`, `tdl/` — per-language dev tooling.
+  `tdl/` is a single package install for the type description language compiler, from the `tdl` input via `overlays/tdl.nix`.
   `git/repos.nix` imports the nix2git home-manager module from https://github.com/unmango/nix2git, whose `nix2git.repositories` runs `git init` for declared paths under the home directory that do not exist yet, and never clones, rewrites, or deletes.
   `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
   `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its own defaults entirely once that file exists.
@@ -336,9 +338,10 @@ Hades' home is activated by the nixos repo through the Home Manager NixOS module
 A standalone activation rewrites the same sops-nix secrets directory without that material, leaving `~/.kube/config` dangling, so never `switch` this configuration.
 Build it with `nix run home-manager -- build --flake .#'erik@hades'`.
 
-Overlays from multiple inputs (devctl, mynix, nil, nix-direnv, nix-vscode-extensions, ux) are composed in `flake.nix` and applied to nixpkgs. `zed.overlays.default` is currently commented out due to a `cargo-about` version conflict.
+Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-extensions) are composed in `flake.nix` and applied to nixpkgs, alongside the local ones from `overlays/`.
+`zed.overlays.default` is commented out: nixpkgs' livekit-libwebrtc is out of sync with zed 0.217.3's expected webrtc API (`no type named 'AudioDeviceSink' in namespace 'webrtc'`).
 
-`overlays/` holds the ones that are not a bare re-export of a flake input: `clan.nix` and `tdl.nix` adapt an input's packages, and `coderabbit.nix` `callPackage`s a derivation from `pkgs/`.
+`overlays/` holds the ones that are not a bare re-export of a flake input: `clan.nix` and `tdl.nix` adapt an input's packages, `coderabbit.nix` `callPackage`s a derivation from `pkgs/`, and `vscode.nix` symlinks `node_modules.asar.unpacked` into the built product, without which oniguruma never loads and every file renders untokenized.
 `pkgs/` is for software with no nixpkgs package and no upstream flake, packaged here rather than in a module so it is reachable as `pkgs.<name>` and a module can take it as a `package` option default.
 `pkgs/coderabbit.nix` is the only one: a closed-source Bun executable published as a per-platform zip, so the version and all four hashes are pinned together and bumped by hand against `https://cli.coderabbit.ai/releases/latest/VERSION`.
 
