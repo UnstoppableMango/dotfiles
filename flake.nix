@@ -163,6 +163,7 @@
       inputs.gomod2nix.follows = "gomod2nix";
       inputs.systems.follows = "systems";
       inputs.treefmt-nix.follows = "treefmt-nix";
+      inputs.home-manager.follows = "home-manager";
     };
   };
 
