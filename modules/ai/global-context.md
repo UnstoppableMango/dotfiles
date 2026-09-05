@@ -37,6 +37,11 @@ When a review or debugging session turns up multiple distinct bugs, file one foc
 
 Avoid temporal or narrative language in docs and code comments (e.g. "now", "previously", "this was changed to", "recently added"). Describe the current state only, as if it always existed. This avoids doc/comment rot and repeated cleanup passes.
 
+Keep code comments brief and high value.
+A comment usually earns its place only when it documents behavior the code does not make obvious.
+Before writing one, consider whether a refactor that makes the code clear on its own would serve better.
+Decision logs, historical reasoning, and additional background belong in markdown under `docs/`, and only when they merit being written down at all.
+
 ## Shell autoload issue
 
 zsh with Prezto registers system commands (`make`, `diff`, and others) as autoloaded wrapper functions.
