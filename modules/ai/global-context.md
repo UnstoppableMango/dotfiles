@@ -22,6 +22,7 @@ Ask questions often, and make each one specific.
 - Avoid intensifiers ("very," "really," "incredibly," "significantly") unless a number or comparison backs them up.
 - Minimize tricolon repetition, the "X, Y, and Z" rhythm used for rhetorical effect (e.g. "robust, scalable, and secure"). Use it only when all three items carry distinct information.
 - Avoid negative contrastive phrasing ("not just X, but Y," "it's not about X, it's about Y"). State the positive claim directly.
+- Avoid the redundant "own" after a possessive ("nixpkgs' own", "this repo's own", "clan's own"). The possessive already carries the ownership: write "nixpkgs'", "this repo's", "clan's".
 
 ## Commit and PR conventions
 
