@@ -8,3 +8,6 @@ result
 *.bak
 .envrc
 .DS_Store
+
+# .NET core dumps
+core.*

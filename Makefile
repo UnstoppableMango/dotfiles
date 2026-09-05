@@ -49,4 +49,9 @@ flake.nix:
 p10k: # This doesn't actually work in make, but its copy-pastable
 	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/modules/zsh/prezto/.p10k.zsh p10k configure
 
+# `home` names a real directory in this repo, so without this make treats the
+# target as already built and refuses to run it. The rest are listed for the
+# same reason should a directory ever grow into their name.
+.PHONY: build check watch update home system format fmt p10k
+
 .PHONY: flake.lock

@@ -119,6 +119,21 @@
       };
 
       xdg.configFile."zed/dev-extensions/gossamer".source = pkgs.gossamer.passthru.editorSupport.zed;
+
+      # Zed's own binary cache, so a host that runs Zed does not build it.
+      # Home Manager only writes the user's nix.conf, and Nix ignores
+      # substituters from an untrusted user, so this takes effect only where
+      # erik is in the system's `trusted-users`: on NixOS the machine config
+      # sets that, elsewhere it is a manual line in /etc/nix/nix.conf.
+      #
+      # nix.package is null by default and nix.settings asserts against that.
+      nix.package = lib.mkDefault pkgs.nix;
+      nix.settings = {
+        extra-substituters = [ "https://zed.cachix.org" ];
+        extra-trusted-public-keys = [
+          "zed.cachix.org-1:/pHQ6dpMsAZk2DiP4WCL0p9YDNKWj2Q5FL20bNmw1cU="
+        ];
+      };
     })
 
     (lib.mkIf config.dotfiles.profile.zed.enable {
