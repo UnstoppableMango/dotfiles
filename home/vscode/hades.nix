@@ -35,7 +35,11 @@
         editorconfig.editorconfig
         foxundermoon.shell-format
         github.vscode-github-actions
-        github.copilot-chat
+        # NOTE: github.copilot-chat is not installed here. VS Code ships Copilot
+        # Chat as a builtin extension, and the marketplace build is skipped in
+        # favour of it ("Skipping extension ... in favour of the builtin
+        # extension .../resources/app/extensions/copilot"), so installing it
+        # only adds closure weight and a warning on every launch.
         golang.go
         graphql.vscode-graphql
         graphql.vscode-graphql-syntax
