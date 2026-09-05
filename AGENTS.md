@@ -155,7 +155,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   The module takes the document as an option (`dotfiles.ai.checkoutRoot.context`, null by default) and holds no content itself, so nothing in `modules/` assumes a checkout root exists.
   `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
   The OpenRouter key reaches that entry through an `auth_command` reading a `sops.secrets` path rather than `OPENROUTER_API_KEY` in the environment, since the systemd user unit running the server never sees a login shell (the same reasoning as `git/opencommit.nix`).
-  `coderabbit.nix` installs the CodeRabbit CLI from `pkgs/coderabbit.nix` and turns its self-update off, since `coderabbit update` rewrites the binary in place and a nix-installed one lives in the read-only store.
+  `coderabbit.nix` installs the CodeRabbit CLI from the `mangopkgs` overlay (packaged at `pkgs/coderabbit/` in https://github.com/unmango/pkgs) and turns its self-update off, since `coderabbit update` rewrites the binary in place and a nix-installed one lives in the read-only store.
   Authentication is a rendered `~/.coderabbit/auth.json` (`{"type":"api_key",...}`) rather than an environment variable, because the CLI reads no `CODERABBIT_API_KEY`; its api_key auth branch returns that file verbatim instead of consulting the OS credential store the OAuth branch uses, so the file alone is a complete authenticated state.
   The key comes from `dotfiles.ai.coderabbit.apiKeySecret` naming a `sops.secrets` entry, and the CLI rejects a user API key, so it has to be an agentic one.
 - `flake-update/` - flake-update automation
@@ -219,9 +219,9 @@ Build it with `nix run home-manager -- build --flake .#'erik@hades'`.
 Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-extensions) are composed in `flake.nix` and applied to nixpkgs, alongside the local ones from `overlays/`.
 `zed.overlays.default` is commented out: nixpkgs' livekit-libwebrtc is out of sync with zed 0.217.3's expected webrtc API (`no type named 'AudioDeviceSink' in namespace 'webrtc'`).
 
-`overlays/` holds the ones that are not a bare re-export of a flake input: `clan.nix` and `tdl.nix` adapt an input's packages, `coderabbit.nix` `callPackage`s a derivation from `pkgs/`, and `vscode.nix` symlinks `node_modules.asar.unpacked` into the built product, without which oniguruma never loads and every file renders untokenized.
-`pkgs/` is for software with no nixpkgs package and no upstream flake, packaged here rather than in a module so it is reachable as `pkgs.<name>` and a module can take it as a `package` option default.
-`pkgs/coderabbit.nix` is the only one: a closed-source Bun executable published as a per-platform zip, so the version and all four hashes are pinned together and bumped by hand against `https://cli.coderabbit.ai/releases/latest/VERSION`.
+`overlays/` holds the ones that are not a bare re-export of a flake input: `clan.nix` and `tdl.nix` adapt an input's packages, and `vscode.nix` symlinks `node_modules.asar.unpacked` into the built product, without which oniguruma never loads and every file renders untokenized.
+Software with no nixpkgs package and no upstream flake is packaged in https://github.com/unmango/pkgs and reaches this flake through the `mangopkgs` overlay, so a module can take it as a `package` option default the same as any nixpkgs attribute.
+There is no `pkgs/` directory here.
 
 The dev shell (entered via `direnv allow` / `nix develop`) includes: age, bashInteractive, clan-cli, direnv, git, gnumake, home-manager, ldns, nil, nix, nixd, nixfmt, shellcheck, sops, ssh-to-age, watchexec.
 

@@ -84,7 +84,7 @@ in
         Let the CLI update itself. Off by default: `coderabbit update` rewrites
         the binary in place, which for a nix-installed one means writing into
         the read-only store, and a successful update would in any case be
-        reverted by the next activation. Bump `pkgs/coderabbit.nix` instead.
+        reverted by the next activation. Bump the package instead.
       '';
     };
   };
