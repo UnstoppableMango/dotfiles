@@ -26,6 +26,7 @@ in
     ./checkout-root.nix
     ./chrome-devtools.nix
     ./cloudflare.nix
+    ./coderabbit.nix
     ./containers.nix
     ./context7.nix
     ./csharp.nix

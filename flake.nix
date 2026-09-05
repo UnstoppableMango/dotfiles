@@ -171,6 +171,7 @@
     let
       clan = import ./overlays/clan.nix { inherit (inputs) clan-core; };
       tdlPkg = import ./overlays/tdl.nix { inherit (inputs) tdl; };
+      coderabbitPkg = import ./overlays/coderabbit.nix;
 
       overlay = inputs.nixpkgs.lib.composeManyExtensions (
         with inputs;
@@ -182,6 +183,7 @@
           nix-vscode-extensions.overlays.default
           clan.overlays.default
           tdlPkg.overlays.default
+          coderabbitPkg.overlays.default
 
           # cargo-about pin conflict is resolved upstream (zed's own nix/build.nix
           # now vendors cargo-about via fetchFromGitHub), but a new mismatch surfaced:
