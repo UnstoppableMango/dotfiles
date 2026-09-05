@@ -46,7 +46,7 @@ Cross-repo searches are legitimate when the question is genuinely about conventi
 | `github.com/sourceallies`, `github.com/residex-ai`                  | Work                                           |
 | `github.com/crossplane`, `pulumiverse`, `tvanfosson`, `vishvananda` | Upstream clones                                |
 
-In the personal namespaces, `origin` is the user's own repo and is writable.
+In the personal namespaces, `origin` is the user's repo and is writable.
 
 In an upstream-owner directory, `origin` points at the upstream project, and the personal fork, when one exists, is a separate named remote (for example `UnstoppableMango` in `pulumiverse/pulumi-talos`).
 Push to the named fork remote, never to `origin`, and never assume a branch there is the user's to rewrite.

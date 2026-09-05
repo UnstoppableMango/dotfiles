@@ -46,12 +46,15 @@ The file states these rules and has to follow them:
 - No em dash (U+2014). Use a comma, period, or parentheses.
 - One sentence per line in markdown. Let the renderer wrap.
 - No temporal or narrative phrasing ("now", "previously", "this was changed to"). Describe the current state as if it always held.
+- No negative contrastive phrasing ("not just X, but Y"). State the positive claim directly.
+- No redundant "own" after a possessive ("this repo's own"). The possessive already carries the ownership.
+- No flourish, cliche, or unbacked intensifiers.
 
 An edit that violates one of these contradicts the text sitting a few lines above it.
 
 ## Where to put it in the file
 
-Sections, in order: a top-level bullet list, then `## English style`, `## Commit and PR conventions`, `## Bug fixing and review`, `## Docs and comments`, `## Shell autoload issue`.
+Sections, in order: a top-level bullet list, then `## Asking questions`, `## English style`, `## Commit and PR conventions`, `## Bug fixing and review`, `## Docs and comments`, `## Shell autoload issue`.
 
 Per-language rules (e.g. Nix) belong in that language's skill under `modules/ai/`, not here.
 

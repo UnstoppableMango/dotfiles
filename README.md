@@ -47,7 +47,7 @@ Erik's home on hades is installed through the Home Manager NixOS module rather t
 - `c/`, `containers/`, `dotnet/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - language toolchains
 - `gnome/`, `fonts/`, `stylix/` - desktop, fonts, theming
 - `flake-update/`, `launch-services/` - automation, and macOS Launch Services registration
-- `profile/` - singular, not to be confused with the top-level `profiles/` above. `dotfiles.profile.*`, erik's per-tool taste toggles; read by `kitty/`, `kubernetes/k9s/`, `zed/`, and `ai/checkout-root.nix` to decide whether to layer erik's curated values on top of their own defaults
+- `profile/` - singular, not to be confused with the top-level `profiles/` above. `dotfiles.profile.*`, erik's per-tool taste toggles; read by `kitty/`, `kubernetes/k9s/`, `zed/`, and `ai/checkout-root.nix` to decide whether to layer erik's curated values on top of their defaults
 
 ## Consuming from another flake
 
