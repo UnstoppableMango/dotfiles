@@ -68,6 +68,8 @@ in
   config = lib.mkIf (cfg.enable && cfg.cloudflare.enable) {
     programs.claude-code.plugins.cloudflare = cloudflareSrc;
 
+    programs.mcp.servers = mcpServers;
+
     programs.github-copilot-cli = {
       inherit mcpServers;
       skills = lib.listToAttrs (

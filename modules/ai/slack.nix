@@ -23,5 +23,6 @@ in
   config = lib.mkIf (cfg.enable && cfg.slack.enable) {
     programs.claude-code.mcpServers.slack = mcpServer;
     programs.github-copilot-cli.mcpServers.slack = mcpServer;
+    programs.mcp.servers.slack = mcpServer;
   };
 }

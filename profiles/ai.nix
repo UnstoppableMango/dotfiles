@@ -5,6 +5,7 @@
   # needs a decryptable OpenRouter secret that not every host has.
   dotfiles.ai = {
     enable = true;
+    claudeDesktop.enable = true;
     omnigent.openRouter = {
       enable = true;
       apiKeySecret = "openrouter-api-key";

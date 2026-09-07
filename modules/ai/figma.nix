@@ -29,5 +29,6 @@ in
   config = lib.mkIf (cfg.enable && cfg.figma.enable) {
     programs.claude-code.mcpServers.figma-desktop = mcpServer;
     programs.github-copilot-cli.mcpServers.figma-desktop = mcpServer;
+    programs.mcp.servers.figma-desktop = mcpServer;
   };
 }

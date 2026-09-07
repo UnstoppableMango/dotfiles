@@ -23,5 +23,6 @@ in
   config = lib.mkIf (cfg.enable && cfg.notion.enable) {
     programs.claude-code.mcpServers.notion = mcpServer;
     programs.github-copilot-cli.mcpServers.notion = mcpServer;
+    programs.mcp.servers.notion = mcpServer;
   };
 }

@@ -15,6 +15,23 @@ let
     sha256 = "sha256-PZNjydvhQh2fSbIxRk6+5plJMdD5cYLwZsHNzh3Eowg=";
   };
 
+  pulumi = {
+    type = "http";
+    url = "https://mcp.ai.pulumi.com/mcp";
+  };
+
+  gitlab = {
+    type = "http";
+    url = "https://gitlab.com/api/v4/mcp";
+  };
+
+  # The `${...}` is expanded by the reading client, not by nix. Copilot CLI does
+  # so; a client that does not passes the literal string as the bearer token.
+  github = {
+    type = "http";
+    url = "https://api.githubcopilot.com/mcp/";
+    headers.Authorization = "Bearer \${GITHUB_PERSONAL_ACCESS_TOKEN}";
+  };
 in
 {
   imports = [
@@ -25,6 +42,7 @@ in
     ./caveman.nix
     ./checkout-root.nix
     ./chrome-devtools.nix
+    ./claude-desktop.nix
     ./cloudflare.nix
     ./coderabbit.nix
     ./containers.nix
@@ -61,6 +79,10 @@ in
   config = lib.mkIf cfg.enable {
     programs.mcp.enable = true;
 
+    programs.mcp.servers = {
+      inherit pulumi gitlab github;
+    };
+
     programs.claude-code = {
       enable = true;
       context = ./global-context.md;
@@ -69,14 +91,7 @@ in
         claude-md-management = "${claudePluginsOfficial}/plugins/claude-md-management";
       };
       mcpServers = {
-        pulumi = {
-          type = "http";
-          url = "https://mcp.ai.pulumi.com/mcp";
-        };
-        gitlab = {
-          type = "http";
-          url = "https://gitlab.com/api/v4/mcp";
-        };
+        inherit pulumi gitlab;
       };
     };
 
@@ -84,19 +99,7 @@ in
       enable = true;
       context = ./global-context.md;
       mcpServers = {
-        github = {
-          type = "http";
-          url = "https://api.githubcopilot.com/mcp/";
-          headers.Authorization = "Bearer \${GITHUB_PERSONAL_ACCESS_TOKEN}";
-        };
-        pulumi = {
-          type = "http";
-          url = "https://mcp.ai.pulumi.com/mcp";
-        };
-        gitlab = {
-          type = "http";
-          url = "https://gitlab.com/api/v4/mcp";
-        };
+        inherit pulumi gitlab github;
       };
     };
 

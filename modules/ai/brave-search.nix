@@ -29,6 +29,7 @@ in
   config = lib.mkIf (cfg.enable && cfg.braveSearch.enable) {
     programs.claude-code.mcpServers.brave-search = mcpServer;
     programs.github-copilot-cli.mcpServers.brave-search = mcpServer;
+    programs.mcp.servers.brave-search = mcpServer;
 
     home.packages = [ pkgs.nodejs ];
   };
