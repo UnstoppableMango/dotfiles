@@ -37,7 +37,7 @@
       apiKeySecret = "oco-api-key";
       settings = {
         OCO_AI_PROVIDER = "anthropic";
-        OCO_MODEL = "claude-sonnet-4-6";
+        OCO_MODEL = "claude-sonnet-5";
         OCO_OMIT_SCOPE = false;
         OCO_GITPUSH = false;
         OCO_HOOK_AUTO_UNCOMMENT = true;
