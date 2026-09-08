@@ -189,7 +189,8 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
 - `kitty/`, `ghostty/` - terminals
 - `c/`, `containers/`, `dotnet/`, `git/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - per-language dev tooling.
   There is no `tdl/` module: the tdl flake exports its own `homeModules.tdl` declaring `programs.tdl.*` (the CLI plus the VS Code extension), so `flake.nix` adds that module to `common` and `profiles/dev.nix` sets `programs.tdl.enable` rather than this repo re-declaring a `dotfiles.tdl` toggle over `pkgs.tdl`.
-  A consumer of `homeModules.dev` imports `tdl.homeModules.tdl` the same way they import stylix, nixvim, and nix2git; `homeModules.dotfiles` stays self-contained, since nothing under `modules/` references the option.
+  A consumer of `homeModules.dev` imports `tdl.homeModules.tdl` the same way they import stylix, nixvim, and nix2git.
+  `homeModules.dotfiles` folds `tdl.homeModules.tdl` in alongside `./modules` so a consumer of that export alone gets `programs.tdl.*` without a separate import; `flake.nix`'s internal `common` list still imports it directly too, since the home configurations built here compose `./profiles/base.nix` rather than `homeModules.dotfiles`.
   `git/repos.nix` imports the nix2git home-manager module from https://github.com/unmango/nix2git, whose `nix2git.repositories` runs `git init` for declared paths under the home directory that do not exist yet, and never clones, rewrites, or deletes.
   `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
   `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its defaults entirely once that file exists.

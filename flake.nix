@@ -209,7 +209,15 @@
         overlays.default = overlay;
 
         homeModules = {
-          dotfiles = ./modules;
+          # ./modules alone declares no programs.tdl.* option (tdl has no
+          # dotfiles.* toggle of its own, see AGENTS.md), so the tdl flake's
+          # homeModule is folded in here too, letting a consumer of
+          # `homeModules.dotfiles` set `programs.tdl.enable` without also
+          # importing `tdl.homeModules.tdl` themselves.
+          dotfiles.imports = with inputs; [
+            ./modules
+            tdl.homeModules.tdl
+          ];
 
           # The profiles, as named bundles of enable toggles carrying no
           # identity, published so a third party building a home config from
