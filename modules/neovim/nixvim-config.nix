@@ -86,6 +86,7 @@
       # TypeScript
       ts_ls.enable = false;
       tsgo.enable = true;
+      tsgo.package = pkgs.typescript;
 
       # SQL
       sqls.enable = true;
