@@ -29,34 +29,40 @@ in
     enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
-      description = "Haskell language support for Claude Code and Copilot CLI: haskell-language-server as the LSP server for .hs files, and lsmcp (wrapping the same server) as the MCP server. Installs Node.js when enabled.";
+      description = "Haskell language support for Claude Code and Copilot CLI: haskell-language-server as the LSP server for .hs files. Installs Node.js when enabled.";
+    };
+
+    mcp.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Register lsmcp (wrapping haskell-language-server) as an MCP server. Every configured MCP server starts with each Claude Code and Copilot CLI session regardless of the project's language, so a Haskell project declares this one in a repo-local .mcp.json instead.";
     };
   };
 
-  config = lib.mkIf (cfg.enable && cfg.haskell.enable) {
-    programs.claude-code = {
-      lspServers.haskell = {
+  config = lib.mkMerge [
+    (lib.mkIf (cfg.enable && cfg.haskell.enable) {
+      programs.claude-code.lspServers.haskell = {
         command = hls;
         args = [ "--lsp" ];
         inherit extensionToLanguage;
       };
-      mcpServers.haskell = mcpServer;
-    };
 
-    programs.mcp.servers.haskell = mcpServer;
-
-    programs.github-copilot-cli = {
-      lspServers.haskell = {
+      programs.github-copilot-cli.lspServers.haskell = {
         command = hls;
         args = [ "--lsp" ];
         fileExtensions = extensionToLanguage;
       };
-      mcpServers.haskell = mcpServer;
-    };
 
-    home.packages = [
-      pkgs.haskellPackages.haskell-language-server
-      pkgs.nodejs
-    ];
-  };
+      home.packages = [
+        pkgs.haskellPackages.haskell-language-server
+        pkgs.nodejs
+      ];
+    })
+
+    (lib.mkIf (cfg.enable && cfg.haskell.enable && cfg.haskell.mcp.enable) {
+      programs.claude-code.mcpServers.haskell = mcpServer;
+      programs.mcp.servers.haskell = mcpServer;
+      programs.github-copilot-cli.mcpServers.haskell = mcpServer;
+    })
+  ];
 }

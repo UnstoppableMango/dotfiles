@@ -20,38 +20,48 @@ in
     enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
-      description = "Nix language support for Claude Code and Copilot CLI: the nixd LSP server for .nix files, and the mcp-nixos MCP server for live nixpkgs/NixOS/Home Manager/nix-darwin option lookups.";
+      description = "Nix language support for Claude Code and Copilot CLI: the nixd LSP server for .nix files, and the nix skill.";
+    };
+
+    mcp.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Register mcp-nixos as an MCP server for live nixpkgs/NixOS/Home Manager/nix-darwin option lookups. Every configured MCP server starts with each Claude Code and Copilot CLI session regardless of the project's language, so a Nix project declares this one in a repo-local .mcp.json instead.";
     };
   };
 
-  config = lib.mkIf (cfg.enable && cfg.nix.enable) {
-    programs.claude-code = {
-      lspServers.nix = {
-        command = nixd;
-        extensionToLanguage = {
-          ".nix" = "nix";
+  config = lib.mkMerge [
+    (lib.mkIf (cfg.enable && cfg.nix.enable) {
+      programs.claude-code = {
+        lspServers.nix = {
+          command = nixd;
+          extensionToLanguage = {
+            ".nix" = "nix";
+          };
         };
+        skills.nix = ./nix-skill;
       };
-      mcpServers.nix = mcpServer;
-      skills.nix = ./nix-skill;
-    };
 
-    programs.mcp.servers.nix = mcpServer;
-
-    programs.github-copilot-cli = {
-      lspServers.nix = {
-        command = nixd;
-        fileExtensions = {
-          ".nix" = "nix";
+      programs.github-copilot-cli = {
+        lspServers.nix = {
+          command = nixd;
+          fileExtensions = {
+            ".nix" = "nix";
+          };
         };
+        skills.nix = ./nix-skill;
       };
-      mcpServers.nix = mcpServer;
-      skills.nix = ./nix-skill;
-    };
 
-    home.packages = [
-      pkgs.nixd
-      pkgs.mcp-nixos
-    ];
-  };
+      home.packages = [
+        pkgs.nixd
+        pkgs.mcp-nixos
+      ];
+    })
+
+    (lib.mkIf (cfg.enable && cfg.nix.enable && cfg.nix.mcp.enable) {
+      programs.claude-code.mcpServers.nix = mcpServer;
+      programs.mcp.servers.nix = mcpServer;
+      programs.github-copilot-cli.mcpServers.nix = mcpServer;
+    })
+  ];
 }

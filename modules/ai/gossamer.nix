@@ -38,33 +38,43 @@ in
     enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
-      description = "Gossamer language support for Claude Code and Copilot CLI: gos lsp as the LSP server, gos mcp as the MCP server, and the skill-prompt content as a skill.";
+      description = "Gossamer language support for Claude Code and Copilot CLI: gos lsp as the LSP server, and the skill-prompt content as a skill.";
+    };
+
+    mcp.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Register gos mcp as an MCP server. Every configured MCP server starts with each Claude Code and Copilot CLI session regardless of the project's language, so a Gossamer project declares this one in a repo-local .mcp.json instead.";
     };
   };
 
-  config = lib.mkIf (cfg.enable && cfg.gossamer.enable) {
-    programs.claude-code = {
-      lspServers.gossamer = {
-        command = gos;
-        args = [ "lsp" ];
-        inherit extensionToLanguage;
+  config = lib.mkMerge [
+    (lib.mkIf (cfg.enable && cfg.gossamer.enable) {
+      programs.claude-code = {
+        lspServers.gossamer = {
+          command = gos;
+          args = [ "lsp" ];
+          inherit extensionToLanguage;
+        };
+        skills.gossamer = gossamerSkill;
       };
-      mcpServers.gossamer = mcpServer;
-      skills.gossamer = gossamerSkill;
-    };
 
-    programs.mcp.servers.gossamer = mcpServer;
-
-    programs.github-copilot-cli = {
-      lspServers.gossamer = {
-        command = gos;
-        args = [ "lsp" ];
-        fileExtensions = extensionToLanguage;
+      programs.github-copilot-cli = {
+        lspServers.gossamer = {
+          command = gos;
+          args = [ "lsp" ];
+          fileExtensions = extensionToLanguage;
+        };
+        skills.gossamer = gossamerSkill;
       };
-      mcpServers.gossamer = mcpServer;
-      skills.gossamer = gossamerSkill;
-    };
 
-    home.packages = [ pkgs.gossamer ];
-  };
+      home.packages = [ pkgs.gossamer ];
+    })
+
+    (lib.mkIf (cfg.enable && cfg.gossamer.enable && cfg.gossamer.mcp.enable) {
+      programs.claude-code.mcpServers.gossamer = mcpServer;
+      programs.mcp.servers.gossamer = mcpServer;
+      programs.github-copilot-cli.mcpServers.gossamer = mcpServer;
+    })
+  ];
 }
