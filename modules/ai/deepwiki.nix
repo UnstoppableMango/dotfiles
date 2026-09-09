@@ -15,7 +15,7 @@ in
   options.dotfiles.ai.deepwiki = {
     enable = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = false;
       description = "DeepWiki MCP server: structured, wiki-style documentation and Q&A for any public GitHub repository. Free, no auth.";
     };
   };
