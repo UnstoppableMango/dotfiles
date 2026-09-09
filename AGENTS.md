@@ -70,7 +70,7 @@ Those values are erik's literal preferences, and they carry no identity data (no
 This is a single export of one file that flips four toggles that need no change between identities, same as any other `homeModules.*` export, rather than a reopening of the shared layer.
 A consumer who wants only one piece can instead set a single `dotfiles.profile.<tool>.enable` directly, without importing `homeModules.taste` at all.
 
-Precedent: the sops key path and the rosequartz kubeconfig describe erik's user environment rather than a clan machine, so they live in `modules/sops/` and `modules/kubernetes/rosequartz/` rather than in the nixos repo's `machines/hades/configuration.nix`, with only the clan-generated CA and admin cert/key paths staying host-specific data supplied from outside.
+Precedent: the sops key path and the rosequartz kubeconfig describe erik's user environment rather than a clan machine, so they live in `modules/sops/` and `modules/kubernetes/rosequartz/` rather than in the nixos repo's `machines/hades/configuration.nix`, with the clan-generated CA and admin cert/key vendored in (`modules/kubernetes/rosequartz/ca.crt` and `home/secrets/rosequartz.yaml`) rather than reached for across repos.
 The `kubernetes/` module carries `k9s/`, `openshift/`, and `rosequartz/` submodules, each tool's config being more than a single file, aggregated through `default.nix`.
 
 ## Common Commands
@@ -90,19 +90,15 @@ make update         # update flake inputs only
 Note: `make build` validates the local flake (`$PWD`), while `make home` operates on `~/.config/home-manager`, a standalone flake whose only input is `github:UnstoppableMango/dotfiles`.
 `make home` therefore applies whatever is on `main`, so local edits reach it only after a commit and a push.
 To apply a local checkout instead, run `home-manager switch --flake $PWD#<config> -b hm-backup`.
-That is for darter only: hades is activated by the nixos repo (see Architecture below).
 
-On hades, erik's home is installed through the Home Manager NixOS module rather than as a standalone Home Manager install.
-There is no `home-manager` generation to switch there, so never suggest or run `home-manager switch` (or `make home`) for `erik@hades`; changes reach hades by landing on `main` and running `nixos-rebuild switch` from the [nixos](https://github.com/UnstoppableMango/nixos) repo.
-`make build` and `nix build .#homeConfigurations."erik@hades".activationPackage` are the only things to run against that configuration here.
-A standalone `home-manager switch` on hades resolves `erik@hades` and would rewrite the same sops-nix secrets directory without the clan-generated material the nixos repo layers on, leaving `~/.kube/config` dangling.
-Nothing in the naming prevents that, so it is a rule to follow rather than a guard to rely on.
-Darter is the standalone case and is the one the `home-manager switch` instructions above apply to.
+Darter and hades both run standalone Home Manager, so `make home` and `make system` mean the same thing on either.
+On hades `make system` rebuilds NixOS from the [nixos](https://github.com/UnstoppableMango/nixos) repo, which configures the machine and erik's system account and nothing about his home environment; that repo consumes this flake only for `overlays.default` and the dev shell.
+Darter is not a NixOS machine, so only `make home` applies there.
 
-That split also fixes who may set `nixpkgs.*`.
-Whoever creates the nixpkgs instance owns `nixpkgs.overlays` and `nixpkgs.config`; under the Home Manager NixOS module with `useGlobalPkgs = true` that is the system, and Home Manager warns that any `nixpkgs.*` set inside the home configuration is ignored.
-So nothing under `modules/`, `home/`, `profiles/`, or `hosts/` sets them.
-`flake.nix`'s `common` list supplies both to the standalone configurations, and the nixos repo supplies them to hades.
+Who may set `nixpkgs.*` follows from that.
+Whoever creates the nixpkgs instance owns `nixpkgs.overlays` and `nixpkgs.config`, and for a standalone home configuration that is the configuration itself.
+`flake.nix`'s `common` list supplies both, once, so nothing under `modules/`, `home/`, `profiles/`, or `hosts/` sets them.
+That also keeps the tree composable into someone else's Home Manager NixOS module, where `useGlobalPkgs = true` hands ownership to the system and Home Manager warns that any `nixpkgs.*` set inside the home configuration is ignored.
 
 `make build` builds a configuration picked from `hostname -s`: darter and hades build their own, macOS builds `generic@aarch64-darwin`, and any other Linux box falls back to `erik@server`.
 Set `HOME_CONFIG` to build a different one, e.g. `make build HOME_CONFIG=erik@hades`.
@@ -139,7 +135,7 @@ The profiles are:
 - `workstation` - imports `graphical` and adds the full desktop session (gnome, brave, vscode, zed, helix, kitty, ghostty).
 
 `hosts/darter.nix` is `base + dev + ai + graphical` plus `targets.genericLinux`, its signing key, and the rosequartz KUBECONFIG.
-`hosts/hades.nix` is `base + dev + ai + workstation` plus its signing key, ocaml and dotnet, and its desktop package list.
+`hosts/hades.nix` is `base + dev + ai + workstation` plus its signing key, ocaml, dotnet and emacs, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
 `hosts/server.nix` is `home/account.nix` plus `base`, containers, and kubernetes.
 It deliberately does not import the rest of `home/`: the personal layer declares sops secrets encrypted to erik's laptop keys, which a server has no reason to hold.
 Server does get prezto and Powerlevel10k, because `base` sets `dotfiles.zsh.enable` and that toggle is the prezto toggle.
@@ -178,11 +174,11 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `prezto/` is a submodule holding the framework config and the bundled `.p10k.zsh`, which `dotfiles.zsh.p10kConfig` points at and a consumer can replace or set null.
   Both submodules follow `dotfiles.zsh.enable`, so a host that turns zsh on gets a framework rather than a bare shell.
 - `sops/` - sops-nix age key location (`~/.config/sops/age/keys.txt`).
-  Secrets live under `home/secrets/`, encrypted in `.sops.yaml` to erik's darter and hades keys so one file decrypts on both; hades also decrypts clan-generated material from the nixos repo.
+  Secrets live under `home/secrets/`, encrypted in `.sops.yaml` to erik's darter and hades keys so one file decrypts on both.
+  `rosequartz.yaml` is the exception in origin rather than in handling: the admin cert and key are clan-generated in the nixos repo and re-encrypted here, so a rotation there has to be copied over the same way `modules/kubernetes/rosequartz/ca.crt` does.
 - `ssh/` - SSH client config.
   Host aliases come from the `hosts` flake input (https://github.com/UnstoppableMango/hosts).
   The module takes the table as data (`dotfiles.ssh.hosts`, empty by default); `flake.nix` feeds it `inputs.hosts.lib.addresses`, so no module closes over `inputs` for it.
-  The nixos repo's `machines/hades/configuration.nix` imports `homeModules.hades` and does not set `dotfiles.ssh.hosts` itself, so hades' Home Manager environment gets the empty default rather than the `hosts` flake input's addresses, even though that repo follows the same `hosts` input for its `internet` clan service.
   `HostKeyAlias` plus the `@cert-authority` entry in `~/.ssh/known_hosts_nix` mean cluster machines validate against the clan SSH CA instead of prompting on first connect.
   Agent handling belongs to gnupg's gpg-agent, not here.
 - `stylix/` - Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
@@ -195,7 +191,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
   `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its defaults entirely once that file exists.
   The file route rather than `OCO_API_KEY` in the environment, since the `prepare-commit-msg` hook also fires for editor and GUI commits that never see a login shell.
-  `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); the nixos repo supplies only the clan-generated CA and admin cert/key paths.
+  `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); a host supplies the admin cert and key paths, and omitting them yields the OIDC context alone (which is what darter takes).
   `containers/` installs both stacks side by side: podman (with buildah, skopeo, podman-compose) and `docker-client`, the CLI without the daemon, since a system dockerd is outside Home Manager's reach.
   `docker compose` and `docker buildx` are linked into `~/.docker/cli-plugins` because the CLI resolves subcommands there rather than from PATH.
   `REGISTRY_AUTH_FILE` points podman, skopeo, and buildah at `~/.docker/config.json`, so one `docker login` serves both (`dotfiles.containers.sharedAuth`).
@@ -212,11 +208,6 @@ The two `generic@*` entries are the same idea one layer out: profiles only, no `
 `generic@aarch64-darwin` is also the only consumer of the darwin branches in `modules/` (ghostty's null package, the 1Password agent socket, the containers defaults, omnigent's launchd unit, `launch-services/`).
 `nix flake check` does not evaluate `homeConfigurations`, so CI builds them explicitly.
 That takes two jobs: `check` on `ubuntu-latest` for the linux configurations, and `darwin` on `macos-latest` (Apple Silicon, so aarch64-darwin) for the darwin one, which gets a real build rather than an evaluation.
-
-`erik@hades` is build-only.
-Hades' home is activated by the nixos repo through the Home Manager NixOS module, which imports `homeModules.hades` and layers clan-generated material (the rosequartz kubeconfig and admin key) on top of it.
-A standalone activation rewrites the same sops-nix secrets directory without that material, leaving `~/.kube/config` dangling, so never `switch` this configuration.
-Build it with `nix run home-manager -- build --flake .#'erik@hades'`.
 
 Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-extensions, tdl) are composed in `flake.nix` and applied to nixpkgs, alongside the local ones from `overlays/`.
 `zed.overlays.default` is commented out: nixpkgs' livekit-libwebrtc is out of sync with zed 0.217.3's expected webrtc API (`no type named 'AudioDeviceSink' in namespace 'webrtc'`).

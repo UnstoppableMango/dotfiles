@@ -24,10 +24,8 @@ No machine is named `server`; that entry exists so the headless profile is cover
 Neither is any machine or person named `generic`.
 Those two build the profiles with no identity attached, so the exports below stay working for somebody who is not me instead of only breaking in their flake.
 
-`erik@hades` is build-only.
-Hades' home is activated by the [nixos](https://github.com/UnstoppableMango/nixos) repo through the Home Manager NixOS module, so this entry exists to verify the config evaluates and builds, not to switch into.
-Erik's home on hades is installed through the Home Manager NixOS module rather than as a standalone Home Manager install, so it is applied with `nixos-rebuild switch` from the nixos repo, never with `home-manager switch` or `make home`.
-`erik@darter` is the standalone configuration.
+`erik@darter` and `erik@hades` are both standalone Home Manager installs, switched with `make home`.
+Hades is also a NixOS machine, so its system half comes from the [nixos](https://github.com/UnstoppableMango/nixos) repo via `make system`; that repo takes only `overlays.default` and the dev shell from here.
 
 ## Layout
 
@@ -98,7 +96,7 @@ Add this repo as an input and compose `homeModules.{base,dev,ai,graphical,workst
 A profile sets its toggles at normal priority, so turning one back off takes `lib.mkForce` (`dotfiles.gnupg.enable = lib.mkForce false;`) rather than a plain `false`, which is a conflict.
 `homeModules.dotfiles` is the raw option set if you would rather pick toggles yourself than take a profile.
 `homeModules.taste` is the one piece of `home/` that is published: it flips the four `dotfiles.profile.<tool>.enable` toggles (kitty colors, the k9s skin, zed settings, the ai checkout-root doc), which carry no identity of their own. Those toggles live in `modules/profile/`, so they are already reachable through `homeModules.dotfiles`; a consumer who wants only one piece of the taste can set a single toggle directly instead of importing `homeModules.taste`.
-`homeModules.hades` and everything else under `home/` and `hosts/` are my identity and my machines; they are not meant to be consumed.
+Everything under `home/` and `hosts/` is my identity and my machines; it is not exported and not meant to be consumed.
 
 Defaults that are mine rather than everyone's, and that you will probably want to override:
 

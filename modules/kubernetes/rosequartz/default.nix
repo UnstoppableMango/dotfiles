@@ -2,8 +2,8 @@
 let
   cfg = config.dotfiles.kubernetes.rosequartz;
 
-  # The admin identity is clan-generated material that only the nixos repo can
-  # supply. Without both halves we emit the OIDC context alone.
+  # The admin identity is privileged material a host has to supply for itself.
+  # Without both halves we emit the OIDC context alone.
   adminEnabled = cfg.admin.certFile != null && cfg.admin.keyFile != null;
 
   lines = [
@@ -93,7 +93,6 @@ in
         `vars/shared/rosequartz-ca/crt/value`, which is the source of truth.
         It is duplicated here because that repo depends on this one, so the
         import cannot go the other way. Re-copy it if the CA is ever rotated.
-        The nixos repo overrides this with the real vars path.
       '';
     };
 
@@ -102,9 +101,11 @@ in
         type = with lib.types; nullOr str;
         default = null;
         description = ''
-          Path to the admin client certificate. Clan-generated, so only the
-          nixos repo can set it. The admin context and user are omitted unless
-          both this and `admin.keyFile` are set.
+          Path to the admin client certificate. The material is clan-generated
+          in the nixos repo and vendored into `home/secrets/rosequartz.yaml`,
+          so a host that holds it points this at its own sops secret path. The
+          admin context and user are omitted unless both this and
+          `admin.keyFile` are set.
         '';
       };
 

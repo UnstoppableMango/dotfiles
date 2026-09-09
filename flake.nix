@@ -245,12 +245,6 @@
           # single dotfiles.profile.<tool>.enable directly against
           # `homeModules.dotfiles`, without this export at all.
           taste = ./home/taste.nix;
-
-          # The whole host file, since the nixos repo's Home Manager NixOS
-          # integration wants hades' full configuration (home/ plus the
-          # profiles plus hades' own overrides) as a single import; see
-          # machines/hades/configuration.nix in that repo.
-          hades = ./hosts/hades.nix;
         };
 
         nixvimModules.default = ./modules/neovim/nixvim-config.nix;
@@ -260,13 +254,13 @@
             inherit (inputs.home-manager.lib) homeManagerConfiguration;
             inherit (inputs.nixpkgs) legacyPackages;
 
-            # `nixpkgs.*` belongs to whoever owns the nixpkgs instance. A
-            # standalone home configuration owns its own, so these are set here.
-            # Under the Home Manager NixOS module with `useGlobalPkgs`, the
-            # system owns it and Home Manager warns that these are ignored, so
-            # nothing under `modules/` or the home/profiles/hosts tree may set
-            # them; hades gets both
-            # from the nixos repo instead.
+            # `nixpkgs.*` belongs to whoever owns the nixpkgs instance. Every
+            # configuration here is standalone and so owns its own, which is
+            # why these are set once here rather than anywhere under
+            # `modules/` or the home/profiles/hosts tree. A consumer composing
+            # `homeModules.*` into the Home Manager NixOS module with
+            # `useGlobalPkgs` keeps that ownership at the system level, and
+            # nothing in the tree fights them for it.
             common = with inputs; [
               {
                 nixpkgs.overlays = [ overlay ];
