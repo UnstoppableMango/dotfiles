@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixpkgs-unstable";
-    systems.url = "github:nix-systems/triplet";
+    systems.url = "github:UnstoppableMango/nix-systems";
 
     flake-utils = {
       url = "github:numtide/flake-utils";
@@ -200,6 +200,8 @@
       systems = import inputs.systems;
 
       imports = with inputs; [
+        systems.flakeModule
+
         home-manager.flakeModules.home-manager
         treefmt-nix.flakeModule
       ];
