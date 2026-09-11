@@ -17,10 +17,12 @@ This repo manages my [Home Manager](https://nix-community.github.io/home-manager
 | `erik@darter`            | x86_64-linux   |
 | `erik@hades`             | x86_64-linux   |
 | `erik@server`            | x86_64-linux   |
+| `erik@workspace`         | x86_64-linux   |
 | `generic@x86_64-linux`   | x86_64-linux   |
 | `generic@aarch64-darwin` | aarch64-darwin |
 
-No machine is named `server`; that entry exists so the headless host file is covered by `nix flake check`.
+No machine is named `server`; that entry exists so the headless profile is covered by `nix flake check`.
+No machine is named `workspace` either; that one is the configuration `packages.workspace-image` bakes into a container image.
 Neither is any machine or person named `generic`.
 Those two build most of the modules with no identity attached, so the export below stays working for somebody who is not me instead of only breaking in their flake.
 
@@ -32,6 +34,7 @@ Hades is also a NixOS machine, so its system half comes from the [nixos](https:/
 - `modules/` - option-driven software config, no identity
 - `home/` - my identity and taste (including the account), consuming those options
 - `hosts/` - one file per home configuration: which modules it turns on, plus what is true of it alone; `common.nix` is what all of them are built on
+- `packages/` - derivations that package a home configuration into something else, currently the container image below
 
 `modules/` is flat: one directory per piece of software, each with a `default.nix`, imported by existing rather than by being listed.
 
@@ -46,6 +49,36 @@ Hades is also a NixOS machine, so its system half comes from the [nixos](https:/
 - `flake-update/`, `launch-services/` - automation, and macOS Launch Services registration
 
 Every module is off until something sets its `dotfiles.<name>.enable`, so importing the modules turns nothing on.
+
+## Workspace container image
+
+`packages.workspace-image` is an OCI image built from `homeConfigurations."erik@workspace"`, running [Claude Code Remote Control](https://code.claude.com/docs/en/remote-control) as PID 1.
+It gives a session on claude.ai or the mobile apps the same `base`, `dev`, and `ai` toolchain a development machine has, in a container instead of on a machine.
+
+```shell
+$ make workspace-load     # build and `docker load` it
+$ docker run -d --name workspace \
+    -v ~/.claude:/home/erik/.claude \
+    -v ~/src:/home/erik/src \
+    workspace:latest
+```
+
+The server registers with Anthropic over outbound HTTPS and opens no inbound port, so nothing needs publishing.
+
+Two mounts matter.
+`~/.claude` carries the subscription login the server refuses to start without, and its uid must match the container's account (1000): nothing is baked into the image.
+`~/src` is the working directory the sessions get, which `hosts/workspace.nix` takes from `dotfiles.ai.remoteControl.rootDir`.
+Home Manager activation runs on every start and writes into both, so a bind mount is required rather than an anonymous volume, which the runtime would create root-owned.
+
+Everything after the image name is passed through to `claude remote-control`, so a one-off run can override what the host file sets:
+
+```shell
+$ docker run --rm -it -v ~/.claude:/home/erik/.claude workspace:latest --permission-mode bypassPermissions
+```
+
+Nothing from `home/` is in the image, so it holds no sops secrets, no git email, and no ssh keys.
+The image is large (around 5GB compressed): `dotfiles.ai.<language>.enable` defaults to true and installs a language server each, and `haskell`, `dotnet`, `ocaml`, and `csharp` alone account for most of it.
+Turn off the ones a container has no use for in `hosts/workspace.nix`.
 
 ## Consuming from another flake
 
@@ -127,6 +160,8 @@ $ make watch   # rerun `nix flake check` on file changes
 $ make update  # nix flake update
 $ make home    # update + switch ~/.config/home-manager
 $ make system  # update + rebuild /etc/nixos (needs sudo)
+$ make workspace-image  # build the container image tarball
+$ make workspace-load   # build it and load it into docker
 ```
 
 Note: `make build` validates the local flake (`$PWD`); `make home` operates on the installed config at `~/.config/home-manager`.

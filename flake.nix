@@ -246,6 +246,15 @@
             # being an export that only breaks in whatever flake consumes it.
             "erik@server" = home "x86_64-linux" ./hosts/server.nix;
 
+            # No machine is named `workspace` either. This is the home
+            # configuration `packages.workspace-image` bakes into an OCI image,
+            # kept here for the same reason as `erik@server`.
+            "erik@workspace" = homeManagerConfiguration {
+              pkgs = legacyPackages.x86_64-linux;
+              extraSpecialArgs = { inherit inputs self; };
+              modules = common ++ [ ./hosts/workspace.nix ];
+            };
+
             "generic@x86_64-linux" = home "x86_64-linux" ./hosts/generic.nix;
             "generic@aarch64-darwin" = home "aarch64-darwin" ./hosts/generic.nix;
           };
@@ -254,19 +263,29 @@
       perSystem =
         {
           inputs',
+          lib,
           system,
           pkgs,
           ...
         }:
         {
-          packages.nixvim =
-            (inputs.nixvim.lib.evalNixvim {
-              inherit system;
-              modules = [
-                { nixpkgs.overlays = [ overlay ]; }
-                self.nixvimModules.default
-              ];
-            }).config.build.package;
+          packages = {
+            nixvim =
+              (inputs.nixvim.lib.evalNixvim {
+                inherit system;
+                modules = [
+                  { nixpkgs.overlays = [ overlay ]; }
+                  self.nixvimModules.default
+                ];
+              }).config.build.package;
+          }
+          # `homeConfigurations."erik@workspace"` is x86_64-linux, and
+          # dockerTools cannot cross-build the image from anywhere else.
+          // lib.optionalAttrs (system == "x86_64-linux") {
+            workspace-image = pkgs.callPackage ./packages/workspace-image.nix {
+              homeConfiguration = self.homeConfigurations."erik@workspace";
+            };
+          };
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [

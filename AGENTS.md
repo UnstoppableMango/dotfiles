@@ -16,6 +16,11 @@ Three top-level directories, in dependency order:
   The only entrypoints.
   Each lists the modules it turns on plus whatever is true of that machine alone.
 
+`packages/` sits outside that order: it holds derivations that package a home configuration into another artifact rather than configuring software.
+`packages/workspace-image.nix` is the only one, an OCI image built from `homeConfigurations."erik@workspace"` with `claude remote-control` as PID 1.
+It reads `dotfiles.ai.remoteControl.*` out of the evaluated configuration for the entrypoint flags, because the module's own output is a systemd user unit and a container has no user manager to load it.
+See README.md for what it expects to be mounted.
+
 See "Class vs Instance Modules" below for the full rule and a checklist to apply before adding or moving a file.
 The actual NixOS system configs live at https://github.com/UnstoppableMango/nixos.
 

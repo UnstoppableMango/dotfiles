@@ -37,6 +37,14 @@ system:
 	sudo nix flake update --flake /etc/nixos
 	sudo nixos-rebuild switch --flake /etc/nixos
 
+workspace-image:
+	nix build ${CURDIR}#workspace-image
+
+# `nix build` prints the tarball rather than writing a ./result symlink, so
+# the load reads the same path the build just produced.
+workspace-load:
+	docker load -i $$(nix build --no-link --print-out-paths ${CURDIR}#workspace-image)
+
 format fmt:
 	nix fmt
 
@@ -53,5 +61,6 @@ p10k: # This doesn't actually work in make, but its copy-pastable
 # target as already built and refuses to run it. The rest are listed for the
 # same reason should a directory ever grow into their name.
 .PHONY: build check watch update home system format fmt p10k
+.PHONY: workspace-image workspace-load
 
 .PHONY: flake.lock
