@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 {
-  # Headless: the `base` role only, plus the two toolchains a box that runs
-  # containers needs. The account comes from `home/account.nix` directly rather
+  # Headless: the shell and secret floor, plus the two toolchains a box that
+  # runs containers needs. The account comes from `home/account.nix` directly rather
   # than from all of `home/`, because the rest of the personal layer carries
   # sops secrets encrypted to erik's laptop keys that a server has no reason to
   # hold. `account.nix` carries no identity of its own, so the username is set
@@ -16,7 +16,14 @@
   ];
 
   dotfiles = {
-    base.enable = true;
+    git.enable = true;
+    gnupg.enable = true;
+    nix.enable = true;
+    onePassword.enable = true;
+    sops.enable = true;
+    ssh.enable = true;
+    zsh.enable = true;
+
     containers.enable = true;
     kubernetes.enable = true;
   };
@@ -27,8 +34,20 @@
     program = lib.mkForce "pinentry-curses";
   };
 
-  programs.direnv = {
-    enable = true;
-    nix-direnv.enable = true;
+  programs = {
+    home-manager.enable = true;
+
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
+
+    fzf.enable = true;
+    grep.enable = true;
+    htop.enable = true;
+    jq.enable = true;
+    less.enable = true;
+    ripgrep.enable = true;
+    vim.enable = true;
   };
 }

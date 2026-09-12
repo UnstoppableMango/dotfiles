@@ -22,7 +22,7 @@ This repo manages my [Home Manager](https://nix-community.github.io/home-manager
 
 No machine is named `server`; that entry exists so the headless host file is covered by `nix flake check`.
 Neither is any machine or person named `generic`.
-Those two build every role with no identity attached, so the export below stays working for somebody who is not me instead of only breaking in their flake.
+Those two build most of the modules with no identity attached, so the export below stays working for somebody who is not me instead of only breaking in their flake.
 
 `erik@darter` and `erik@hades` are both standalone Home Manager installs, switched with `make home`.
 Hades is also a NixOS machine, so its system half comes from the [nixos](https://github.com/UnstoppableMango/nixos) repo via `make system`; that repo takes only `overlays.default` and the dev shell from here.
@@ -31,7 +31,7 @@ Hades is also a NixOS machine, so its system half comes from the [nixos](https:/
 
 - `modules/` - option-driven software config, no identity
 - `home/` - my identity and taste (including the account), consuming those options
-- `hosts/` - one file per machine: which roles it takes, plus what is true of it alone
+- `hosts/` - one file per home configuration: which modules it turns on, plus what is true of it alone; `common.nix` is what all of them are built on
 
 `modules/` is flat: one directory per piece of software, each with a `default.nix`, imported by existing rather than by being listed.
 
@@ -44,23 +44,13 @@ Hades is also a NixOS machine, so its system half comes from the [nixos](https:/
 - `c/`, `containers/`, `dotnet/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - language toolchains
 - `gnome/`, `fonts/`, `stylix/` - desktop, fonts, theming
 - `flake-update/`, `launch-services/` - automation, and macOS Launch Services registration
-- `roles/` - `dotfiles.base.enable`, `dotfiles.dev.enable`, and `dotfiles.desktop.enable`, each turning on a group of the toggles above at `mkDefault` priority
 
-## Roles
-
-| Role      | Turns on                                                                                       |
-| --------- | ---------------------------------------------------------------------------------------------- |
-| `base`    | git, gnupg, nix, 1Password CLI, sops, ssh, zsh, and the small CLI tools                        |
-| `dev`     | c, containers, go, javascript, kubernetes, neovim, python, tdl, the agent CLIs, Claude Desktop |
-| `desktop` | fonts, stylix, obsidian, kitty, ghostty, helix, vscode, zed, and on Linux, brave and gnome     |
-
-All three default to off, so importing the modules turns nothing on.
-A role only sets defaults, so a host drops one piece with a plain `dotfiles.gnome.enable = false;`, or skips the role and enables pieces individually.
+Every module is off until something sets its `dotfiles.<name>.enable`, so importing the modules turns nothing on.
 
 ## Consuming from another flake
 
 The modules carry no identity, so another person can build a home configuration out of them.
-Add this repo as an input, import `homeModules.dotfiles`, and pick roles:
+Add this repo as an input, import `homeModules.dotfiles`, and turn on the modules you want:
 
 ```nix
 {
@@ -94,8 +84,9 @@ Add this repo as an input, import `homeModules.dotfiles`, and pick roles:
             home.stateVersion = "25.05";
 
             dotfiles = {
-              base.enable = true;
-              dev.enable = true;
+              git.enable = true;
+              zsh.enable = true;
+              neovim.enable = true;
             };
           }
         ];

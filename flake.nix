@@ -226,83 +226,28 @@
 
         homeConfigurations =
           let
-            inherit (inputs.home-manager.lib) homeManagerConfiguration;
-            inherit (inputs.nixpkgs) legacyPackages;
-
-            # `nixpkgs.*` belongs to whoever owns the nixpkgs instance. Every
-            # configuration here is standalone and so owns its own, which is
-            # why these are set once here rather than anywhere under
-            # `modules/`, `home/`, or `hosts/`. A consumer composing
-            # `homeModules.*` into the Home Manager NixOS module with
-            # `useGlobalPkgs` keeps that ownership at the system level, and
-            # nothing in the tree fights them for it.
-            common = with inputs; [
-              {
-                nixpkgs.overlays = [ overlay ];
-                nixpkgs.config.allowUnfree = true;
-              }
-              stylix.homeModules.stylix
-              nixvim.homeModules.nixvim
-              sops-nix.homeManagerModules.sops
-              nix2git.homeModules.nix2git
-              self.homeModules.dotfiles
-              { dotfiles.ssh.hosts = hosts.lib.addresses; }
-            ];
-
-            # A home configuration with no identity in it: every role on, plus
-            # the account fields Home Manager requires. Nothing from `home/`.
-            #
-            # No machine is named `generic` and no person is either. These
-            # exist so the roles are built here rather than only breaking in
-            # whatever flake consumes `homeModules.dotfiles`, which is the same
-            # reason `erik@server` exists. The darwin one is also the only
-            # consumer of the darwin branches in `modules/`.
-            generic =
-              system: homeDirectory:
-              homeManagerConfiguration {
-                pkgs = legacyPackages.${system};
+            home =
+              system: host:
+              inputs.home-manager.lib.homeManagerConfiguration {
+                pkgs = inputs.nixpkgs.legacyPackages.${system};
                 extraSpecialArgs = { inherit inputs self; };
-                modules = common ++ [
-                  {
-                    home = {
-                      username = "generic";
-                      inherit homeDirectory;
-                      stateVersion = "25.05";
-                    };
-
-                    dotfiles = {
-                      base.enable = true;
-                      dev.enable = true;
-                      desktop.enable = true;
-                    };
-                  }
+                modules = [
+                  ./hosts/common.nix
+                  host
                 ];
               };
           in
           {
-            "erik@darter" = homeManagerConfiguration {
-              pkgs = legacyPackages.x86_64-linux;
-              extraSpecialArgs = { inherit inputs self; };
-              modules = common ++ [ ./hosts/darter.nix ];
-            };
-
-            "erik@hades" = homeManagerConfiguration {
-              pkgs = legacyPackages.x86_64-linux;
-              extraSpecialArgs = { inherit inputs self; };
-              modules = common ++ [ ./hosts/hades.nix ];
-            };
+            "erik@darter" = home "x86_64-linux" ./hosts/darter.nix;
+            "erik@hades" = home "x86_64-linux" ./hosts/hades.nix;
 
             # No machine is named `server`. This exists so `hosts/server.nix`
             # is built by `nix flake check` like the other two, rather than
             # being an export that only breaks in whatever flake consumes it.
-            "erik@server" = homeManagerConfiguration {
-              pkgs = legacyPackages.x86_64-linux;
-              extraSpecialArgs = { inherit inputs self; };
-              modules = common ++ [ ./hosts/server.nix ];
-            };
+            "erik@server" = home "x86_64-linux" ./hosts/server.nix;
 
-            "generic@x86_64-linux" = generic "x86_64-linux" "/home/generic";
-            "generic@aarch64-darwin" = generic "aarch64-darwin" "/Users/generic";
+            "generic@x86_64-linux" = home "x86_64-linux" ./hosts/generic.nix;
+            "generic@aarch64-darwin" = home "aarch64-darwin" ./hosts/generic.nix;
           };
       };
 

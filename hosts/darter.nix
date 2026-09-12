@@ -20,21 +20,50 @@ in
   };
 
   dotfiles = {
-    base.enable = true;
-    dev.enable = true;
+    git.enable = true;
+    gnupg.enable = true;
+    nix.enable = true;
+    onePassword.enable = true;
+    sops.enable = true;
+    ssh.enable = true;
+    zsh.enable = true;
 
-    # A display, but not the desktop session: the pieces of `desktop` darter
-    # wants, picked individually.
+    c.enable = true;
+    containers.enable = true;
+    go.enable = true;
+    javascript.enable = true;
+    kubernetes.enable = true;
+    neovim.enable = true;
+    python.enable = true;
+
+    ai = {
+      enable = true;
+      claudeDesktop.enable = true;
+      omnigent.enable = false;
+    };
+
+    # A display, but no desktop session.
     fonts.enable = true;
     obsidian.enable = true;
     stylix.enable = true;
     zed.enable = true;
 
-    ai.omnigent.enable = false;
-
     # rosequartz's admin cert is clan-generated and darter isn't a clan
     # machine, so darter gets the OIDC context only, as a side file.
     kubernetes.rosequartz.enable = true;
+  };
+
+  programs = {
+    home-manager.enable = true;
+    tdl.enable = true;
+
+    fzf.enable = true;
+    grep.enable = true;
+    htop.enable = true;
+    jq.enable = true;
+    less.enable = true;
+    ripgrep.enable = true;
+    vim.enable = true;
   };
 
   # The first file is the writable hand-managed one, the second is

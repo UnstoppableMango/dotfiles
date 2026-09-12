@@ -31,9 +31,9 @@ jobs:
           --no-out-link
 
       # The identity-free configuration. `nix flake check` does not evaluate
-      # homeConfigurations, so without this the roles would only break in
-      # whatever flake consumes `homeModules.dotfiles`. The darwin half is the
-      # `darwin` job below.
+      # homeConfigurations, so without this the modules no host turns on would
+      # only break in whatever flake consumes `homeModules.dotfiles`. The
+      # darwin half is the `darwin` job below.
       - run: |
           nix run home-manager -- build \
           --flake ${{ github.workspace }}#generic@x86_64-linux \
