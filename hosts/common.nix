@@ -7,6 +7,7 @@
     nixvim.homeModules.nixvim
     sops-nix.homeManagerModules.sops
     nix2git.homeModules.nix2git
+    direnv-instant.homeModules.direnv-instant
     self.homeModules.dotfiles
   ];
 
