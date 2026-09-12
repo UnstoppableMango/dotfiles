@@ -50,6 +50,7 @@
     ai = {
       enable = true;
       claudeDesktop.enable = true;
+      cursor.editor.enable = true;
     };
 
     brave.enable = true;

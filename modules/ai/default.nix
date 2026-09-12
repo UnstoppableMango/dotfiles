@@ -48,6 +48,7 @@ in
     ./containers.nix
     ./context7.nix
     ./csharp.nix
+    ./cursor.nix
     ./deepwiki.nix
     ./figma.nix
     ./fsharp.nix

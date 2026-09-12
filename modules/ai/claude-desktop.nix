@@ -65,10 +65,17 @@ in
         Render the Claude Desktop MCP config from `programs.mcp.servers`, so the
         per-service `dotfiles.ai.<tool>.enable` toggles configure the desktop app
         alongside Claude Code and Copilot CLI.
+      '';
+    };
 
-        The app itself is installed by hand (it has no nixpkgs package), so this
-        configures software this module does not install, the same as
-        `modules/onepassword`.
+    package = lib.mkOption {
+      type = lib.types.nullOr lib.types.package;
+      default = if pkgs.stdenv.hostPlatform.isLinux then pkgs.claude-desktop-fhs else null;
+      defaultText = lib.literalExpression "if isLinux then pkgs.claude-desktop-fhs else null";
+      description = ''
+        The Claude Desktop app to install. The FHS variant gives the MCP servers
+        the app spawns a normal filesystem layout. Null on macOS, where the app
+        has no package and is installed by hand.
       '';
     };
   };
@@ -78,6 +85,9 @@ in
       mcpServers = servers;
     };
 
-    home.packages = [ pkgs.nodejs ];
+    home.packages = [
+      pkgs.nodejs
+    ]
+    ++ lib.optional (cfg.claudeDesktop.package != null) cfg.claudeDesktop.package;
   };
 }
