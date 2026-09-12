@@ -1,15 +1,12 @@
 { pkgs, lib, ... }:
 {
-  # Headless: `base` only, plus the two toolchains a box that runs containers
-  # actually needs. The account comes from `home/account.nix` directly rather
+  # Headless: the `base` role only, plus the two toolchains a box that runs
+  # containers needs. The account comes from `home/account.nix` directly rather
   # than from all of `home/`, because the rest of the personal layer carries
   # sops secrets encrypted to erik's laptop keys that a server has no reason to
   # hold. `account.nix` carries no identity of its own, so the username is set
   # here rather than inherited from `home/default.nix`'s default.
-  imports = [
-    ../home/account.nix
-    ../profiles/base.nix
-  ];
+  imports = [ ../home/account.nix ];
 
   home.username = "erik";
 
@@ -19,6 +16,7 @@
   ];
 
   dotfiles = {
+    base.enable = true;
     containers.enable = true;
     kubernetes.enable = true;
   };

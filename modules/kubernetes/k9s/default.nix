@@ -8,12 +8,9 @@
 
   config = lib.mkMerge [
     (lib.mkIf config.dotfiles.k9s.enable {
-      programs.k9s.enable = true;
-    })
-
-    (lib.mkIf config.dotfiles.profile.k9s.enable {
       programs.k9s = {
-        settings.k9s.ui.skin = "pink";
+        enable = true;
+        settings.k9s.ui.skin = lib.mkDefault "pink";
         skins.pink.k9s = {
           body = {
             fgColor = "#ee2677";

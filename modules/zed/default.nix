@@ -136,10 +136,10 @@
       };
     })
 
-    (lib.mkIf config.dotfiles.profile.zed.enable {
+    (lib.mkIf config.dotfiles.zed.enable {
       programs.zed-editor.userSettings = {
-        features.copilot = true;
-        telemetry.metrics = false;
+        features.copilot = lib.mkDefault true;
+        telemetry.metrics = lib.mkDefault false;
       };
     })
   ];

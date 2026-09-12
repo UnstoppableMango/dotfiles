@@ -6,17 +6,16 @@ This file provides guidance to AI agents when working with code in this reposito
 
 This is a Nix-based dotfiles repository using Home Manager and flake-parts.
 It manages the home configuration for one user, `erik`, across several Linux hosts.
-Four top-level directories, in dependency order:
+Three top-level directories, in dependency order:
 
 - `modules/` - generic, reusable, option-driven software configuration, with no identity baked in.
   Declares `dotfiles.*` options; sets no personal values.
-- `home/` - erik's identity and taste: the account itself, git email, GNOME dconf, secrets, and toggles for the modules/-level taste defaults (kitty colors, k9s skin, zed settings, checkout-root doc).
+  Includes `roles/`, the three coarse switches (`dotfiles.base.enable`, `dotfiles.dev.enable`, `dotfiles.desktop.enable`) that turn on groups of toggles.
+- `home/` - erik's identity: the account itself, git email, GNOME dconf, and secrets.
   Consumes `dotfiles.*`; declares none.
-- `profiles/` - named bundles of enable toggles (`base`, `dev`, `ai`, `graphical`, `workstation`).
-  Only which modules a class of machine turns on, never what they are set to.
 - `hosts/` - one file per machine (`darter`, `hades`, `server`).
   The only entrypoints.
-  Each imports the profiles it wants plus whatever is true of that machine alone.
+  Each sets the roles it wants plus whatever is true of that machine alone.
 
 See "Class vs Instance Modules" below for the full rule and a checklist to apply before adding or moving a file.
 The actual NixOS system configs live at https://github.com/UnstoppableMango/nixos.
@@ -27,7 +26,7 @@ Every file in this repo falls into one of two buckets, and keeping that split cl
 `modules/` is the class bucket: it describes how a piece of software is configured, mechanically, with no identity baked in.
 Personalization enters a class module only as a `dotfiles.<x>.<y>` option (data), never as a literal value.
 `home/` is the instance bucket: it holds this person's actual values, and every file in it is gated on the `dotfiles.*` option its module declares, so importing it costs nothing on a host that has the feature switched off.
-`profiles/` and `hosts/` hold no personal values, only composition: a profile is enable toggles and nothing else, saying which modules a class of machine turns on, and a host says which profiles it is plus what is true of it alone (a signing key, a kubeconfig path, a package it alone installs).
+`hosts/` holds no personal values, only composition: a host says which roles it takes plus what is true of it alone (a signing key, a kubeconfig path, a package it alone installs).
 The account is identity rather than a class of machine, so it sits in `home/account.nix`; `hosts/server.nix` imports that one file directly because it takes the account without the rest of the personal layer.
 `account.nix` itself carries no identity: `homeDirectory` derives from whatever `home.username` ends up being (`lib.mkDefault "/home/${config.home.username}"`), and it sets no username at all.
 `home/default.nix` supplies the "erik" default as `home.username = lib.mkDefault "erik";`, so `home/default.nix` (which imports `account.nix`) can still be composed with a different username without a conflicting-definitions error, and `hosts/server.nix` sets its own username explicitly since it skips `home/default.nix`.
@@ -35,8 +34,7 @@ The account is identity rather than a class of machine, so it sits in `home/acco
 An opinionated value is not automatically identity.
 A curated set that any consumer of this flake would plausibly want (the nixvim LSP and plugin list, the Powerlevel10k prompt config, the Zed extension list) belongs in `modules/` as an **option default** rather than as a literal in `home/`.
 So do erik's curated _taste_ values: kitty's font and colors (`modules/kitty`), the k9s pink skin (`modules/kubernetes/k9s`), Zed's Copilot/telemetry settings (`modules/zed`), and the `~/src` checkout-root context doc (`modules/ai/checkout-root.nix`).
-Those four are personal rather than universally wanted, so each sits behind a `dotfiles.profile.<tool>.enable` (declared in `modules/profile/`) rather than applying unconditionally alongside its tool's enable toggle.
-`home/taste.nix` flips all four for erik in one shot; a consumer of `homeModules.dotfiles` can flip exactly one instead.
+Each applies at `mkDefault` priority whenever its tool is enabled, so a consumer overrides a value with a plain assignment; there is no separate taste toggle.
 `home/` keeps only what has no natural home as a module option default: the git email, the GNOME dconf tree, and the secrets.
 The test is whether the next person would have to change the value, and whether no toggle already exists for saying so.
 "Did someone choose this?" is the wrong question.
@@ -49,26 +47,21 @@ Before adding or moving a file, run this checklist:
 2. Does the file hardcode a literal (an email, a color hex, a hostname, an API key path, "this person's" editor choice)?
    That literal belongs in `home/`, or the class module needs to grow an option that `home/` supplies.
 3. Is it an `enable` toggle rather than a value?
-   Toggles belong in `profiles/`, grouped by the kind of machine that wants them, rather than in `home/`.
-   If no existing profile fits and more than one host would want the group, add a profile; if exactly one host wants it, set it in that host file.
+   If every host taking a role would want it, add it to that role in `modules/roles/default.nix`; if only some hosts want it, set it in those host files.
+   Add a new role only when no existing one fits and more than one host would take it.
 4. Is a module accreting config specific to one sub-tool (more than one or two files for it)?
    Split it into its own submodule directory with a `default.nix`, aggregated by the parent, rather than letting the parent module grow multiple unrelated concerns.
 5. Would the value differ between machines?
    It goes in `hosts/<machine>.nix`, never as a per-host branch inside a class module.
 
-Signals that a change is about to cause drift: hardcoding a literal inside `modules/`; declaring a `dotfiles.*` option outside `modules/`; a host file that sets a value rather than composing profiles; or a profile that sets anything other than toggles.
+Signals that a change is about to cause drift: hardcoding a literal inside `modules/`; declaring a `dotfiles.*` option outside `modules/`; a host file that sets a value that is not true of that machine alone; or a role that sets anything other than `mkDefault` enable toggles.
 
 There is deliberately no "shared across identities" layer.
 This repo configures one identity, so such a layer would be an abstraction over a set of size one; its contents live in `home/`.
 
-A second identity lives in its own flake and consumes `homeModules.dotfiles`, supplying its own `dotfiles.*` toggles, account, secrets, and (on macOS) nix-darwin system layer, rather than the `base`/`dev`/`ai`/`graphical`/`workstation` profiles those toggles mirror.
+A second identity lives in its own flake and consumes `homeModules.dotfiles`, supplying its own roles and toggles, account, secrets, and (on macOS) nix-darwin system layer.
 That is why the reusable half of a shared layer belongs in `modules/` behind options rather than in a shared directory: an export is the sharing mechanism, so the layer is unnecessary.
-`home/` therefore stays flat rather than becoming `home/<name>/`, and `profiles/` is unaffected either way, because a profile never holds an identity.
-
-`homeModules.taste` is the one narrow exception: `home/taste.nix` flips the four `dotfiles.profile.<tool>.enable` toggles (declared in `modules/profile/`) that make `modules/kitty`, `modules/kubernetes/k9s`, `modules/zed`, and `modules/ai/checkout-root.nix` apply erik's kitty colors, k9s skin, Zed settings, and checkout-root doc.
-Those values are erik's literal preferences, and they carry no identity data (no username, email, or host-specific value), so the same person's other identity can take them as-is instead of re-declaring them.
-This is a single export of one file that flips four toggles that need no change between identities, same as any other `homeModules.*` export, rather than a reopening of the shared layer.
-A consumer who wants only one piece can instead set a single `dotfiles.profile.<tool>.enable` directly, without importing `homeModules.taste` at all.
+`home/` therefore stays flat rather than becoming `home/<name>/`.
 
 Precedent: the sops key path and the rosequartz kubeconfig describe erik's user environment rather than a clan machine, so they live in `modules/sops/` and `modules/kubernetes/rosequartz/` rather than in the nixos repo's `machines/hades/configuration.nix`, with the clan-generated CA and admin cert/key vendored in (`modules/kubernetes/rosequartz/ca.crt` and `home/secrets/rosequartz.yaml`) rather than reached for across repos.
 The `kubernetes/` module carries `k9s/`, `openshift/`, and `rosequartz/` submodules, each tool's config being more than a single file, aggregated through `default.nix`.
@@ -97,7 +90,7 @@ Darter is not a NixOS machine, so only `make home` applies there.
 
 Who may set `nixpkgs.*` follows from that.
 Whoever creates the nixpkgs instance owns `nixpkgs.overlays` and `nixpkgs.config`, and for a standalone home configuration that is the configuration itself.
-`flake.nix`'s `common` list supplies both, once, so nothing under `modules/`, `home/`, `profiles/`, or `hosts/` sets them.
+`flake.nix`'s `common` list supplies both, once, so nothing under `modules/`, `home/`, or `hosts/` sets them.
 That also keeps the tree composable into someone else's Home Manager NixOS module, where `useGlobalPkgs = true` hands ownership to the system and Home Manager warns that any `nixpkgs.*` set inside the home configuration is ignored.
 
 `make build` builds a configuration picked from `hostname -s`: darter and hades build their own, macOS builds `generic@aarch64-darwin`, and any other Linux box falls back to `erik@server`.
@@ -114,31 +107,29 @@ The flake uses `flake-parts`.
 There is no category layer, because deciding whether git is a `toolchain/` or a top-level concern, or whether kitty is `terminals/` or part of the shell setup, is a question with no correct answer and a different answer each time.
 `modules/default.nix` imports every subdirectory that has a `default.nix`, read from disk rather than listed, so adding a module is creating the directory and nothing else.
 Dropping a directory in there enables its options repo-wide, which is the tradeoff for not maintaining a list.
-`profiles/base.nix` imports `../modules` once, so every host gets the whole option set.
+`flake.nix`'s `common` list imports `homeModules.dotfiles` (`./modules` plus `tdl.homeModules.tdl`) once, so every host gets the whole option set.
 Everything is `mkIf`-gated, so importing a module a host does not use costs nothing.
 
-`home/default.nix` collects erik's personal config: git identity/aliases, vscode's default-profile settings, GNOME dconf taste, the direnv/nix-direnv setup, the sops secrets, and the `home.username` default, plus `home/taste.nix`, which flips the four `dotfiles.profile.<tool>.enable` toggles that make `modules/kitty`, `modules/kubernetes/k9s`, `modules/zed`, and `modules/ai/checkout-root.nix` apply erik's kitty colors, k9s skin, zed settings, and `~/src` checkout-root document.
-`flake.nix` exports `home/taste.nix` on its own as `homeModules.taste`, for a consumer that wants only the identity-free taste in one shot; `home/default.nix` and `home/account.nix` are reached by relative import (`hosts/darter.nix`, `hosts/hades.nix`, `hosts/server.nix`) rather than exported, since nothing outside this repo imports either by name.
-The nixvim configuration, the prezto/p10k setup, the Zed extension list, and the kitty/k9s/zed/checkout-root taste all follow the same shape: the curated value is an option default in `modules/` (`dotfiles.neovim.defaultConfig`, `dotfiles.zsh.p10kConfig`, `dotfiles.zed.extensions`, `dotfiles.profile.<tool>.enable`), reachable to anyone consuming the flake, and `home/` only flips or overrides a toggle rather than holding a literal value.
-`modules/profile/default.nix` declares the four `dotfiles.profile.*` options and nothing else; each of the four consuming modules reads its toggle to decide whether to layer erik's curated values on top of its mechanical defaults.
+`home/default.nix` collects erik's personal config: git identity/aliases, vscode's default-profile settings, GNOME dconf taste, the direnv/nix-direnv setup, the sops secrets (and the `dotfiles.ai.omnigent.openRouter.apiKeySecret` naming one of them), and the `home.username` default.
+`home/default.nix` and `home/account.nix` are reached by relative import (`hosts/darter.nix`, `hosts/hades.nix`, `hosts/server.nix`) rather than exported, since nothing outside this repo imports either by name.
+The nixvim configuration, the prezto/p10k setup, the Zed extension list, and the kitty/k9s/zed/checkout-root taste all follow the same shape: the curated value is an option default in `modules/` (`dotfiles.neovim.defaultConfig`, `dotfiles.zsh.p10kConfig`, `dotfiles.zed.extensions`, `dotfiles.ai.checkoutRoot.context`, or an `mkDefault` on the tool's settings), reachable to anyone consuming the flake, and `home/` only overrides it rather than holding a literal value.
 `home/vscode/hades.nix` is the one file `home/default.nix` does not import, because that VS Code profile exists on hades alone; `hosts/hades.nix` imports it directly.
 
-The profiles are:
+`modules/roles/default.nix` declares the three roles, all off by default, so importing `homeModules.dotfiles` turns nothing on.
+Each role sets its toggles with `mkDefault`, so a host turns one piece back off with a plain `false`:
 
-- `base` - Home Manager managing itself, the git/gnupg/nix/sops/ssh/zsh floor, and the small CLI tools no machine is usable without.
-  Imports `../modules`.
+- `base` - Home Manager managing itself, the git/gnupg/nix/1Password CLI/sops/ssh/zsh floor, and the small CLI tools no machine is usable without.
   Every host takes it.
-- `dev` - language toolchains and neovim (c, containers, go, javascript, kubernetes, python).
-- `ai` - the agent CLIs and the omnigent OpenRouter wiring.
-  Split from `dev` because omnigent needs a decryptable secret not every host holds.
-- `graphical` - fonts, stylix, obsidian: the floor once a display exists.
-- `workstation` - imports `graphical` and adds the full desktop session (gnome, brave, vscode, zed, helix, kitty, ghostty).
+- `dev` - language toolchains and neovim (c, containers, go, javascript, kubernetes, python), tdl, the agent CLIs, and Claude Desktop's MCP config.
+- `desktop` - fonts, stylix, obsidian, kitty, ghostty, helix, vscode, zed, and on Linux the gnome session and brave.
 
-`hosts/darter.nix` is `base + dev + ai + graphical` plus `targets.genericLinux`, its signing key, and the rosequartz KUBECONFIG.
-`hosts/hades.nix` is `base + dev + ai + workstation` plus its signing key, ocaml, dotnet and emacs, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
+The omnigent OpenRouter provider is not a role concern: it turns on when `dotfiles.ai.omnigent.openRouter.apiKeySecret` names a secret, which only `home/` does.
+
+`hosts/darter.nix` is `base + dev` plus fonts, stylix, obsidian, and zed picked individually (a display without the desktop session), `targets.genericLinux`, its signing key, and the rosequartz KUBECONFIG.
+`hosts/hades.nix` is `base + dev + desktop` plus its signing key, ocaml, dotnet and emacs, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
 `hosts/server.nix` is `home/account.nix` plus `base`, containers, and kubernetes.
 It deliberately does not import the rest of `home/`: the personal layer declares sops secrets encrypted to erik's laptop keys, which a server has no reason to hold.
-Server does get prezto and Powerlevel10k, because `base` sets `dotfiles.zsh.enable` and that toggle is the prezto toggle.
+Server does get prezto and Powerlevel10k, because the `base` role sets `dotfiles.zsh.enable` and that toggle is the prezto toggle.
 A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = null`.
 
 `modules/` itself stays generic, holding enable toggles and the mechanics needed for a feature to function, with no personal values:
@@ -147,8 +138,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   Each MCP integration and third-party service (aws, azure, cloudflare, figma, slack, gossamer, per-language servers, etc.) gets its own `.nix` toggle file; `moer/`, `nix-skill/`, and `tdd-orchestrator/` are skill submodules (a SKILL.md plus agents), following the same one-file-per-concern pattern as the rest of `modules/`.
   `global-context.md` is the user-level agent instructions, rendered to both `~/.claude/CLAUDE.md` and `~/.copilot/copilot-instructions.md`; `.claude/skills/agent-context/` covers how to change it.
   `checkout-root.nix` renders `modules/ai/checkout-root.md` to `~/src/AGENTS.md` with a `CLAUDE.md` include beside it, matching the pairing the repos underneath use, so conventions spanning the whole checkout root are stated once instead of per repo.
-  `dotfiles.profile.ai.enable` (declared in `modules/profile/`) points `context` at the bundled file for erik; a consumer supplying their own document sets `dotfiles.ai.checkoutRoot.context` directly and never needs that toggle.
-  The module takes the document as an option (`dotfiles.ai.checkoutRoot.context`, null by default) and holds no content itself, so nothing in `modules/` assumes a checkout root exists.
+  The document is an option, `dotfiles.ai.checkoutRoot.context`, defaulting to the bundled file; a consumer supplies their own or sets it to null to write nothing.
   `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
   The OpenRouter key reaches that entry through an `auth_command` reading a `sops.secrets` path rather than `OPENROUTER_API_KEY` in the environment, since the systemd user unit running the server never sees a login shell (the same reasoning as `git/opencommit.nix`).
   `coderabbit.nix` installs the CodeRabbit CLI from the `mangopkgs` overlay (packaged at `pkgs/coderabbit/` in https://github.com/unmango/pkgs) and turns its self-update off, since `coderabbit update` rewrites the binary in place and a nix-installed one lives in the read-only store.
@@ -184,9 +174,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
 - `stylix/` - Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
 - `kitty/`, `ghostty/` - terminals
 - `c/`, `containers/`, `dotnet/`, `git/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - per-language dev tooling.
-  There is no `tdl/` module: the tdl flake exports its own `homeModules.tdl` declaring `programs.tdl.*` (the CLI plus the VS Code extension), so `flake.nix` adds that module to `common` and `profiles/dev.nix` sets `programs.tdl.enable` rather than this repo re-declaring a `dotfiles.tdl` toggle over `pkgs.tdl`.
-  A consumer of `homeModules.dev` imports `tdl.homeModules.tdl` the same way they import stylix, nixvim, and nix2git.
-  `homeModules.dotfiles` folds `tdl.homeModules.tdl` in alongside `./modules` so a consumer of that export alone gets `programs.tdl.*` without a separate import; `flake.nix`'s internal `common` list still imports it directly too, since the home configurations built here compose `./profiles/base.nix` rather than `homeModules.dotfiles`.
+  There is no `tdl/` module: the tdl flake exports its own `homeModules.tdl` declaring `programs.tdl.*` (the CLI plus the VS Code extension), so `homeModules.dotfiles` folds that module in alongside `./modules` and the `dev` role sets `programs.tdl.enable`, rather than this repo re-declaring a `dotfiles.tdl` toggle over `pkgs.tdl`.
   `git/repos.nix` imports the nix2git home-manager module from https://github.com/unmango/nix2git, whose `nix2git.repositories` runs `git init` for declared paths under the home directory that do not exist yet, and never clones, rewrites, or deletes.
   `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
   `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its defaults entirely once that file exists.
@@ -198,13 +186,13 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `dotfiles.containers.podmanSocket` and `.userRegistryConfig` default to `targets.genericLinux.enable`: non-NixOS hosts get the rootless `podman.socket`/`podman.service` user units and `~/.config/containers/{policy.json,registries.conf}`, which the podman package carries no defaults for, while NixOS hosts keep the system layer's units and `/etc/containers` authoritative.
 - `gnome/` - the GNOME option, the extension packages, and the derived `enabled-extensions` list.
   The dconf preferences that go with it are taste and live in `home/gnome.nix`.
-- `profile/` - singular, not to be confused with the top-level `profiles/` bundles above.
-  Declares `dotfiles.profile.*`, the four per-tool toggles that let `kitty/`, `kubernetes/k9s/`, `zed/`, and `ai/checkout-root.nix` decide whether to layer erik's curated taste on top of their mechanical defaults.
+- `roles/` - `dotfiles.base.enable`, `dotfiles.dev.enable`, and `dotfiles.desktop.enable`, described above.
+  The only module that sets other modules' toggles, and only at `mkDefault`.
 
 Five home configurations are built: `erik@darter`, `erik@hades`, and `erik@server` on x86_64-linux, plus `generic@x86_64-linux` and `generic@aarch64-darwin`.
 No machine is actually named `server`; that entry exists so `hosts/server.nix` is covered by `nix flake check` rather than only breaking whenever someone next touches it.
 
-The two `generic@*` entries are the same idea one layer out: profiles only, no `home/`, and an inline account with a throwaway username, so the `homeModules.{base,dev,ai,graphical,workstation}` exports are built here rather than only breaking in somebody else's flake.
+The two `generic@*` entries are the same idea one layer out: every role on, no `home/`, and an inline account with a throwaway username, so `homeModules.dotfiles` and its roles are built here rather than only breaking in somebody else's flake.
 `generic@aarch64-darwin` is also the only consumer of the darwin branches in `modules/` (ghostty's null package, the 1Password agent socket, the containers defaults, omnigent's launchd unit, `launch-services/`).
 `nix flake check` does not evaluate `homeConfigurations`, so CI builds them explicitly.
 That takes two jobs: `check` on `ubuntu-latest` for the linux configurations, and `darwin` on `macos-latest` (Apple Silicon, so aarch64-darwin) for the darwin one, which gets a real build rather than an evaluation.

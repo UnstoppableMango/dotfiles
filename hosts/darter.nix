@@ -7,13 +7,7 @@ let
   inherit (config.home) homeDirectory;
 in
 {
-  imports = [
-    ../home
-    ../profiles/base.nix
-    ../profiles/dev.nix
-    ../profiles/ai.nix
-    ../profiles/graphical.nix
-  ];
+  imports = [ ../home ];
 
   # darter runs standalone Home Manager on Pop!_OS (not NixOS). This patches
   # XDG_DATA_DIRS and session variables so HM-installed man pages, shell
@@ -26,15 +20,21 @@ in
   };
 
   dotfiles = {
+    base.enable = true;
+    dev.enable = true;
+
+    # A display, but not the desktop session: the pieces of `desktop` darter
+    # wants, picked individually.
+    fonts.enable = true;
+    obsidian.enable = true;
+    stylix.enable = true;
+    zed.enable = true;
+
     ai.omnigent.enable = false;
 
     # rosequartz's admin cert is clan-generated and darter isn't a clan
     # machine, so darter gets the OIDC context only, as a side file.
     kubernetes.rosequartz.enable = true;
-
-    # Not from the workstation profile, which darter does not take; darter
-    # wants the editor without the rest of the desktop session.
-    zed.enable = true;
   };
 
   # The first file is the writable hand-managed one, the second is

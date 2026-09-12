@@ -37,15 +37,17 @@ in
 
     sshAgent = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = !config.services.gpg-agent.enableSshSupport;
+      defaultText = lib.literalExpression "!config.services.gpg-agent.enableSshSupport";
       description = ''
         Point OpenSSH at 1Password's agent socket instead of whatever agent is
         already in the environment.
 
         This is exclusive with gpg-agent's SSH support: both want to own
-        `SSH_AUTH_SOCK`, and the loser is silently ignored. An assertion below
-        catches the overlap rather than letting it surface as a key that just
-        never offers itself.
+        `SSH_AUTH_SOCK`, and the loser is silently ignored. The default defers
+        to gpg-agent when it holds the socket, and an assertion below catches
+        an explicit overlap rather than letting it surface as a key that never
+        offers itself.
       '';
     };
 

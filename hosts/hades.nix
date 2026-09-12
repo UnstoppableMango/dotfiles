@@ -7,10 +7,6 @@
   imports = [
     ../home
     ../home/vscode/hades.nix
-    ../profiles/base.nix
-    ../profiles/dev.nix
-    ../profiles/ai.nix
-    ../profiles/workstation.nix
   ];
 
   programs.git.settings = {
@@ -34,6 +30,10 @@
   };
 
   dotfiles = {
+    base.enable = true;
+    dev.enable = true;
+    desktop.enable = true;
+
     ocaml.enable = true;
     dotnet.enable = true;
     emacs.enable = true;
