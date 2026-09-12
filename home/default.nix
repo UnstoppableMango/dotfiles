@@ -45,6 +45,8 @@
     };
   };
 
+  dotfiles.ai.omnigent.openRouter.apiKeySecret = "openrouter-api-key";
+
   programs = {
     ripgrep-all.enable = true;
 

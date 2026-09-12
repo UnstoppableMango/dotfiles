@@ -140,13 +140,13 @@ in
     openRouter = {
       enable = lib.mkOption {
         type = lib.types.bool;
-        default = false;
+        default = openRouter.apiKeySecret != null;
+        defaultText = lib.literalExpression "config.dotfiles.ai.omnigent.openRouter.apiKeySecret != null";
         description = ''
           OpenRouter as an omnigent model provider, registered under
           `providers.openrouter` in `~/.omnigent/config.yaml`. It serves the
           `openai` family, which is what the codex, opencode, qwen, and
-          openai-agents harnesses consume. Needs `apiKeySecret` set.
-          Disabled by default.
+          openai-agents harnesses consume. On whenever `apiKeySecret` is set.
         '';
       };
 
@@ -160,7 +160,7 @@ in
           for the systemd user unit as for an interactive shell.
 
           The declaration itself is identity-scoped, so it lives under
-          `users/`; this module only names it.
+          `home/`; this module only names it.
         '';
       };
 

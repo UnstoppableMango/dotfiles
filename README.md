@@ -20,9 +20,9 @@ This repo manages my [Home Manager](https://nix-community.github.io/home-manager
 | `generic@x86_64-linux`   | x86_64-linux   |
 | `generic@aarch64-darwin` | aarch64-darwin |
 
-No machine is named `server`; that entry exists so the headless profile is covered by `nix flake check`.
+No machine is named `server`; that entry exists so the headless host file is covered by `nix flake check`.
 Neither is any machine or person named `generic`.
-Those two build the profiles with no identity attached, so the exports below stay working for somebody who is not me instead of only breaking in their flake.
+Those two build most of the modules with no identity attached, so the export below stays working for somebody who is not me instead of only breaking in their flake.
 
 `erik@darter` and `erik@hades` are both standalone Home Manager installs, switched with `make home`.
 Hades is also a NixOS machine, so its system half comes from the [nixos](https://github.com/UnstoppableMango/nixos) repo via `make system`; that repo takes only `overlays.default` and the dev shell from here.
@@ -31,8 +31,7 @@ Hades is also a NixOS machine, so its system half comes from the [nixos](https:/
 
 - `modules/` - option-driven software config, no identity
 - `home/` - my identity and taste (including the account), consuming those options
-- `profiles/` - enable toggles only, bundled by machine class: `base`, `dev`, `ai`, `graphical`, `workstation`
-- `hosts/` - one file per machine, composing profiles
+- `hosts/` - one file per home configuration: which modules it turns on, plus what is true of it alone; `common.nix` is what all of them are built on
 
 `modules/` is flat: one directory per piece of software, each with a `default.nix`, imported by existing rather than by being listed.
 
@@ -45,12 +44,13 @@ Hades is also a NixOS machine, so its system half comes from the [nixos](https:/
 - `c/`, `containers/`, `dotnet/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - language toolchains
 - `gnome/`, `fonts/`, `stylix/` - desktop, fonts, theming
 - `flake-update/`, `launch-services/` - automation, and macOS Launch Services registration
-- `profile/` - singular, not to be confused with the top-level `profiles/` above. `dotfiles.profile.*`, erik's per-tool taste toggles; read by `kitty/`, `kubernetes/k9s/`, `zed/`, and `ai/checkout-root.nix` to decide whether to layer erik's curated values on top of their defaults
+
+Every module is off until something sets its `dotfiles.<name>.enable`, so importing the modules turns nothing on.
 
 ## Consuming from another flake
 
-The modules and profiles carry no identity, so another person can build a home configuration out of them.
-Add this repo as an input and compose `homeModules.{base,dev,ai,graphical,workstation}` with your own account:
+The modules carry no identity, so another person can build a home configuration out of them.
+Add this repo as an input, import `homeModules.dotfiles`, and turn on the modules you want:
 
 ```nix
 {
@@ -75,17 +75,19 @@ Add this repo as an input and compose `homeModules.{base,dev,ai,graphical,workst
           inputs.sops-nix.homeManagerModules.sops
           inputs.nix2git.homeModules.nix2git
 
-          # `dev` sets `programs.tdl.enable`, which this module declares.
-          inputs.tdl.homeModules.tdl
-
-          # `base` imports ./modules, so it is the only one you strictly need.
-          dotfiles.homeModules.base
-          dotfiles.homeModules.dev
+          # Every `dotfiles.*` option, plus tdl's `programs.tdl.*`.
+          dotfiles.homeModules.dotfiles
 
           {
             home.username = "you";
             home.homeDirectory = "/Users/you";
             home.stateVersion = "25.05";
+
+            dotfiles = {
+              git.enable = true;
+              zsh.enable = true;
+              neovim.enable = true;
+            };
           }
         ];
       };
@@ -93,25 +95,25 @@ Add this repo as an input and compose `homeModules.{base,dev,ai,graphical,workst
 }
 ```
 
-A profile sets its toggles at normal priority, so turning one back off takes `lib.mkForce` (`dotfiles.gnupg.enable = lib.mkForce false;`) rather than a plain `false`, which is a conflict.
-`homeModules.dotfiles` is the raw option set if you would rather pick toggles yourself than take a profile.
-`homeModules.taste` is the one piece of `home/` that is published: it flips the four `dotfiles.profile.<tool>.enable` toggles (kitty colors, the k9s skin, zed settings, the ai checkout-root doc), which carry no identity of their own. Those toggles live in `modules/profile/`, so they are already reachable through `homeModules.dotfiles`; a consumer who wants only one piece of the taste can set a single toggle directly instead of importing `homeModules.taste`.
 Everything under `home/` and `hosts/` is my identity and my machines; it is not exported and not meant to be consumed.
 
 Defaults that are mine rather than everyone's, and that you will probably want to override:
 
-| Option                             | Default                                     |
-| ---------------------------------- | ------------------------------------------- |
-| `dotfiles.ssh.hosts`               | `{}`, fed `inputs.hosts.lib.addresses` here |
-| `dotfiles.ssh.hostKeyAliasDomain`  | `thecluster.io`                             |
-| `dotfiles.ssh.certAuthorities`     | the clan SSH CA public key                  |
-| `dotfiles.kubernetes.rosequartz.*` | my cluster's VIP, CA, and OIDC issuer       |
-| `dotfiles.neovim.defaultConfig`    | `true`, the bundled nixvim config           |
-| `dotfiles.zsh.p10kConfig`          | the bundled `.p10k.zsh`                     |
-| `dotfiles.zed.extensions`          | the bundled extension list                  |
+| Option                              | Default                                     |
+| ----------------------------------- | ------------------------------------------- |
+| `dotfiles.ssh.hosts`                | `{}`, fed `inputs.hosts.lib.addresses` here |
+| `dotfiles.ssh.hostKeyAliasDomain`   | `thecluster.io`                             |
+| `dotfiles.ssh.certAuthorities`      | the clan SSH CA public key                  |
+| `dotfiles.kubernetes.rosequartz.*`  | my cluster's VIP, CA, and OIDC issuer       |
+| `dotfiles.neovim.defaultConfig`     | `true`, the bundled nixvim config           |
+| `dotfiles.zsh.p10kConfig`           | the bundled `.p10k.zsh`                     |
+| `dotfiles.zed.extensions`           | the bundled extension list                  |
+| `dotfiles.ai.checkoutRoot.context`  | the bundled `~/src` checkout-root doc       |
+| `programs.kitty.settings`           | my fonts, layout, and background            |
+| `programs.k9s.settings.k9s.ui.skin` | `pink`                                      |
+| `programs.zed-editor.userSettings`  | Copilot on, telemetry metrics off           |
 
-`profiles/ai.nix` points omnigent at a sops secret named `openrouter-api-key`, and the module asserts that the name resolves.
-Declare it, or set `dotfiles.ai.omnigent.openRouter.enable = false`.
+The omnigent OpenRouter provider turns on when `dotfiles.ai.omnigent.openRouter.apiKeySecret` names a `sops.secrets` entry, and stays off otherwise.
 
 ## Development
 

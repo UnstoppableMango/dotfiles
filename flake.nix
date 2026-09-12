@@ -220,141 +220,34 @@
             ./modules
             tdl.homeModules.tdl
           ];
-
-          # The profiles, as named bundles of enable toggles carrying no
-          # identity, published so a third party building a home config from
-          # scratch (see README.md) has a starting point instead of hand-
-          # picking `dotfiles.*` toggles. `base` imports ./modules, so it is
-          # the only one an outside consumer strictly needs; the rest layer
-          # on top of it.
-          #
-          # Flat rather than nested under a `profiles` attribute because
-          # home-manager's flakeModule types this option as
-          # `attrsOf deferredModule`, which collapses a nested set into one
-          # module whose `imports` are all five at once.
-          base = ./profiles/base.nix;
-          dev = ./profiles/dev.nix;
-          ai = ./profiles/ai.nix;
-          graphical = ./profiles/graphical.nix;
-          workstation = ./profiles/workstation.nix;
-
-          # kitty colors, k9s skin, zed settings, and the ai checkout-root
-          # doc carry no identity (no username, email, or host-specific
-          # value); this flips the four dotfiles.profile.* toggles
-          # (modules/profile/) that apply them, so it's exported on its own
-          # for an identity that wants the whole bundle without the rest of
-          # `home/`. A consumer that wants only one piece can instead set a
-          # single dotfiles.profile.<tool>.enable directly against
-          # `homeModules.dotfiles`, without this export at all.
-          taste = ./home/taste.nix;
         };
 
         nixvimModules.default = ./modules/neovim/nixvim-config.nix;
 
         homeConfigurations =
           let
-            inherit (inputs.home-manager.lib) homeManagerConfiguration;
-            inherit (inputs.nixpkgs) legacyPackages;
-
-            # `nixpkgs.*` belongs to whoever owns the nixpkgs instance. Every
-            # configuration here is standalone and so owns its own, which is
-            # why these are set once here rather than anywhere under
-            # `modules/` or the home/profiles/hosts tree. A consumer composing
-            # `homeModules.*` into the Home Manager NixOS module with
-            # `useGlobalPkgs` keeps that ownership at the system level, and
-            # nothing in the tree fights them for it.
-            common = with inputs; [
-              {
-                nixpkgs.overlays = [ overlay ];
-                nixpkgs.config.allowUnfree = true;
-              }
-              stylix.homeModules.stylix
-              nixvim.homeModules.nixvim
-              sops-nix.homeManagerModules.sops
-              nix2git.homeModules.nix2git
-              tdl.homeModules.tdl
-              { dotfiles.ssh.hosts = hosts.lib.addresses; }
-            ];
-
-            # A home configuration with no identity in it: profiles only, plus
-            # the account fields Home Manager requires. Nothing from `home/`.
-            #
-            # No machine is named `generic` and no person is either. These
-            # exist so `homeModules.profiles.*` is built here rather than only
-            # breaking in whatever flake consumes it, which is the same reason
-            # `erik@server` exists. The darwin one is also the only consumer
-            # the darwin branches in `modules/` have had since the darwin host
-            # was removed.
-            generic =
-              system: homeDirectory: extraProfiles:
-              homeManagerConfiguration {
-                pkgs = legacyPackages.${system};
+            home =
+              system: host:
+              inputs.home-manager.lib.homeManagerConfiguration {
+                pkgs = inputs.nixpkgs.legacyPackages.${system};
                 extraSpecialArgs = { inherit inputs self; };
-                modules =
-                  common
-                  ++ [
-                    ./profiles/base.nix
-                    ./profiles/dev.nix
-                    ./profiles/ai.nix
-                  ]
-                  ++ extraProfiles
-                  ++ [
-                    {
-                      home = {
-                        username = "generic";
-                        inherit homeDirectory;
-                        stateVersion = "25.05";
-                      };
-
-                      # profiles/ai.nix points omnigent at a sops secret that
-                      # only `home/` declares, and the module asserts the name
-                      # resolves. Identity-free means no secrets, so the
-                      # OpenRouter wiring stays off here.
-                      dotfiles.ai.omnigent.openRouter.enable = inputs.nixpkgs.lib.mkForce false;
-                    }
-                  ];
+                modules = [
+                  ./hosts/common.nix
+                  host
+                ];
               };
           in
           {
-            "erik@darter" = homeManagerConfiguration {
-              pkgs = legacyPackages.x86_64-linux;
-              extraSpecialArgs = { inherit inputs self; };
-              modules = common ++ [ ./hosts/darter.nix ];
-            };
-
-            "erik@hades" = homeManagerConfiguration {
-              pkgs = legacyPackages.x86_64-linux;
-              extraSpecialArgs = { inherit inputs self; };
-              modules = common ++ [ ./hosts/hades.nix ];
-            };
+            "erik@darter" = home "x86_64-linux" ./hosts/darter.nix;
+            "erik@hades" = home "x86_64-linux" ./hosts/hades.nix;
 
             # No machine is named `server`. This exists so `hosts/server.nix`
             # is built by `nix flake check` like the other two, rather than
             # being an export that only breaks in whatever flake consumes it.
-            "erik@server" = homeManagerConfiguration {
-              pkgs = legacyPackages.x86_64-linux;
-              extraSpecialArgs = { inherit inputs self; };
-              modules = common ++ [ ./hosts/server.nix ];
-            };
+            "erik@server" = home "x86_64-linux" ./hosts/server.nix;
 
-            "generic@x86_64-linux" = generic "x86_64-linux" "/home/generic" [
-              ./profiles/workstation.nix
-            ];
-
-            # `workstation` is a Linux desktop session (gnome, brave); darwin
-            # takes `graphical` plus the cross-platform GUI tools from it.
-            "generic@aarch64-darwin" = generic "aarch64-darwin" "/Users/generic" [
-              ./profiles/graphical.nix
-              {
-                dotfiles = {
-                  ghostty.enable = true;
-                  helix.enable = true;
-                  kitty.enable = true;
-                  vscode.enable = true;
-                  zed.enable = true;
-                };
-              }
-            ];
+            "generic@x86_64-linux" = home "x86_64-linux" ./hosts/generic.nix;
+            "generic@aarch64-darwin" = home "aarch64-darwin" ./hosts/generic.nix;
           };
       };
 

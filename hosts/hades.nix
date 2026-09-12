@@ -7,10 +7,6 @@
   imports = [
     ../home
     ../home/vscode/hades.nix
-    ../profiles/base.nix
-    ../profiles/dev.nix
-    ../profiles/ai.nix
-    ../profiles/workstation.nix
   ];
 
   programs.git.settings = {
@@ -34,9 +30,40 @@
   };
 
   dotfiles = {
-    ocaml.enable = true;
+    git.enable = true;
+    gnupg.enable = true;
+    nix.enable = true;
+    onePassword.enable = true;
+    sops.enable = true;
+    ssh.enable = true;
+    zsh.enable = true;
+
+    c.enable = true;
+    containers.enable = true;
     dotnet.enable = true;
+    go.enable = true;
+    javascript.enable = true;
+    kubernetes.enable = true;
+    ocaml.enable = true;
+    python.enable = true;
+
+    ai = {
+      enable = true;
+      claudeDesktop.enable = true;
+    };
+
+    brave.enable = true;
     emacs.enable = true;
+    fonts.enable = true;
+    ghostty.enable = true;
+    gnome.enable = true;
+    helix.enable = true;
+    kitty.enable = true;
+    neovim.enable = true;
+    obsidian.enable = true;
+    stylix.enable = true;
+    vscode.enable = true;
+    zed.enable = true;
 
     # Serve the omnigent web UI to the rest of the LAN, not just loopback, so
     # the desktop and mobile clients on other devices reach this host at
@@ -61,7 +88,19 @@
     };
   };
 
-  programs.lutris.enable = true;
+  programs = {
+    home-manager.enable = true;
+    lutris.enable = true;
+    tdl.enable = true;
+
+    fzf.enable = true;
+    grep.enable = true;
+    htop.enable = true;
+    jq.enable = true;
+    less.enable = true;
+    ripgrep.enable = true;
+    vim.enable = true;
+  };
 
   home.packages = with pkgs; [
     devenv

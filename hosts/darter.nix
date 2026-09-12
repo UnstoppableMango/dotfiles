@@ -7,13 +7,7 @@ let
   inherit (config.home) homeDirectory;
 in
 {
-  imports = [
-    ../home
-    ../profiles/base.nix
-    ../profiles/dev.nix
-    ../profiles/ai.nix
-    ../profiles/graphical.nix
-  ];
+  imports = [ ../home ];
 
   # darter runs standalone Home Manager on Pop!_OS (not NixOS). This patches
   # XDG_DATA_DIRS and session variables so HM-installed man pages, shell
@@ -26,15 +20,50 @@ in
   };
 
   dotfiles = {
-    ai.omnigent.enable = false;
+    git.enable = true;
+    gnupg.enable = true;
+    nix.enable = true;
+    onePassword.enable = true;
+    sops.enable = true;
+    ssh.enable = true;
+    zsh.enable = true;
+
+    c.enable = true;
+    containers.enable = true;
+    go.enable = true;
+    javascript.enable = true;
+    kubernetes.enable = true;
+    neovim.enable = true;
+    python.enable = true;
+
+    ai = {
+      enable = true;
+      claudeDesktop.enable = true;
+      omnigent.enable = false;
+    };
+
+    # A display, but no desktop session.
+    fonts.enable = true;
+    obsidian.enable = true;
+    stylix.enable = true;
+    zed.enable = true;
 
     # rosequartz's admin cert is clan-generated and darter isn't a clan
     # machine, so darter gets the OIDC context only, as a side file.
     kubernetes.rosequartz.enable = true;
+  };
 
-    # Not from the workstation profile, which darter does not take; darter
-    # wants the editor without the rest of the desktop session.
-    zed.enable = true;
+  programs = {
+    home-manager.enable = true;
+    tdl.enable = true;
+
+    fzf.enable = true;
+    grep.enable = true;
+    htop.enable = true;
+    jq.enable = true;
+    less.enable = true;
+    ripgrep.enable = true;
+    vim.enable = true;
   };
 
   # The first file is the writable hand-managed one, the second is
