@@ -30,23 +30,17 @@
         dbaeumer.vscode-eslint
         docker.docker
         dprint.dprint
-        drblury.protobuf-vsc
+        # drblury.protobuf-vsc
         eamodio.gitlens
         editorconfig.editorconfig
         foxundermoon.shell-format
         github.vscode-github-actions
-        # NOTE: github.copilot-chat is not installed here. VS Code ships Copilot
-        # Chat as a builtin extension, and the marketplace build is skipped in
-        # favour of it ("Skipping extension ... in favour of the builtin
-        # extension .../resources/app/extensions/copilot"), so installing it
-        # only adds closure weight and a warning on every launch.
         golang.go
         graphql.vscode-graphql
         graphql.vscode-graphql-syntax
         hashicorp.terraform
         haskell.haskell
         humao.rest-client
-        igochkov.vscode-ebnf
         ionide.ionide-fake
         ionide.ionide-fsharp
         # NOTE: pkgs.vscode-marketplace resolves resharper-code to 0.0.2, an
