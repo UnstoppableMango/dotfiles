@@ -84,7 +84,7 @@ in
       default = { };
       example = {
         OCO_AI_PROVIDER = "anthropic";
-        OCO_MODEL = "claude-sonnet-5";
+        OCO_MODEL = "claude-sonnet-4-6";
       };
       description = ''
         Entries for `~/.opencommit`, merged over opencommit's own defaults.
