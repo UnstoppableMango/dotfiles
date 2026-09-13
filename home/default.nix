@@ -20,6 +20,7 @@
     buf
     clan-cli
     devctl
+    dix
     glow
     mise
     nano

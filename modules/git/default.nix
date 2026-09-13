@@ -20,6 +20,7 @@
 
       settings = {
         core.editor = "nvim";
+        fetch.prune = true;
         push.autoSetupRemote = true;
       };
     };
