@@ -11,8 +11,7 @@ on:
 
 jobs:
   copilot-setup-steps:
-    # It broke atm
-    runs-on: [self-hosted, thecluster]
+    runs-on: thecluster
     permissions:
       contents: read
     steps:
