@@ -75,6 +75,18 @@ in
 
   options.dotfiles.ai = {
     enable = lib.mkEnableOption "slop";
+
+    copilot.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "GitHub Copilot CLI.";
+    };
+
+    cursor.cli.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Cursor CLI.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -97,13 +109,13 @@ in
     };
 
     programs.github-copilot-cli = {
-      enable = true;
+      enable = cfg.copilot.enable;
       context = ./global-context.md;
       mcpServers = {
         inherit pulumi gitlab github;
       };
     };
 
-    home.packages = with pkgs; [ cursor-cli ];
+    home.packages = lib.optional cfg.cursor.cli.enable pkgs.cursor-cli;
   };
 }
