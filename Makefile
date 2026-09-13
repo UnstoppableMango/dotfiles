@@ -47,7 +47,7 @@ flake.nix:
 	nix flake init
 
 p10k: # This doesn't actually work in make, but its copy-pastable
-	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/modules/zsh/prezto/.p10k.zsh p10k configure
+	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/modules/zsh/.p10k.zsh p10k configure
 
 # `home` names a real directory in this repo, so without this make treats the
 # target as already built and refuses to run it. The rest are listed for the

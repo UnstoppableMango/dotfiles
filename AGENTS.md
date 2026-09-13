@@ -111,7 +111,7 @@ Everything is `mkIf`-gated, so importing a module a host does not use costs noth
 
 `home/default.nix` collects erik's personal config: git identity/aliases, vscode's default-profile settings, GNOME dconf taste, the direnv/nix-direnv setup, the sops secrets (and the `dotfiles.ai.omnigent.openRouter.apiKeySecret` naming one of them), and the `home.username` default.
 `home/default.nix` and `home/account.nix` are reached by relative import (`hosts/darter.nix`, `hosts/hades.nix`, `hosts/server.nix`) rather than exported, since nothing outside this repo imports either by name.
-The nixvim configuration, the prezto/p10k setup, the Zed extension list, and the kitty/k9s/zed/checkout-root taste all follow the same shape: the curated value is an option default in `modules/` (`dotfiles.neovim.defaultConfig`, `dotfiles.zsh.p10kConfig`, `dotfiles.zed.extensions`, `dotfiles.ai.checkoutRoot.context`, or an `mkDefault` on the tool's settings), reachable to anyone consuming the flake, and `home/` only overrides it rather than holding a literal value.
+The nixvim configuration, the p10k setup, the Zed extension list, and the kitty/k9s/zed/checkout-root taste all follow the same shape: the curated value is an option default in `modules/` (`dotfiles.neovim.defaultConfig`, `dotfiles.zsh.p10kConfig`, `dotfiles.zed.extensions`, `dotfiles.ai.checkoutRoot.context`, or an `mkDefault` on the tool's settings), reachable to anyone consuming the flake, and `home/` only overrides it rather than holding a literal value.
 `home/vscode/hades.nix` is the one file `home/default.nix` does not import, because that VS Code profile exists on hades alone; `hosts/hades.nix` imports it directly.
 
 Every `dotfiles.*` module is off by default, so importing `homeModules.dotfiles` turns nothing on.
@@ -123,7 +123,7 @@ The omnigent OpenRouter provider has no toggle of its own to set: it turns on wh
 `hosts/hades.nix` is the same floor and toolchains plus the full desktop session, ocaml, dotnet and emacs, its signing key, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
 `hosts/server.nix` is `home/account.nix` plus the floor, containers, and kubernetes.
 It deliberately does not import the rest of `home/`: the personal layer declares sops secrets encrypted to erik's laptop keys, which a server has no reason to hold.
-Server does get prezto and Powerlevel10k, because it sets `dotfiles.zsh.enable` and that toggle is the prezto toggle.
+Server does get oh-my-zsh and Powerlevel10k, because it sets `dotfiles.zsh.enable` and `dotfiles.zsh.ohMyZsh.enable`, and the prompt follows `dotfiles.zsh.enable`.
 A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = null`.
 
 `modules/` itself stays generic, holding enable toggles and the mechanics needed for a feature to function, with no personal values:
@@ -154,9 +154,10 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   The desktop app owns both the socket and the signing helper and is not installable from nixpkgs on macOS, so the module configures an app installed by hand rather than installing anything but the CLI.
   `dotfiles.onePassword.signingKey` takes the public half of the key as identity data from `home/`; the module holds no key material.
   Its SSH agent is exclusive with gpg-agent's `enableSshSupport` (both claim `SSH_AUTH_SOCK`), and an assertion fails the build on the overlap instead of letting it show up as a key that never offers itself.
-- `zsh/` - Prezto, or oh-my-zsh as an alt via `dotfiles.zsh.ohMyZsh.enable`; Powerlevel10k.
-  `prezto/` is a submodule holding the framework config and the bundled `.p10k.zsh`, which `dotfiles.zsh.p10kConfig` points at and a consumer can replace or set null.
-  Both submodules follow `dotfiles.zsh.enable`, so a host that turns zsh on gets a framework rather than a bare shell.
+- `zsh/` - zsh, Powerlevel10k, and a framework: oh-my-zsh (`dotfiles.zsh.ohMyZsh.enable`) or prezto (`dotfiles.zsh.prezto.enable`), mutually exclusive by assertion.
+  `dotfiles.zsh.enable` is the base shell (aliases, history, completion) plus the prompt; the bundled `.p10k.zsh` sits beside it, and `dotfiles.zsh.p10kConfig` points at it and a consumer can replace or set null.
+  `oh-my-zsh/` and `prezto/` are submodules holding each framework's config, each active only alongside `dotfiles.zsh.enable`.
+  Every host uses oh-my-zsh; the prezto config is kept, switched off.
 - `sops/` - sops-nix age key location (`~/.config/sops/age/keys.txt`).
   Secrets live under `home/secrets/`, encrypted in `.sops.yaml` to erik's darter and hades keys so one file decrypts on both.
   `rosequartz.yaml` is the exception in origin rather than in handling: the admin cert and key are clan-generated in the nixos repo and re-encrypted here, so a rotation there has to be copied over the same way `modules/kubernetes/rosequartz/ca.crt` does.

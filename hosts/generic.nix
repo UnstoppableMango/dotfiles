@@ -25,6 +25,7 @@ in
     sops.enable = true;
     ssh.enable = true;
     zsh.enable = true;
+    zsh.ohMyZsh.enable = true;
 
     c.enable = true;
     containers.enable = true;

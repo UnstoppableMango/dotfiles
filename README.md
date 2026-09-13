@@ -39,7 +39,7 @@ Hades is also a NixOS machine, so its system half comes from the [nixos](https:/
 - `brave/`, `obsidian/` - browser and notes
 - `vscode/`, `neovim/` (nixvim), `zed/`, `helix/`, `emacs/` - editors
 - `kitty/`, `ghostty/` - terminals
-- `zsh/` - Prezto and Powerlevel10k, or oh-my-zsh via `dotfiles.zsh.ohMyZsh.enable`
+- `zsh/` - Powerlevel10k plus oh-my-zsh (`dotfiles.zsh.ohMyZsh.enable`) or prezto (`dotfiles.zsh.prezto.enable`)
 - `git/`, `gnupg/`, `onepassword/`, `sops/`, `ssh/` - identity and secret plumbing
 - `c/`, `containers/`, `dotnet/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - language toolchains
 - `gnome/`, `fonts/`, `stylix/` - desktop, fonts, theming
@@ -86,6 +86,7 @@ Add this repo as an input, import `homeModules.dotfiles`, and turn on the module
             dotfiles = {
               git.enable = true;
               zsh.enable = true;
+              zsh.ohMyZsh.enable = true;
               neovim.enable = true;
             };
           }

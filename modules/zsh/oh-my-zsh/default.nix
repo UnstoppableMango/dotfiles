@@ -1,14 +1,16 @@
 { lib, config, ... }:
+let
+  cfg = config.dotfiles.zsh;
+in
 {
-  options.dotfiles.zsh.ohMyZsh.enable = lib.mkEnableOption "oh-my-zsh (alt to prezto)";
+  options.dotfiles.zsh.ohMyZsh.enable = lib.mkEnableOption "oh-my-zsh";
 
-  config = lib.mkIf config.dotfiles.zsh.ohMyZsh.enable {
+  # The prompt is Powerlevel10k, sourced from ../default.nix, so `theme` stays unset.
+  config = lib.mkIf (cfg.enable && cfg.ohMyZsh.enable) {
     programs.zsh.oh-my-zsh = {
       enable = true;
       plugins = [
         "sudo"
-        "ssh-agent"
-        "gpg-agent"
 
         "git"
         "nix-shell"
@@ -27,9 +29,6 @@
         "docker"
         "helm"
       ];
-
-      # This is printing warnings... thought it was required?
-      # theme = "powerlevel10k/powerlevel10k";
     };
   };
 }

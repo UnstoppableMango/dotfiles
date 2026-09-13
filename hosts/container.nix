@@ -15,6 +15,7 @@
     git.enable = true;
     ssh.enable = true;
     zsh.enable = true;
+    zsh.ohMyZsh.enable = true;
 
     c.enable = true;
     go.enable = true;

@@ -23,6 +23,7 @@
     sops.enable = true;
     ssh.enable = true;
     zsh.enable = true;
+    zsh.ohMyZsh.enable = true;
 
     containers.enable = true;
     kubernetes.enable = true;
