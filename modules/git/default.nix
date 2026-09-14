@@ -8,6 +8,7 @@
   imports = [
     ./git-spice.nix
     ./opencommit.nix
+    ./signing.nix
   ];
 
   options.dotfiles.git.enable = lib.mkEnableOption "git Toolchain";

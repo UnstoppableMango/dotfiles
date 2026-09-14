@@ -151,7 +151,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
 - `fonts/` - Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
 - `gnupg/` - gpg + gpg-agent for signing and encryption only; gpg-agent never serves SSH (see `ssh/`).
   `dotfiles.gnupg.pinentry` picks the passphrase prompt: `pinentry-gnome3` on Linux, `pinentry_mac` on macOS, and `hosts/server.nix` sets `pinentry-curses`.
-- `onepassword/` - the 1Password CLI, plus the agent socket when a host sets `dotfiles.ssh.agent = "1password"`.
+- `onepassword/` - the 1Password CLI, plus the agent socket when a host sets `dotfiles.ssh.agent = "1password"`, and in that case git signs through the app's `op-ssh-sign`, since 1Password keys never reach `ssh-keygen`.
   The desktop app owns the socket and is not installable from nixpkgs on macOS, so the module points at an app installed by hand rather than installing anything but the CLI.
   No real host enables it; `hosts/generic.nix` does, so both platforms' socket paths are built.
 - `zsh/` - zsh, Powerlevel10k, and a framework: oh-my-zsh (`dotfiles.zsh.ohMyZsh.enable`) or prezto (`dotfiles.zsh.prezto.enable`), mutually exclusive by assertion.
@@ -173,6 +173,8 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
 - `kitty/`, `ghostty/` - terminals
 - `c/`, `containers/`, `dotnet/`, `git/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - per-language dev tooling.
   There is no `tdl/` module: the tdl flake exports its own `homeModules.tdl` declaring `programs.tdl.*` (the CLI plus the VS Code extension), so `homeModules.dotfiles` folds that module in alongside `./modules` and a host sets `programs.tdl.enable`, rather than this repo re-declaring a `dotfiles.tdl` toggle over `pkgs.tdl`.
+  `git/signing.nix` signs commits (not tags) with `dotfiles.git.signing.key`, an SSH public key by default, which each host sets for itself; the private half is whatever the host's `dotfiles.ssh.agent` holds.
+  `dotfiles.git.signing.allowedSigners` comes from `home/git.nix`, every machine's key, and becomes `gpg.ssh.allowedSignersFile` so a commit signed on one machine verifies on the others.
   `git/repos.nix` imports the nix2git home-manager module from https://github.com/unmango/nix2git, whose `nix2git.repositories` runs `git init` for declared paths under the home directory that do not exist yet, and never clones, rewrites, or deletes.
   `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
   `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its defaults entirely once that file exists.

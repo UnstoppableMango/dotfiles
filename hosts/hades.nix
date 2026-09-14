@@ -9,11 +9,6 @@
     ../home/vscode/hades.nix
   ];
 
-  programs.git.settings = {
-    user.signingkey = "B4986C137EB15A0C91FB69FE264283BBFDC491BC";
-    gpg.format = "openpgp";
-  };
-
   # The admin identity for the rosequartz cluster. Clan-generated in the nixos
   # repo, vendored here so this configuration stands on its own; see the
   # `caFile` option's description for the same reasoning about the CA.
@@ -31,6 +26,7 @@
 
   dotfiles = {
     git.enable = true;
+    git.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEwW6dUPKvKXXzj+gKJS7EXh6UzyLjzatrcPXa0Y2qvz erik@hades";
     gnupg.enable = true;
     nix.enable = true;
     sops.enable = true;

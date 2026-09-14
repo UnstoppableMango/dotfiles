@@ -14,13 +14,9 @@ in
   # completions, and the locale archive resolve on a non-NixOS system.
   targets.genericLinux.enable = true;
 
-  programs.git.settings = {
-    user.signingkey = "27DA5D049D4EEE32015BE9C29E0C29600DBC6D14";
-    gpg.format = "openpgp";
-  };
-
   dotfiles = {
     git.enable = true;
+    git.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMsFkHA8jLd9sHV5a/zcMsaxo/o+ZnEB95CBSRnu3YfD erik@darter";
     gnupg.enable = true;
     nix.enable = true;
     sops.enable = true;

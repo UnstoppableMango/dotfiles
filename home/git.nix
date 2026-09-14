@@ -6,8 +6,6 @@
         email = "erik.rasmussen@unmango.dev";
       };
 
-      commit.gpgsign = true;
-
       # this is what was forcing annotated tags
       tag.gpgsign = false;
 
@@ -32,6 +30,13 @@
   dotfiles.git = {
     enable = true;
     spice.enable = true;
+
+    # Every machine's signing key, so a commit made on one verifies on all.
+    signing.allowedSigners = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMsFkHA8jLd9sHV5a/zcMsaxo/o+ZnEB95CBSRnu3YfD erik@darter"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEwW6dUPKvKXXzj+gKJS7EXh6UzyLjzatrcPXa0Y2qvz erik@hades"
+    ];
+
     openCommit = {
       enable = true;
       apiKeySecret = "oco-api-key";
