@@ -45,6 +45,9 @@ With a machine's software age key gone, any YubiKey decrypts the secrets:
 
 `SOPS_AGE_KEY_FILE=~/.config/sops/age/yubikey.txt sops -d home/secrets/<file>.yaml`
 
+sops also reads the default `~/.config/sops/age/keys.txt` whatever `SOPS_AGE_KEY_FILE` says, so on a machine that still has its software key, that key decrypts first and the YubiKey is never asked.
+To test the YubiKey path there, hide the default: prefix the command with `XDG_CONFIG_HOME=$(mktemp -d)`.
+
 `yubikey.txt` stays separate from `keys.txt`, because sops-nix reads `keys.txt` unattended at activation and a YubiKey identity would stall it waiting for a PIN.
 
 ## Troubleshooting
