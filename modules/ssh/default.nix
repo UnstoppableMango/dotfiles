@@ -1,6 +1,12 @@
-{ lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 let
   cfg = config.dotfiles.ssh;
+  inherit (pkgs.stdenv.hostPlatform) isDarwin;
 
   managedKnownHosts = ".ssh/known_hosts_nix";
 
@@ -35,7 +41,7 @@ in
         so machines are reachable by bare name.
 
         The table itself is data the flake supplies, not something this module
-        reaches for: flake.nix feeds it `inputs.hosts.lib.addresses`
+        reaches for: hosts/common.nix feeds it `inputs.hosts.lib.addresses`
         (github:UnstoppableMango/hosts). The nixos repo reads that same input
         for the `internet` clan service, so the two can't drift. Consumers that
         import this module from elsewhere have to set it; empty just means no
@@ -68,14 +74,61 @@ in
         via /etc/ssh/ssh_known_hosts; this covers the machines that don't.
       '';
     };
+
+    agent = lib.mkOption {
+      type =
+        with lib.types;
+        nullOr (enum [
+          "openssh"
+          "gnome"
+          "1password"
+        ]);
+      default = if isDarwin then null else "openssh";
+      defaultText = lib.literalExpression ''if isDarwin then null else "openssh"'';
+      description = ''
+        The one SSH agent this machine uses. A single choice rather than a
+        toggle per agent, since every agent wants `SSH_AUTH_SOCK` and all but
+        one would be silently ignored.
+
+        - `openssh`: Home Manager runs OpenSSH's `ssh-agent` as a user service.
+        - `gnome`: GNOME's `gcr-ssh-agent`, which the system provides (NixOS
+          enables it with GNOME). Keys unlock through the login keyring.
+        - `1password`: the 1Password desktop app's agent; requires
+          `dotfiles.onePassword.enable`.
+        - `null`: leave `SSH_AUTH_SOCK` alone. The macOS default, where launchd
+          already runs an agent.
+      '';
+    };
+
+    identityFiles = lib.mkOption {
+      type = with lib.types; listOf str;
+      default = [ "~/.ssh/id_ed25519" ];
+      description = ''
+        Private keys ssh offers, in order. An explicit `IdentityFile` stops ssh
+        from trying its built-in defaults, so the default key is listed here
+        rather than assumed. Missing files are skipped.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    # Agent/forwarding comes from elsewhere: gpg-agent
-    # (services.gpg-agent.enableSshSupport = true; see modules/gnupg) or
-    # 1Password's agent socket (see modules/onepassword), one per machine.
-    # This module only manages client behavior - no secret material,
-    # no sops-nix/agenix.
+    assertions = [
+      {
+        assertion = cfg.agent == "1password" -> config.dotfiles.onePassword.enable;
+        message = ''dotfiles.ssh.agent = "1password" requires dotfiles.onePassword.enable.'';
+      }
+    ];
+
+    services.ssh-agent.enable = cfg.agent == "openssh";
+
+    # gcr serves %t/gcr/ssh but exports nothing, so the session learns the
+    # path from here, the same way Home Manager's own agent modules do it.
+    sshAuthSock = lib.mkIf (cfg.agent == "gnome") {
+      enable = true;
+      initialization.bash = ''export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"'';
+      systemd.socketProviderUnit = "gcr-ssh-agent.socket";
+    };
+
     programs.ssh = {
       enable = true;
 
@@ -107,6 +160,7 @@ in
           ControlPath = "~/.ssh/master-%C";
           ControlPersist = "10m";
           AddKeysToAgent = "yes";
+          IdentityFile = lib.mkIf (cfg.identityFiles != [ ]) cfg.identityFiles;
           # The first file is the writable one, the second is nix-managed.
           UserKnownHostsFile = [
             "~/.ssh/known_hosts"

@@ -14,6 +14,8 @@
   dotfiles = {
     git.enable = true;
     ssh.enable = true;
+    # The image runs no systemd user manager to host an agent.
+    ssh.agent = null;
     zsh.enable = true;
     zsh.ohMyZsh.enable = true;
 
