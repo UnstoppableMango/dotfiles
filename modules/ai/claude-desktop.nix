@@ -55,6 +55,10 @@ let
   servers = lib.mapAttrs toServer (
     lib.filterAttrs (_: server: server.enabled != false) config.programs.mcp.servers
   );
+
+  serversFragment = jsonFormat.generate "claude_desktop_config.json" { mcpServers = servers; };
+
+  configFile = lib.escapeShellArg "${config.home.homeDirectory}/${configPath}";
 in
 {
   options.dotfiles.ai.claudeDesktop = {
@@ -81,9 +85,21 @@ in
   };
 
   config = lib.mkIf (cfg.enable && cfg.claudeDesktop.enable) {
-    home.file.${configPath}.source = jsonFormat.generate "claude_desktop_config.json" {
-      mcpServers = servers;
-    };
+    # The app writes its own keys (`preferences`, `coworkUserFilesPath`) into
+    # this file, so it stays a regular file and only `mcpServers` is assigned.
+    home.activation.claudeDesktopMcpServers = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      $DRY_RUN_CMD mkdir -p "$(dirname ${configFile})"
+      if [ -L ${configFile} ]; then
+        $DRY_RUN_CMD cp --remove-destination "$(readlink -f ${configFile})" ${configFile}
+      fi
+      if [ ! -s ${configFile} ]; then
+        $DRY_RUN_CMD cp ${serversFragment} ${configFile}
+      fi
+      $DRY_RUN_CMD chmod u+w ${configFile}
+      $DRY_RUN_CMD ${pkgs.yq-go}/bin/yq -i -p json -o json \
+        '.mcpServers = load("${serversFragment}").mcpServers' \
+        ${configFile}
+    '';
 
     home.packages = [
       pkgs.nodejs
