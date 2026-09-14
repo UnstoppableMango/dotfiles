@@ -10,6 +10,7 @@
     ./direnv.nix
     ./git.nix
     ./gnome.nix
+    ./ssh.nix
     ./taste.nix
     ./vscode
   ];

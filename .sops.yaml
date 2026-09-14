@@ -1,8 +1,12 @@
 # erik's keys mirror the nixos repo's clan user `erik` (sops/users/erik/key.json).
-# One key per machine, both on every secret, so the same file decrypts anywhere.
+# One software key per machine, decrypted unattended by sops-nix, plus each
+# YubiKey's PIV slot as a backup (age-plugin-yubikey; needs the key and its PIN).
+# Every recipient is on every secret, so the same file decrypts anywhere.
 keys:
   - &erik_darter age16yu7pqrmwd3m7jrs5pdh2rd2z4lzskc2ywftqngtssgkd8vj54us875q6t
   - &erik_hades age1jz7tthllca32pw95jwfq8fhm4vy5j43p4akc3d54ae5evqvtpgmql8z53d
+  - &yubikey_nano age1yubikey1qvagvtdammwnfa24wvzpwzrvtkjfz9vytxv475yzgssz3576yf9f7nxep7g
+  - &yubikey_nfc age1yubikey1q2yk76pht3jv3ekcl3nmf94hls9d4v4zw6655rkm7d2sevnmp4s3zndun8g
 
 creation_rules:
   - path_regex: home/secrets/[^/]+\.yaml$
@@ -10,3 +14,5 @@ creation_rules:
       - age:
           - *erik_darter
           - *erik_hades
+          - *yubikey_nano
+          - *yubikey_nfc
