@@ -109,7 +109,7 @@ Dropping a directory in there enables its options repo-wide, which is the tradeo
 `hosts/common.nix` imports `homeModules.dotfiles` (`./modules` plus `tdl.homeModules.tdl`) and the stylix, nixvim, sops-nix, and nix2git modules once; `flake.nix` pairs it with each host file, so every configuration gets the whole option set.
 Everything is `mkIf`-gated, so importing a module a host does not use costs nothing.
 
-`home/default.nix` collects erik's personal config: git identity/aliases, vscode's default-profile settings, GNOME dconf taste, the direnv/nix-direnv setup, the sops secrets (and the `dotfiles.ai.omnigent.openRouter.apiKeySecret` naming one of them), and the `home.username` default.
+`home/default.nix` collects erik's personal config: git identity/aliases, vscode's default-profile settings, GNOME dconf taste, the direnv/nix-direnv setup, the sops secrets (and `dotfiles.openrouter.apiKeySecret` naming the OpenRouter key), and the `home.username` default.
 `home/default.nix` and `home/account.nix` are reached by relative import (`hosts/darter.nix`, `hosts/hades.nix`, `hosts/server.nix`) rather than exported, since nothing outside this repo imports either by name.
 The nixvim configuration, the p10k setup, the Zed extension list, and the kitty/k9s/zed/checkout-root taste all follow the same shape: the curated value is an option default in `modules/` (`dotfiles.neovim.defaultConfig`, `dotfiles.zsh.p10kConfig`, `dotfiles.zed.extensions`, `dotfiles.ai.checkoutRoot.context`, or an `mkDefault` on the tool's settings), reachable to anyone consuming the flake, and `home/` only overrides it rather than holding a literal value.
 `home/vscode/hades.nix` is the one file `home/default.nix` does not import, because that VS Code profile exists on hades alone; `hosts/hades.nix` imports it directly.
@@ -117,7 +117,7 @@ The nixvim configuration, the p10k setup, the Zed extension list, and the kitty/
 Every `dotfiles.*` module is off by default, so importing `homeModules.dotfiles` turns nothing on.
 Each host file lists every toggle it wants, even where hosts overlap, so reading one file tells you the whole configuration.
 
-The omnigent OpenRouter provider has no toggle of its own to set: it turns on when `dotfiles.ai.omnigent.openRouter.apiKeySecret` names a secret, which only `home/` does.
+OpenRouter has no toggle of its own to set: `dotfiles.openrouter` turns on when `dotfiles.openrouter.apiKeySecret` names a secret, which only `home/` does, and every integration under `modules/openrouter/` follows it.
 
 `hosts/darter.nix` is the shell and secret floor, the dev toolchains and agent CLIs, and fonts, stylix, obsidian, and zed (a display without the desktop session), plus `targets.genericLinux`, its signing key, and the rosequartz KUBECONFIG.
 `hosts/hades.nix` is the same floor and toolchains plus the full desktop session, ocaml, dotnet and emacs, its signing key, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
@@ -133,11 +133,20 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `global-context.md` is the user-level agent instructions, rendered to both `~/.claude/CLAUDE.md` and `~/.copilot/copilot-instructions.md`; `.claude/skills/agent-context/` covers how to change it.
   `checkout-root.nix` renders `modules/ai/checkout-root.md` to `~/src/AGENTS.md` with a `CLAUDE.md` include beside it, matching the pairing the repos underneath use, so conventions spanning the whole checkout root are stated once instead of per repo.
   The document is an option, `dotfiles.ai.checkoutRoot.context`, defaulting to the bundled file; a consumer supplies their own or sets it to null to write nothing.
-  `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
-  The OpenRouter key reaches that entry through an `auth_command` reading a `sops.secrets` path rather than `OPENROUTER_API_KEY` in the environment, since the systemd user unit running the server never sees a login shell (the same reasoning as `git/opencommit.nix`).
+  `omnigent.nix` installs omnigent and runs its server and host daemon; its model provider comes from `openrouter/omnigent.nix`.
   `coderabbit.nix` installs the CodeRabbit CLI from the `mangopkgs` overlay (packaged at `pkgs/coderabbit/` in https://github.com/unmango/pkgs) and turns its self-update off, since `coderabbit update` rewrites the binary in place and a nix-installed one lives in the read-only store.
   Authentication is a rendered `~/.coderabbit/auth.json` (`{"type":"api_key",...}`) rather than an environment variable, because the CLI reads no `CODERABBIT_API_KEY`; its api_key auth branch returns that file verbatim instead of consulting the OS credential store the OAuth branch uses, so the file alone is a complete authenticated state.
   The key comes from `dotfiles.ai.coderabbit.apiKeySecret` naming a `sops.secrets` entry, and the CLI rejects a user API key, so it has to be an agentic one.
+- `openrouter/` - OpenRouter as the one provider for every paid model outside Claude Code.
+  Claude Code stays on the Claude subscription, since Remote Control refuses an `ANTHROPIC_BASE_URL` other than api.anthropic.com.
+  `default.nix` holds the key (`apiKeySecret`, a `sops.secrets` name) and two model tiers (`models.default`, `models.fast`), and exposes read-only `baseUrl`, `apiKeyFile`, and `apiKeyPlaceholder` for integrations to consume.
+  Each tool gets one file here declaring `dotfiles.openrouter.<tool>.enable` (on by default) plus a model option defaulting to a tier, active only when both OpenRouter and the tool are enabled.
+  Adding a tool means adding a file and listing it in `default.nix`'s `imports`.
+  `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
+  Its `auth_command` reads the key file rather than `OPENROUTER_API_KEY`, since the systemd user unit running the server never sees a login shell.
+  `opencode.nix` passes the key as `{file:...}`, which opencode resolves when it loads its config.
+  `opencommit.nix` sets `dotfiles.git.openCommit`'s key, provider, and model at `mkDefault`, reusing that module's `~/.opencommit` template.
+  `zed.nix` wraps `zeditor` to export `OPENROUTER_API_KEY` from the key file at launch, because Zed has no file route for the key; on macOS, launching Zed.app from Finder bypasses the wrapper.
 - `flake-update/` - flake-update automation
 - `brave/` - Brave
 - `launch-services/`: macOS-only, and unreached, since no darwin configuration is defined.
@@ -181,6 +190,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
   `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its defaults entirely once that file exists.
   The file route rather than `OCO_API_KEY` in the environment, since the `prepare-commit-msg` hook also fires for editor and GUI commits that never see a login shell.
+  With OpenRouter on, `openrouter/opencommit.nix` supplies the key, provider, and model.
   `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); a host supplies the admin cert and key paths, and omitting them yields the OIDC context alone (which is what darter takes).
   `containers/` installs both stacks side by side: podman (with buildah, skopeo, podman-compose) and `docker-client`, the CLI without the daemon, since a system dockerd is outside Home Manager's reach.
   `docker compose` and `docker buildx` are linked into `~/.docker/cli-plugins` because the CLI resolves subcommands there rather than from PATH.
