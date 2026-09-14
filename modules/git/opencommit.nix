@@ -138,8 +138,14 @@ in
         # with the store path to cli.cjs hardcoded as the script argument, which
         # overwrites argv[1] and breaks that detection. Symlinking straight to
         # cli.cjs preserves the hook path in argv[1] instead.
+        # The test fails the build if nixpkgs moves cli.cjs, rather than leaving
+        # a dangling hook.
         xdg.configFile."git/template/hooks/prepare-commit-msg".source =
-          "${pkgs.opencommit}/lib/node_modules/opencommit/out/cli.cjs";
+          pkgs.runCommand "opencommit-prepare-commit-msg" { }
+            ''
+              test -f ${pkgs.opencommit}/lib/opencommit/cli.cjs
+              ln -s ${pkgs.opencommit}/lib/opencommit/cli.cjs $out
+            '';
 
         programs.git.settings.init.templateDir = "${config.xdg.configHome}/git/template";
       }
