@@ -45,15 +45,15 @@ in
       type = lib.types.bool;
       default = false;
       description = ''
-        opencommit (`oco`) wired in as a git template hook: `git init`/`git
-        clone` symlinks every new repo's `prepare-commit-msg` hook straight to
-        the `oco` binary, the same mechanism `oco hook set` uses per-repo, so
-        commit messages get auto-drafted from the staged diff in Conventional
-        Commit form. Needs an OCO_API_KEY (or a local OCO_AI_PROVIDER such as
+        opencommit (`oco`) as a global `prepare-commit-msg` hook: git's
+        `core.hooksPath` points at `~/.config/git/hooks`, where the hook links
+        to opencommit's cli script, so every repo gets commit messages drafted
+        from the staged diff in Conventional Commit form. A global
+        `core.hooksPath` makes git ignore each repo's `.git/hooks`; a repo that
+        needs its own hooks sets `core.hooksPath` locally, which takes
+        precedence. Needs an OCO_API_KEY (or a local OCO_AI_PROVIDER such as
         ollama) exported in the shell, or `apiKeySecret` set to have one
         rendered into `~/.opencommit` by sops-nix. Disabled by default.
-        Existing repos need `git init` re-run once (safe, idempotent) to pick
-        up the hook.
       '';
     };
 
@@ -132,22 +132,24 @@ in
         home.packages = [ pkgs.opencommit ];
 
         # oco detects "I'm running as a git hook" by checking that
-        # process.argv[1] is exactly $GIT_DIR/hooks/prepare-commit-msg, which is
-        # how `oco hook set` wires a repo up (a symlink from the hook path to its
-        # own cli script). nixpkgs' `bin/oco` is a bash wrapper that execs node
-        # with the store path to cli.cjs hardcoded as the script argument, which
-        # overwrites argv[1] and breaks that detection. Symlinking straight to
-        # cli.cjs preserves the hook path in argv[1] instead.
-        # The test fails the build if nixpkgs moves cli.cjs, rather than leaving
-        # a dangling hook.
-        xdg.configFile."git/template/hooks/prepare-commit-msg".source =
+        # process.argv[1] ends with `$(git config core.hooksPath)/prepare-commit-msg`.
+        # nixpkgs' `bin/oco` is a bash wrapper that execs node with the store
+        # path to cli.cjs as the script argument, which overwrites argv[1] and
+        # breaks that detection. Symlinking straight to cli.cjs preserves the
+        # hook path in argv[1] instead. The test fails the build if nixpkgs
+        # moves cli.cjs, rather than leaving a dangling hook.
+        xdg.configFile."git/hooks/prepare-commit-msg".source =
           pkgs.runCommand "opencommit-prepare-commit-msg" { }
             ''
               test -f ${pkgs.opencommit}/lib/opencommit/cli.cjs
               ln -s ${pkgs.opencommit}/lib/opencommit/cli.cjs $out
             '';
 
-        programs.git.settings.init.templateDir = "${config.xdg.configHome}/git/template";
+        # A global hooksPath rather than init.templateDir, because git copies a
+        # template symlink's target, which pins a Home Manager generation that a
+        # later GC removes. oco compares argv[1] against the raw config value,
+        # so the path has to be absolute, without `~`.
+        programs.git.settings.core.hooksPath = "${config.xdg.configHome}/git/hooks";
       }
 
       (lib.mkIf (cfg.apiKeySecret != null) {
