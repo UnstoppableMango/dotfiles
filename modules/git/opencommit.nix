@@ -135,15 +135,23 @@ in
         # process.argv[1] ends with `$(git config core.hooksPath)/prepare-commit-msg`.
         # nixpkgs' `bin/oco` is a bash wrapper that execs node with the store
         # path to cli.cjs as the script argument, which overwrites argv[1] and
-        # breaks that detection. Symlinking straight to cli.cjs preserves the
-        # hook path in argv[1] instead. The test fails the build if nixpkgs
-        # moves cli.cjs, rather than leaving a dangling hook.
+        # breaks that detection. cli.cjs itself is unusable as the hook, since
+        # its `#!/usr/bin/env node` shebang depends on PATH. The hook is a node
+        # script that require()s cli.cjs instead, which keeps the hook path in
+        # argv[1]. The test fails the build if nixpkgs moves cli.cjs, rather
+        # than leaving a hook that cannot run.
         xdg.configFile."git/hooks/prepare-commit-msg".source =
-          pkgs.runCommand "opencommit-prepare-commit-msg" { }
-            ''
-              test -f ${pkgs.opencommit}/lib/opencommit/cli.cjs
-              ln -s ${pkgs.opencommit}/lib/opencommit/cli.cjs $out
-            '';
+          let
+            cli = "${pkgs.opencommit}/lib/opencommit/cli.cjs";
+          in
+          pkgs.runCommand "opencommit-prepare-commit-msg" { } ''
+            test -f ${cli}
+            cat > $out <<'EOF'
+            #!${lib.getExe pkgs.nodejs}
+            require("${cli}");
+            EOF
+            chmod +x $out
+          '';
 
         # A global hooksPath rather than init.templateDir, because git copies a
         # template symlink's target, which pins a Home Manager generation that a
