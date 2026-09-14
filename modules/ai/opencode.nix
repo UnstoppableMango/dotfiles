@@ -8,18 +8,18 @@ let
   cfg = config.dotfiles.ai.opencode;
 in
 {
+  # The OpenRouter provider lives in modules/openrouter/opencode.nix.
+  imports = [
+    (lib.mkRenamedOptionModule
+      [ "dotfiles" "ai" "opencode" "openrouter" "enable" ]
+      [ "dotfiles" "openrouter" "opencode" "enable" ]
+    )
+  ];
+
   options.dotfiles.ai.opencode = {
     enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
-    };
-
-    openrouter = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "OpenRouter as an opencode model provider. Needs an OPENROUTER_API_KEY exported in the shell. Disabled by default.";
-      };
     };
 
     desktop.enable = lib.mkOption {
@@ -30,12 +30,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.opencode = {
-      enable = true;
-      settings = lib.mkIf cfg.openrouter.enable {
-        provider.openrouter.options.apiKey = "{env:OPENROUTER_API_KEY}";
-      };
-    };
+    programs.opencode.enable = true;
 
     home.packages = [
       pkgs.opencode-claude-auth

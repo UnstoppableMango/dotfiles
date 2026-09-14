@@ -67,7 +67,7 @@ in
         invoked outside a login shell (editor and GUI commits), since the
         `OCO_API_KEY` environment variable is not in reach there.
 
-        The declaration itself is identity-scoped, so it lives under `users/`;
+        The declaration itself is identity-scoped, so it lives under `home/`;
         this module only names it. Null leaves `~/.opencommit` unmanaged and
         the key has to come from the environment instead.
       '';

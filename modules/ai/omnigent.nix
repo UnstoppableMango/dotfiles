@@ -9,9 +9,6 @@ let
 
   omnigentBin = "${config.home.homeDirectory}/.local/bin/omnigent";
 
-  omnigentHome = "${config.home.homeDirectory}/.omnigent";
-  configPath = "${omnigentHome}/config.yaml";
-
   # omnigent's own default, and what every client assumes when no URL is
   # configured, so it stays a constant rather than an option.
   port = 6767;
@@ -36,30 +33,6 @@ let
   };
   certEnvList = lib.mapAttrsToList (n: v: "${n}=${v}") certEnv;
 
-  openRouter = cfg.omnigent.openRouter;
-
-  # OpenRouter reaches the OpenAI-compatible Chat Completions surface at its
-  # own base URL. The openai family's default endpoint (api.openai.com) is
-  # wrong for it, and it implements no Responses API, so both fields are
-  # required rather than left to the consuming harness.
-  openRouterEntry = {
-    kind = "key";
-    openai = {
-      base_url = "https://openrouter.ai/api/v1";
-      wire_api = "chat";
-      # A shell command that prints the token, rather than `api_key_ref:
-      # env:OPENROUTER_API_KEY`: the systemd user unit below never sees a
-      # login shell, so an environment variable is not in reach there.
-      auth_command = "cat ${config.sops.secrets.${openRouter.apiKeySecret}.path}";
-    }
-    // lib.optionalAttrs (openRouter.models != { }) { inherit (openRouter) models; };
-  }
-  // lib.optionalAttrs openRouter.default { default = true; };
-
-  providerFragment = (pkgs.formats.yaml { }).generate "omnigent-providers.yaml" {
-    providers.openrouter = openRouterEntry;
-  };
-
   # No nixpkgs package or Homebrew cask exists for the desktop client, so the
   # .dmg is fetched and unpacked directly. Bump version + sha256 together when
   # updating: https://omnigent.ai/download/mac redirects to the versioned URL.
@@ -79,6 +52,27 @@ let
   };
 in
 {
+  # The OpenRouter provider entry lives in modules/openrouter/omnigent.nix.
+  imports =
+    map
+      (
+        name:
+        lib.mkRenamedOptionModule
+          [ "dotfiles" "ai" "omnigent" "openRouter" name ]
+          [ "dotfiles" "openrouter" "omnigent" name ]
+      )
+      [
+        "enable"
+        "default"
+        "models"
+      ]
+    ++ [
+      (lib.mkRenamedOptionModule
+        [ "dotfiles" "ai" "omnigent" "openRouter" "apiKeySecret" ]
+        [ "dotfiles" "openrouter" "apiKeySecret" ]
+      )
+    ];
+
   options.dotfiles.ai.omnigent = {
     enable = lib.mkOption {
       type = lib.types.bool;
@@ -136,110 +130,13 @@ in
       default = pkgs.stdenv.hostPlatform.isDarwin;
       description = "Install the Omnigent.app native desktop client. macOS (aarch64) only.";
     };
-
-    openRouter = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = openRouter.apiKeySecret != null;
-        defaultText = lib.literalExpression "config.dotfiles.ai.omnigent.openRouter.apiKeySecret != null";
-        description = ''
-          OpenRouter as an omnigent model provider, registered under
-          `providers.openrouter` in `~/.omnigent/config.yaml`. It serves the
-          `openai` family, which is what the codex, opencode, qwen, and
-          openai-agents harnesses consume. On whenever `apiKeySecret` is set.
-        '';
-      };
-
-      apiKeySecret = lib.mkOption {
-        type = with lib.types; nullOr str;
-        default = null;
-        description = ''
-          Name of a `sops.secrets` entry holding the OpenRouter API key. The
-          provider entry reads it with an `auth_command`, so the key stays out
-          of both the nix store and the environment, and resolves the same way
-          for the systemd user unit as for an interactive shell.
-
-          The declaration itself is identity-scoped, so it lives under
-          `home/`; this module only names it.
-        '';
-      };
-
-      default = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = ''
-          Mark the entry `default: true`, making OpenRouter the default for
-          every surface it serves: the `openai` family and the `pi` scope. A
-          `claude` subscription entry claims the `anthropic` family only, so
-          the two coexist. omnigent rejects a config where two providers claim
-          the same family.
-        '';
-      };
-
-      models = lib.mkOption {
-        type = lib.types.attrsOf lib.types.str;
-        default = { };
-        example = {
-          default = "anthropic/claude-sonnet-4.5";
-        };
-        description = ''
-          Role or tier to OpenRouter model id. The `default` entry is
-          consulted when an agent spec pins no model of its own; without it
-          `/model` reports no pinned model and `omnigent config set --global
-          model=...` supplies one instead.
-        '';
-      };
-    };
   };
 
   config = lib.mkIf (cfg.enable && cfg.omnigent.enable) (
     lib.mkMerge [
       {
         programs.uv.tool.packages = [ "omnigent" ];
-
-        assertions = [
-          {
-            assertion = !openRouter.enable || openRouter.apiKeySecret != null;
-            message = ''
-              dotfiles.ai.omnigent.openRouter.enable needs apiKeySecret set:
-              the provider entry has no other credential route, and a family
-              with no api_key/api_key_ref/auth_command fails omnigent's own
-              parse.
-            '';
-          }
-          {
-            assertion =
-              !openRouter.enable
-              || openRouter.apiKeySecret == null
-              || config.sops.secrets ? ${openRouter.apiKeySecret};
-            message = ''
-              dotfiles.ai.omnigent.openRouter.apiKeySecret names
-              "${toString openRouter.apiKeySecret}", which is not declared in
-              sops.secrets, so there is no decrypted path for the
-              auth_command to read.
-            '';
-          }
-        ];
       }
-
-      # Guarded on apiKeySecret too, not just enable: the entry's
-      # auth_command indexes sops.secrets by that name, so a null would throw
-      # before the assertion above got a chance to report it.
-      (lib.mkIf (openRouter.enable && openRouter.apiKeySecret != null) {
-        # `~/.omnigent/config.yaml` is runtime-owned: omnigent generates
-        # `host.host_id` there on first `omnigent host`, and `omnigent config
-        # set --global` rewrites the whole file. So the nix-declared entry is
-        # merged in rather than the file being rendered outright. Assigning
-        # `.providers.openrouter` (not a deep merge) means nix fully owns that
-        # one entry while every sibling survives untouched.
-        home.activation.omnigentProviders = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          $DRY_RUN_CMD mkdir -p ${lib.escapeShellArg omnigentHome}
-          $DRY_RUN_CMD touch ${lib.escapeShellArg configPath}
-          $DRY_RUN_CMD ${pkgs.yq-go}/bin/yq -i \
-            '.providers.openrouter = load("${providerFragment}").providers.openrouter' \
-            ${lib.escapeShellArg configPath}
-        '';
-      })
 
       (lib.mkIf (cfg.omnigent.autostart && pkgs.stdenv.hostPlatform.isDarwin) {
         launchd.agents.omnigent-server = {

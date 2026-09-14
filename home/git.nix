@@ -37,12 +37,10 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEwW6dUPKvKXXzj+gKJS7EXh6UzyLjzatrcPXa0Y2qvz erik@hades"
     ];
 
+    # Provider, model, and key come from dotfiles.openrouter.
     openCommit = {
       enable = true;
-      apiKeySecret = "oco-api-key";
       settings = {
-        OCO_AI_PROVIDER = "anthropic";
-        OCO_MODEL = "claude-sonnet-4-6";
         OCO_OMIT_SCOPE = false;
         OCO_GITPUSH = false;
         OCO_HOOK_AUTO_UNCOMMENT = true;

@@ -35,19 +35,13 @@
 
   # Encrypted to both of erik's age keys (see .sops.yaml), so these decrypt on
   # darter and hades alike. Edit with `sops home/secrets/<file>.yaml`.
-  sops.secrets = {
-    "oco-api-key" = {
-      sopsFile = ./secrets/opencommit.yaml;
-      key = "oco_api_key";
-    };
-
-    "openrouter-api-key" = {
-      sopsFile = ./secrets/openrouter.yaml;
-      key = "openrouter_api_key";
-    };
+  sops.secrets."openrouter-api-key" = {
+    sopsFile = ./secrets/openrouter.yaml;
+    key = "openrouter_api_key";
   };
 
-  dotfiles.ai.omnigent.openRouter.apiKeySecret = "openrouter-api-key";
+  # Every paid model goes through OpenRouter; see modules/openrouter/.
+  dotfiles.openrouter.apiKeySecret = "openrouter-api-key";
 
   programs = {
     ripgrep-all.enable = true;
