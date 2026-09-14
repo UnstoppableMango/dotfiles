@@ -26,6 +26,8 @@ in
     onePassword.enable = true;
     sops.enable = true;
     ssh.enable = true;
+    yubikey.enable = true;
+    yubikey.gui = true;
     zsh.enable = true;
     zsh.ohMyZsh.enable = true;
 

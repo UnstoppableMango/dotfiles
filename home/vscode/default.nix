@@ -4,6 +4,7 @@
     # TODO: This doesn't count as the "default" profile for app-level settings
     programs.vscode.profiles.default.userSettings = {
       "docker.extension.enableComposeLanguageServer" = true;
+      "resharper.dataSharing.allowDataSharing" = false;
       "telemetry.telemetryLevel" = "off";
       "window.nativeTabs" = true;
       "terminal.integrated.fontFamily" = "MesloLGS NF";
