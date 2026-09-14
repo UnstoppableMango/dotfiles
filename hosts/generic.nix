@@ -24,6 +24,8 @@ in
     onePassword.enable = true;
     sops.enable = true;
     ssh.enable = true;
+    # Builds the 1Password socket branch on both platforms.
+    ssh.agent = "1password";
     yubikey.enable = true;
     yubikey.gui = true;
     zsh.enable = true;

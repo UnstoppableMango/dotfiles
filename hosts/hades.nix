@@ -33,9 +33,9 @@
     git.enable = true;
     gnupg.enable = true;
     nix.enable = true;
-    onePassword.enable = true;
     sops.enable = true;
     ssh.enable = true;
+    ssh.agent = "gnome";
     yubikey.enable = true;
     yubikey.gui = true;
     zsh.enable = true;

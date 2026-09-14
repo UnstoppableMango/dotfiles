@@ -23,7 +23,6 @@ in
     git.enable = true;
     gnupg.enable = true;
     nix.enable = true;
-    onePassword.enable = true;
     sops.enable = true;
     ssh.enable = true;
     yubikey.enable = true;

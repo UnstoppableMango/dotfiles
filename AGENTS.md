@@ -149,11 +149,11 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `neovim/nixvim-config.nix` is the curated LSP and plugin set, imported when `dotfiles.neovim.defaultConfig` is on and exported as `nixvimModules.default` so `packages.nixvim` builds the same configuration standalone.
   `zed/` carries the extension list as the `dotfiles.zed.extensions` default.
 - `fonts/` - Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
-- `gnupg/` - gpg + gpg-agent (pinentry only on Linux, so macOS has no way to prompt for a passphrase and does not enable this module)
-- `onepassword/` - 1Password CLI, the SSH agent socket, and SSH-format git commit signing through `op-ssh-sign`.
-  The desktop app owns both the socket and the signing helper and is not installable from nixpkgs on macOS, so the module configures an app installed by hand rather than installing anything but the CLI.
-  `dotfiles.onePassword.signingKey` takes the public half of the key as identity data from `home/`; the module holds no key material.
-  Its SSH agent is exclusive with gpg-agent's `enableSshSupport` (both claim `SSH_AUTH_SOCK`), and an assertion fails the build on the overlap instead of letting it show up as a key that never offers itself.
+- `gnupg/` - gpg + gpg-agent for signing and encryption only; gpg-agent never serves SSH (see `ssh/`).
+  `dotfiles.gnupg.pinentry` picks the passphrase prompt: `pinentry-gnome3` on Linux, `pinentry_mac` on macOS, and `hosts/server.nix` sets `pinentry-curses`.
+- `onepassword/` - the 1Password CLI, plus the agent socket when a host sets `dotfiles.ssh.agent = "1password"`.
+  The desktop app owns the socket and is not installable from nixpkgs on macOS, so the module points at an app installed by hand rather than installing anything but the CLI.
+  No real host enables it; `hosts/generic.nix` does, so both platforms' socket paths are built.
 - `zsh/` - zsh, Powerlevel10k, and a framework: oh-my-zsh (`dotfiles.zsh.ohMyZsh.enable`) or prezto (`dotfiles.zsh.prezto.enable`), mutually exclusive by assertion.
   `dotfiles.zsh.enable` is the base shell (aliases, history, completion) plus the prompt; the bundled `.p10k.zsh` sits beside it, and `dotfiles.zsh.p10kConfig` points at it and a consumer can replace or set null.
   `oh-my-zsh/` and `prezto/` are submodules holding each framework's config, each active only alongside `dotfiles.zsh.enable`.
@@ -163,9 +163,12 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `rosequartz.yaml` is the exception in origin rather than in handling: the admin cert and key are clan-generated in the nixos repo and re-encrypted here, so a rotation there has to be copied over the same way `modules/kubernetes/rosequartz/ca.crt` does.
 - `ssh/` - SSH client config.
   Host aliases come from the `hosts` flake input (https://github.com/UnstoppableMango/hosts).
-  The module takes the table as data (`dotfiles.ssh.hosts`, empty by default); `flake.nix` feeds it `inputs.hosts.lib.addresses`, so no module closes over `inputs` for it.
+  The module takes the table as data (`dotfiles.ssh.hosts`, empty by default); `hosts/common.nix` feeds it `inputs.hosts.lib.addresses`, so no module closes over `inputs` for it.
   `HostKeyAlias` plus the `@cert-authority` entry in `~/.ssh/known_hosts_nix` mean cluster machines validate against the clan SSH CA instead of prompting on first connect.
-  Agent handling belongs to gnupg's gpg-agent, not here.
+  `dotfiles.ssh.agent` names the one SSH agent a machine uses (`openssh`, `gnome`, `1password`, or null), since every agent claims `SSH_AUTH_SOCK` and all but one would be ignored.
+  `gnome` means the system's `gcr-ssh-agent`, which exports nothing, so the module sets `SSH_AUTH_SOCK` through Home Manager's `sshAuthSock`, which covers shells, systemd, and D-Bus.
+  hades uses `gnome` so the passphrase-protected key unlocks with the login keyring; darter and server use `openssh`; macOS defaults to null because launchd already runs an agent.
+  `dotfiles.ssh.identityFiles` lists the keys ssh offers, `~/.ssh/id_ed25519` by default, because an explicit `IdentityFile` stops ssh from trying its built-in defaults.
 - `stylix/` - Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
 - `kitty/`, `ghostty/` - terminals
 - `c/`, `containers/`, `dotnet/`, `git/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - per-language dev tooling.
@@ -195,6 +198,7 @@ That takes two jobs: `check` on `ubuntu-latest` for the linux configurations, an
 
 `generic@container` builds `hosts/container.nix`, the headless, identity-free configuration behind `packages.container` (x86_64-linux only, defined in `flake.nix`).
 It leaves off every GUI module plus 1Password (its agent socket belongs to the desktop app), sops (an image holds no age key), gnupg (pinentry needs a session), and containers (rootless podman does not run inside a container).
+It sets `dotfiles.ssh.agent = null`, since the image runs no systemd user manager to host an agent.
 It also leaves off neovim, whose curated LSP set bundles every language server, and every agent CLI other than Claude Code (`ai.copilot`, `ai.cursor.cli`, `ai.coderabbit`, `ai.omnigent`, `ai.opencode`).
 The `ai.*` integrations that default on but need a display or a toolchain the image lacks (azure, chromeDevtools, playwright, csharp, fsharp, haskell, ocaml) are off too.
 For size it also drops the nix, javascript, and kubernetes toolchains, helix, the `home-manager` CLI (the image is never activated or switched), `programs.vim` (Home Manager builds it from `vim-full`), the gitMcp, gossamer, nix, rust, and typescript `ai.*` integrations, and every glibc locale except `en_US.UTF-8`.
