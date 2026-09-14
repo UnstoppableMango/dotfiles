@@ -13,7 +13,7 @@ in
         "sudo"
 
         "git"
-        "nix-shell"
+        # "nix-shell"
         "direnv"
 
         "nvm"
