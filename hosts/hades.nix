@@ -109,6 +109,7 @@
     bitwarden-cli
     cachix
     github-desktop
+    libreoffice
     seabird
     spotify
     discord
