@@ -1,6 +1,7 @@
 {
   "$schema": "vscode://schemas/settings/user",
   "chat.mcp.gallery.enabled": true,
+  "chat.fontSize": 15,
   "docker.lsp.telemetry": "off",
   "dotnet.defaultSolution": "disable",
   "dotnetAcquisitionExtension.enableTelemetry": false,
