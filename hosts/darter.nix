@@ -43,6 +43,7 @@ in
     # A display, but no desktop session.
     fonts.enable = true;
     obsidian.enable = true;
+    signal.enable = true;
     stylix.enable = true;
     zed.enable = true;
 

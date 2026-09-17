@@ -119,7 +119,7 @@ Each host file lists every toggle it wants, even where hosts overlap, so reading
 
 OpenRouter has no toggle of its own to set: `dotfiles.openrouter` turns on when `dotfiles.openrouter.apiKeySecret` names a secret, which only `home/` does, and every integration under `modules/openrouter/` follows it.
 
-`hosts/darter.nix` is the shell and secret floor, the dev toolchains and agent CLIs, and fonts, stylix, obsidian, and zed (a display without the desktop session), plus `targets.genericLinux`, its signing key, and the rosequartz KUBECONFIG.
+`hosts/darter.nix` is the shell and secret floor, the dev toolchains and agent CLIs, and fonts, stylix, obsidian, signal, and zed (a display without the desktop session), plus `targets.genericLinux`, its signing key, and the rosequartz KUBECONFIG.
 `hosts/hades.nix` is the same floor and toolchains plus the full desktop session, ocaml, dotnet and emacs, its signing key, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
 `hosts/server.nix` is `home/account.nix` plus the floor, containers, and kubernetes.
 It deliberately does not import the rest of `home/`: the personal layer declares sops secrets encrypted to erik's laptop keys, which a server has no reason to hold.
@@ -181,6 +181,8 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `dotfiles.ssh.identityFiles` lists the keys ssh offers, `~/.ssh/id_ed25519` by default, because an explicit `IdentityFile` stops ssh from trying its built-in defaults.
 - `stylix/` - Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
 - `kitty/`, `ghostty/` - terminals
+- `signal/` - Signal, both halves: the desktop app (`dotfiles.signal.desktop`) and `signal-cli` (`dotfiles.signal.cli`), each on by default under `dotfiles.signal.enable`.
+  A headless host that wants the CLI alone sets `dotfiles.signal.desktop = false`.
 - `c/`, `containers/`, `dotnet/`, `git/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - per-language dev tooling.
   There is no `tdl/` module: the tdl flake exports its own `homeModules.tdl` declaring `programs.tdl.*` (the CLI plus the VS Code extension), so `homeModules.dotfiles` folds that module in alongside `./modules` and a host sets `programs.tdl.enable`, rather than this repo re-declaring a `dotfiles.tdl` toggle over `pkgs.tdl`.
   `git/signing.nix` signs commits (not tags) with `dotfiles.git.signing.key`, an SSH public key by default, which each host sets for itself; the private half is whatever the host's `dotfiles.ssh.agent` holds.

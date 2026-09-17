@@ -49,6 +49,7 @@ in
     helix.enable = true;
     kitty.enable = true;
     obsidian.enable = true;
+    signal.enable = true;
     stylix.enable = true;
     vscode.enable = true;
     zed.enable = true;
