@@ -38,6 +38,22 @@ let
   rendered =
     lib.concatMapStrings (name: "${name}=${renderValue settings.${name}}\n") (lib.attrNames settings)
     + "OCO_API_KEY=${config.sops.placeholder.${cfg.apiKeySecret}}\n";
+
+  # opencommit's model cache, a sibling of the config file and likewise fixed
+  # at `join(homedir(), ...)`.
+  cachePath = "${config.home.homeDirectory}/.opencommit-models.json";
+
+  # `{ timestamp, models }` is the shape `writeCache` produces. The timestamp
+  # is stamped at activation rather than at build time so the seed reads as
+  # fresh for opencommit's 7 day CACHE_TTL_MS: `fetchModelsForProvider` takes a
+  # valid cache as-is and refetches on its own once it expires, which is what a
+  # real refresh would have left behind.
+  seedModelCache = pkgs.writeShellScript "opencommit-seed-models" ''
+    set -euo pipefail
+    exec ${lib.getExe pkgs.jq} -n \
+      --argjson models ${lib.escapeShellArg (builtins.toJSON cfg.models)} \
+      '{ timestamp: (now * 1000 | floor), models: $models }' > "$1"
+  '';
 in
 {
   options.dotfiles.git.openCommit = {
@@ -104,6 +120,31 @@ in
         discarded at the next activation, which is the intent.
       '';
     };
+
+    models = lib.mkOption {
+      type = with lib.types; attrsOf (listOf str);
+      default = { };
+      example = {
+        anthropic = [
+          "claude-haiku-4-5-20251001"
+          "claude-sonnet-5"
+        ];
+      };
+      description = ''
+        Seed for `~/.opencommit-models.json`, keyed by `OCO_AI_PROVIDER` value.
+        opencommit only writes that file from `oco models --refresh`, so a host
+        that has never run one falls back to the MODEL_LIST baked into the
+        package, which lags the provider's `/v1/models` by months, and `oco
+        models` then names models that no longer exist alongside none of the
+        current ones. The seed is written only when the file is absent or
+        empty, leaving the refresh in charge from then on. Empty leaves the
+        cache unmanaged.
+
+        `OCO_MODEL` itself is not constrained by any of this: opencommit
+        validates it as a string and nothing more, so a model missing from both
+        lists still reaches the provider.
+      '';
+    };
   };
 
   config = lib.mkIf (config.dotfiles.git.enable && cfg.enable) (
@@ -168,6 +209,18 @@ in
           inherit (cfg) mode;
           content = rendered;
         };
+      })
+
+      (lib.mkIf (cfg.models != { }) {
+        # The cache is opencommit's file: `oco models --refresh` has to keep
+        # working, so this seeds an absent one and never touches it again.
+        # `writeCache` swallows every error, so a store symlink here would fail
+        # the refresh silently rather than loudly.
+        home.activation.opencommitModelCache = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          if [ ! -s ${lib.escapeShellArg cachePath} ]; then
+            $DRY_RUN_CMD ${seedModelCache} ${lib.escapeShellArg cachePath}
+          fi
+        '';
       })
     ]
   );

@@ -192,6 +192,8 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
   `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its defaults entirely once that file exists.
   The file route rather than `OCO_API_KEY` in the environment, since the `prepare-commit-msg` hook also fires for editor and GUI commits that never see a login shell.
+  `dotfiles.git.openCommit.models` seeds `~/.opencommit-models.json` when it is absent, because only `oco models --refresh` ever writes that file and the package's own MODEL_LIST lags the provider API by months.
+  It is a discovery aid rather than a gate: opencommit validates `OCO_MODEL` as a string and nothing more.
   With OpenRouter on, `openrouter/opencommit.nix` supplies the key, provider, and model.
   `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); a host supplies the admin cert and key paths, and omitting them yields the OIDC context alone (which is what darter takes).
   `containers/` installs both stacks side by side: podman (with buildah, skopeo, podman-compose) and `docker-client`, the CLI without the daemon, since a system dockerd is outside Home Manager's reach.
