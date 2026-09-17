@@ -27,6 +27,7 @@
         be5invis.vscode-icontheme-nomo-dark
         bradlc.vscode-tailwindcss
         bufbuild.vscode-buf
+        coderabbit.coderabbit-vscode
         dbaeumer.vscode-eslint
         docker.docker
         dprint.dprint
