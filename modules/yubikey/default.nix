@@ -63,11 +63,12 @@ in
       ++ lib.optional config.dotfiles.sops.enable age-plugin-yubikey;
 
     # Missing handles are skipped, so a machine that has not run
-    # `ssh-keygen -K` yet still connects with its other keys. Option-default
-    # priority adds to the default list rather than replacing it.
-    dotfiles.ssh.identityFiles = lib.mkOptionDefault (
-      lib.mapAttrsToList (name: _: "~/.ssh/id_ed25519_sk_rk_${name}") withSshKey
-    );
+    # `ssh-keygen -K` yet still connects with its other keys. These go in
+    # `identityFiles`, which is additive, rather than ahead of the machine's own
+    # key in `dotfiles.ssh.primaryIdentityFile`.
+    dotfiles.ssh.identityFiles = lib.mapAttrsToList (
+      name: _: "~/.ssh/id_ed25519_sk_rk_${name}"
+    ) withSshKey;
 
     # Go through pcscd and share the card, so a running gpg-agent does not
     # lock ykman, age-plugin-yubikey, and Yubico Authenticator out of the key.

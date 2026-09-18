@@ -19,6 +19,9 @@ let
     pattern: key: "@cert-authority ${pattern} ${key}"
   ) cfg.certAuthorities;
 
+  offeredIdentities =
+    lib.optional (cfg.primaryIdentityFile != null) cfg.primaryIdentityFile ++ cfg.identityFiles;
+
   hostBlocks = lib.mapAttrs (
     name: host:
     {
@@ -100,13 +103,29 @@ in
       '';
     };
 
+    primaryIdentityFile = lib.mkOption {
+      type = with lib.types; nullOr str;
+      default = "~/.ssh/id_ed25519";
+      description = ''
+        The machine's own key, offered first. A single value rather than the
+        first element of `identityFiles`, because that list collects definitions
+        from other modules (modules/yubikey contributes each key's FIDO2
+        credential handle) and a list option keeps only the definitions at the
+        winning override priority. A host setting `identityFiles` to name its
+        key would therefore discard those handles rather than precede them,
+        while setting this says the one thing that differs about the host.
+
+        Null on a machine with no key of its own.
+      '';
+    };
+
     identityFiles = lib.mkOption {
       type = with lib.types; listOf str;
-      default = [ "~/.ssh/id_ed25519" ];
+      default = [ ];
       description = ''
-        Private keys ssh offers, in order. An explicit `IdentityFile` stops ssh
-        from trying its built-in defaults, so the default key is listed here
-        rather than assumed. Missing files are skipped.
+        Further private keys ssh offers, after `primaryIdentityFile`. Additive:
+        every definition contributes, so a module declaring a key here does not
+        displace another module's.
       '';
     };
   };
@@ -160,7 +179,10 @@ in
           ControlPath = "~/.ssh/master-%C";
           ControlPersist = "10m";
           AddKeysToAgent = "yes";
-          IdentityFile = lib.mkIf (cfg.identityFiles != [ ]) cfg.identityFiles;
+          # An explicit IdentityFile stops ssh from trying its built-in
+          # defaults, so an empty list leaves the parameter unset rather than
+          # narrowing ssh to nothing. Missing files are skipped.
+          IdentityFile = lib.mkIf (offeredIdentities != [ ]) offeredIdentities;
           # The first file is the writable one, the second is nix-managed.
           UserKnownHostsFile = [
             "~/.ssh/known_hosts"
