@@ -184,7 +184,9 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `dotfiles.ssh.agent` names the one SSH agent a machine uses (`openssh`, `gnome`, `1password`, or null), since every agent claims `SSH_AUTH_SOCK` and all but one would be ignored.
   `gnome` means the system's `gcr-ssh-agent`, which exports nothing, so the module sets `SSH_AUTH_SOCK` through Home Manager's `sshAuthSock`, which covers shells, systemd, and D-Bus.
   hades uses `gnome` so the passphrase-protected key unlocks with the login keyring; darter and server use `openssh`; macOS defaults to null because launchd already runs an agent.
-  `dotfiles.ssh.identityFiles` lists the keys ssh offers, `~/.ssh/id_ed25519` by default, because an explicit `IdentityFile` stops ssh from trying its built-in defaults.
+  `dotfiles.ssh.primaryIdentityFile` is the machine's own key, `~/.ssh/id_ed25519` by default and offered first, and `dotfiles.ssh.identityFiles` is the additive list after it, which `modules/yubikey/` fills with each key's FIDO2 credential handle.
+  The split exists because a list option keeps only the definitions at the winning override priority, so a host naming its key in `identityFiles` would discard those handles instead of preceding them; darter, whose key is `~/.ssh/id_nsfw_ed25519`, sets `primaryIdentityFile` alone.
+  Both feed one `IdentityFile`, unset when they are empty, because an explicit `IdentityFile` stops ssh from trying its built-in defaults.
 - `stylix/` - Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
 - `kitty/`, `ghostty/` - terminals
 - `signal/` - Signal, both halves: the desktop app (`dotfiles.signal.desktop`) and `signal-cli` (`dotfiles.signal.cli`), each on by default under `dotfiles.signal.enable`.

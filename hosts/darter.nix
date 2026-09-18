@@ -23,6 +23,9 @@ in
     nix.enable = true;
     sops.enable = true;
     ssh.enable = true;
+    # darter's key predates the id_ed25519 default and keeps its own name; the
+    # public half is the signing key above.
+    ssh.primaryIdentityFile = "~/.ssh/id_nsfw_ed25519";
     yubikey.enable = true;
     yubikey.gui = true;
     zsh.enable = true;
