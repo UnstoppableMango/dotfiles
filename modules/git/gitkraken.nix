@@ -14,7 +14,11 @@ in
       several repos and forges at once: `gk work` groups branches, PRs and
       issues spanning repositories into one unit, and `gk ws` operates on a
       named set of checkouts. It shares the GitKraken account with the desktop
-      app, so `gk auth login` is what connects it
+      app, so `gk auth login` is what connects it.
+
+      Note oh-my-zsh's git plugin aliases `gk` to `gitk --all --branches &!`,
+      which shadows the binary. With `dotfiles.zsh.ohMyZsh.enable` on, this
+      module drops that alias
     '';
 
     package = lib.mkOption {
@@ -33,5 +37,12 @@ in
 
   config = lib.mkIf (config.dotfiles.git.enable && cfg.enable) {
     home.packages = [ cfg.package ];
+
+    # Runs after `oh-my-zsh.sh` is sourced, which is where the alias comes
+    # from. Tolerates the alias being absent so the line is safe if the git
+    # plugin ever drops it.
+    programs.zsh.initContent = lib.mkIf config.dotfiles.zsh.ohMyZsh.enable ''
+      unalias gk 2>/dev/null || true
+    '';
   };
 }
