@@ -13,6 +13,7 @@
     ./ssh.nix
     ./taste.nix
     ./vscode
+    ./vscodium.nix
   ];
 
   home.username = lib.mkDefault "erik";

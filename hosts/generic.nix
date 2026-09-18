@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   inherit (pkgs.stdenv.hostPlatform) isDarwin isLinux;
 in
@@ -52,12 +52,19 @@ in
     signal.enable = true;
     stylix.enable = true;
     vscode.enable = true;
+    vscodium.enable = true;
     zed.enable = true;
 
     # A Linux desktop session.
     brave.enable = isLinux;
     gnome.enable = isLinux;
   };
+
+  # This is the one configuration installing both editors, and they collide on
+  # `lib/vscode/LICENSES.chromium.html`. VSCodium's wrapper and desktop entries
+  # point at its own store path, so losing the overlapping files in the profile
+  # costs it nothing.
+  programs.vscodium.package = lib.lowPrio pkgs.vscodium;
 
   programs = {
     home-manager.enable = true;

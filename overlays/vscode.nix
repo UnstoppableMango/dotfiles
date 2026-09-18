@@ -1,5 +1,6 @@
 {
-  # VS Code's release build fetches `onig.wasm` from
+  # VS Code and VSCodium are built from the same nixpkgs generic builder, and
+  # both release builds fetch `onig.wasm` from
   # `node_modules.asar.unpacked/vscode-oniguruma/release/onig.wasm`, and the
   # nixpkgs build ships `node_modules` and `node_modules.asar` without that
   # directory. The fetch fails, oniguruma never loads, TextMate tokenization
@@ -22,5 +23,6 @@
     in
     {
       vscode = addAsarUnpacked prev.vscode;
+      vscodium = addAsarUnpacked prev.vscodium;
     };
 }

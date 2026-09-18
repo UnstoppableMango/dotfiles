@@ -154,7 +154,8 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   Home Manager copies the bundles there but tells neither, and rsync writes them with normalized timestamps, so the fsevents that would trigger an automatic reindex do not reliably fire and an app can sit fully installed yet unreachable from every launcher.
   Both commands only refresh an index, so the activation entry warns instead of failing.
   Defaults to on for darwin and evaluates to nothing elsewhere.
-- `vscode/`, `neovim/` (via nixvim), `zed/`, `helix/`, `emacs/`, `obsidian/` - editors.
+- `vscode/`, `vscodium/`, `neovim/` (via nixvim), `zed/`, `helix/`, `emacs/`, `obsidian/` - editors.
+  `vscodium/` mirrors `vscode/` over Home Manager's separate `programs.vscodium` (its own `~/.vscode-oss` and `~/.config/VSCodium`), so a host can enable both; only `hosts/generic.nix` does, so the module is built rather than installed anywhere real.
   `neovim/nixvim-config.nix` is the curated LSP and plugin set, imported when `dotfiles.neovim.defaultConfig` is on and exported as `nixvimModules.default` so `packages.nixvim` builds the same configuration standalone.
   `zed/` carries the extension list as the `dotfiles.zed.extensions` default.
 - `fonts/` - Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
@@ -229,6 +230,7 @@ Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-ex
 
 `tdl.overlays.default` composes gomod2nix's overlay in (tdl is built with its `buildGoApplication`), so `buildGoApplication` and `mkGoEnv` land in `pkgs` alongside `tdl` and `vscode-tdl`.
 `overlays/` holds the ones that are not a bare re-export of a flake input: `clan.nix` adapts an input's packages, and `vscode.nix` symlinks `node_modules.asar.unpacked` into the built product, without which oniguruma never loads and every file renders untokenized.
+It patches vscode and vscodium alike, both being built from the same nixpkgs generic builder.
 Software with no nixpkgs package and no upstream flake is packaged in https://github.com/unmango/pkgs and reaches this flake through the `mangopkgs` overlay, so a module can take it as a `package` option default the same as any nixpkgs attribute.
 There is no `pkgs/` directory here.
 
