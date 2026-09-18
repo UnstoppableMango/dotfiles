@@ -39,6 +39,10 @@
         unity-backlit-items = false;
         click-action = "cycle-windows";
       };
+
+      "org/gnome/shell/extensions/vscode-recent-folders" = {
+        enable-vscodium = false; # Not installed
+      };
     };
   };
 }

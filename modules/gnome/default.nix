@@ -13,6 +13,7 @@ let
     system-monitor
     tweaks-in-system-menu
     user-themes
+    vscode-recent-folders
   ];
 in
 {
