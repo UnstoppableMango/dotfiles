@@ -94,6 +94,8 @@ Who may set `nixpkgs.*` follows from that.
 Whoever creates the nixpkgs instance owns `nixpkgs.overlays` and `nixpkgs.config`, and for a standalone home configuration that is the configuration itself.
 `hosts/common.nix` supplies both, once, so nothing under `modules/`, `home/`, or the per-configuration host files sets them.
 That also keeps the tree composable into someone else's Home Manager NixOS module, where `useGlobalPkgs = true` hands ownership to the system and Home Manager warns that any `nixpkgs.*` set inside the home configuration is ignored.
+`nix.package` follows the same rule for the same reason: Home Manager needs a non-null one to render a nix.conf at all, a package is not a mergeable value, so naming it in two modules is a conflict rather than a merge, and its own null default occupies the rung below `mkOptionDefault`.
+`hosts/common.nix` names it once and modules that write `nix.settings` (`modules/zed/`, and the Cachix substituter below) leave it alone; a consumer taking `homeModules.dotfiles` without that file sets it themselves.
 
 `make build` builds a configuration picked from `hostname -s`: darter and hades build their own, macOS builds `generic@aarch64-darwin`, and any other Linux box falls back to `erik@server`.
 Set `HOME_CONFIG` to build a different one, e.g. `make build HOME_CONFIG=erik@hades`.
@@ -254,4 +256,9 @@ All formatters run through `treefmt-nix` (`nix fmt` / `make fmt`).
 ## Cachix
 
 The CI uses the `unstoppablemango` Cachix cache.
-When building locally after CI has run, binaries should be available from cache.
+`hosts/common.nix` adds it as a substituter for every configuration, so building locally after CI has run fetches rather than compiles.
+That matters most for the packages that reach this flake through the `mangopkgs` overlay: cache.nixos.org carries nothing outside nixpkgs, so without this cache each version bump of one is a from-source build on every machine.
+A user's nix.conf reaches a substituter only with the system's permission, and silently substitutes nothing without it, so a host that compiles anyway is missing one of two things in its system nix.conf.
+Either suffices: the cache URL in `trusted-substituters` plus its signing key in `trusted-public-keys`, which authorizes that one cache; or the user in `trusted-users`, which authorizes any cache they name.
+Prefer the former, since Nix's manual warns that adding a user to `trusted-users` "is essentially equivalent to giving that user root access to the system".
+darter currently takes the second route, having `trusted-users = root erik`.
