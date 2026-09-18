@@ -133,7 +133,14 @@ in
 
       extraScopes = lib.mkOption {
         type = with lib.types; listOf str;
-        default = [ "groups" ];
+        # The apiserver maps the username from the email claim and the groups
+        # from groups, and Dex leaves a claim out entirely when its scope was
+        # not granted. A mapping that finds no claim fails the login, so both
+        # are required rather than nice to have.
+        default = [
+          "email"
+          "groups"
+        ];
         description = "Extra scopes requested by `kubectl oidc-login`.";
       };
     };
