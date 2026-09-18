@@ -26,6 +26,7 @@
 
   dotfiles = {
     git.enable = true;
+    git.gitkraken.enable = true;
     git.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEwW6dUPKvKXXzj+gKJS7EXh6UzyLjzatrcPXa0Y2qvz erik@hades";
     gnupg.enable = true;
     nix.enable = true;

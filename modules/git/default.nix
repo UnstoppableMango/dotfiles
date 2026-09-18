@@ -7,6 +7,7 @@
 {
   imports = [
     ./git-spice.nix
+    ./gitkraken.nix
     ./opencommit.nix
     ./signing.nix
   ];
