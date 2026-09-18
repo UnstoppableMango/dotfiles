@@ -77,7 +77,7 @@ command make build
 Apply the local checkout:
 
 ```sh
-home-manager switch --flake $PWD -b hm-backup
+homeup
 ```
 
 Check that the text reached both render targets:
@@ -86,8 +86,8 @@ Check that the text reached both render targets:
 grep -n '<the new rule>' ~/.claude/CLAUDE.md ~/.copilot/copilot-instructions.md
 ```
 
-`make home` is a different path: `~/.config/home-manager` is a standalone flake whose only input is `github:UnstoppableMango/dotfiles`, so it applies whatever is on `main`.
-A local edit reaches `make home` only after a commit and a push.
+`homeup` and `make home` both switch from this checkout, so a local edit applies without a commit.
+`homeup` works from any directory; `make home` has to be run in the repo.
 
 ## Commit
 

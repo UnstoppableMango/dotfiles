@@ -126,11 +126,12 @@ $ make build   # home-manager build --flake $PWD
 $ make fmt     # nix fmt (nixfmt + prettier via treefmt)
 $ make watch   # rerun `nix flake check` on file changes
 $ make update  # nix flake update
-$ make home    # update + switch ~/.config/home-manager
+$ make home    # home-manager switch --flake $PWD
 $ make system  # update + rebuild /etc/nixos (needs sudo)
 ```
 
-Note: `make build` validates the local flake (`$PWD`); `make home` operates on the installed config at `~/.config/home-manager`.
+Note: `make build` and `make home` both act on the local flake (`$PWD`), so a switch applies the working tree.
+`homeup` is the same switch from any directory, installed by `modules/home-manager/` wherever `dotfiles.homeManager.enable` is set; `homeup -u` updates flake inputs first.
 
 Overridable variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC` (all have defaults).
 
