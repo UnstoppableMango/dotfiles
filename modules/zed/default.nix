@@ -126,8 +126,10 @@
       # erik is in the system's `trusted-users`: on NixOS the machine config
       # sets that, elsewhere it is a manual line in /etc/nix/nix.conf.
       #
-      # nix.package is null by default and nix.settings asserts against that.
-      nix.package = lib.mkDefault pkgs.nix;
+      # Writing nix.settings needs a non-null `nix.package`, which this module
+      # leaves to whoever owns the nix instance (`hosts/common.nix` here), since
+      # a package is not a mergeable value and naming it in two modules is a
+      # conflict rather than a merge.
       nix.settings = {
         extra-substituters = [ "https://zed.cachix.org" ];
         extra-trusted-public-keys = [

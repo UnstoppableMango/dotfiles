@@ -1,4 +1,10 @@
-{ inputs, self, ... }:
+{
+  inputs,
+  self,
+  pkgs,
+  lib,
+  ...
+}:
 {
   # What every home configuration in this flake is built on. Imported by
   # flake.nix alongside each host file rather than by the host files.
@@ -19,6 +25,31 @@
   # nothing in the tree fights them for it.
   nixpkgs.overlays = [ self.overlays.default ];
   nixpkgs.config.allowUnfree = true;
+
+  # The cache CI pushes every configuration to. Without it the packages that
+  # exist only in the `mangopkgs` overlay have no substituter at all, since
+  # cache.nixos.org carries nothing that is not in nixpkgs, so each version
+  # bump of one is built from source on every machine. Set here rather than
+  # beside any one package, because the cache serves the whole flake.
+  #
+  # Nix honours this from a user's nix.conf only for a user listed in
+  # `trusted-users`, and silently ignores it otherwise, so a host that gets no
+  # substitution is missing that entry in its system nix.conf.
+  #
+  # `nix.package` is null by default and `nix.settings` asserts against that,
+  # so nix.conf renders only once something names a package. One definition,
+  # here: a package is not a mergeable value, so a second module naming the
+  # same one is a conflict rather than a merge, and Home Manager's own null
+  # default occupies the rung below. A consumer taking `homeModules.dotfiles`
+  # without this file therefore sets `nix.package` itself to use any module
+  # that writes `nix.settings`.
+  nix.package = lib.mkDefault pkgs.nix;
+  nix.settings = {
+    extra-substituters = [ "https://unstoppablemango.cachix.org" ];
+    extra-trusted-public-keys = [
+      "unstoppablemango.cachix.org-1:m7uEI6X1Ov8DyFWJQX4WsRFRWFuzRW5c/Xms8ZaP74U="
+    ];
+  };
 
   dotfiles.ssh.hosts = inputs.hosts.lib.addresses;
 }
