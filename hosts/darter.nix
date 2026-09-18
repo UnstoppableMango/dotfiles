@@ -23,6 +23,9 @@ in
     nix.enable = true;
     sops.enable = true;
     ssh.enable = true;
+    # darter's key is not at the default path. Which path is local to the
+    # machine, so it comes from ~/.ssh/config.d/ rather than from here.
+    ssh.primaryIdentityFile = null;
     yubikey.enable = true;
     yubikey.gui = true;
     zsh.enable = true;
