@@ -129,6 +129,25 @@ in
           }
         ];
 
+        # Curated overrides of upstream's defaults, at mkDefault so a host or a
+        # consumer replaces any of them with a plain assignment.
+        dotfiles.git.openCommit.settings = {
+          # The conventional-commit prompt only forbids "a list of commit per
+          # file change" when this is on. Off, nothing holds the model to one
+          # subject and it emits a conventional-commit line per change.
+          OCO_ONE_LINE_COMMIT = lib.mkDefault true;
+
+          # Committing and pushing are separate decisions, and the hook fires
+          # on every commit, including ones made mid-rebase.
+          OCO_GITPUSH = lib.mkDefault false;
+
+          # In hook mode oco otherwise prefixes the message with `# ` and asks
+          # for the `#` to be removed in the editor. On, the draft lands ready
+          # to use, which is also the only form that survives a commit that
+          # never opens an editor.
+          OCO_HOOK_AUTO_UNCOMMENT = lib.mkDefault true;
+        };
+
         home.packages = [ pkgs.opencommit ];
 
         # oco detects "I'm running as a git hook" by checking that
