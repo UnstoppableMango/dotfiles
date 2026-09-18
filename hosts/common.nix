@@ -32,9 +32,17 @@
   # bump of one is built from source on every machine. Set here rather than
   # beside any one package, because the cache serves the whole flake.
   #
-  # Nix honours this from a user's nix.conf only for a user listed in
-  # `trusted-users`, and silently ignores it otherwise, so a host that gets no
-  # substitution is missing that entry in its system nix.conf.
+  # A user's nix.conf reaches a substituter only with the system's permission,
+  # and silently substitutes nothing without it, so a host that compiles anyway
+  # is missing one of two things in its system nix.conf. Either is enough:
+  #
+  # - the cache URL in `trusted-substituters` and this signing key in
+  #   `trusted-public-keys`, which authorizes exactly this cache; or
+  # - the user in `trusted-users`, which authorizes any cache they name.
+  #
+  # Prefer the first. Nix's own manual warns that adding a user to
+  # `trusted-users` "is essentially equivalent to giving that user root access
+  # to the system", which is a steep price for one binary cache.
   #
   # `nix.package` is null by default and `nix.settings` asserts against that,
   # so nix.conf renders only once something names a package. One definition,

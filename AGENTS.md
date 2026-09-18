@@ -258,4 +258,7 @@ All formatters run through `treefmt-nix` (`nix fmt` / `make fmt`).
 The CI uses the `unstoppablemango` Cachix cache.
 `hosts/common.nix` adds it as a substituter for every configuration, so building locally after CI has run fetches rather than compiles.
 That matters most for the packages that reach this flake through the `mangopkgs` overlay: cache.nixos.org carries nothing outside nixpkgs, so without this cache each version bump of one is a from-source build on every machine.
-Nix honours a substituter from a user's nix.conf only for a user listed in `trusted-users`, and silently ignores it otherwise, so a host that compiles anyway is missing that entry in its system nix.conf.
+A user's nix.conf reaches a substituter only with the system's permission, and silently substitutes nothing without it, so a host that compiles anyway is missing one of two things in its system nix.conf.
+Either suffices: the cache URL in `trusted-substituters` plus its signing key in `trusted-public-keys`, which authorizes that one cache; or the user in `trusted-users`, which authorizes any cache they name.
+Prefer the former, since Nix's manual warns that adding a user to `trusted-users` "is essentially equivalent to giving that user root access to the system".
+darter currently takes the second route, having `trusted-users = root erik`.
