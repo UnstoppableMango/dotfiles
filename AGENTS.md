@@ -74,14 +74,17 @@ make check          # nix flake check (validate syntax/config)
 make build          # build home-manager from local flake (validates changes)
 make fmt            # format code (nix fmt)
 make watch          # run checks on file changes (uses watchexec)
-make home           # update flake and switch home-manager at ~/.config/home-manager
+make home           # switch home-manager from this checkout
 make system         # update flake and rebuild NixOS at /etc/nixos (requires sudo)
 make update         # update flake inputs only
 ```
 
-Note: `make build` validates the local flake (`$PWD`), while `make home` operates on `~/.config/home-manager`, a standalone flake whose only input is `github:UnstoppableMango/dotfiles`.
-`make home` therefore applies whatever is on `main`, so local edits reach it only after a commit and a push.
-To apply a local checkout instead, run `home-manager switch --flake $PWD#<config> -b hm-backup`.
+Both `make build` and `make home` act on the local flake (`${CURDIR}`), so a switch applies the working tree and the active home matches the checkout.
+Input updates stay deliberate: `make update` bumps `flake.lock`, and that lands as a commit.
+
+`homeup` is the same switch from any directory, installed by `modules/home-manager/` for hosts that set `dotfiles.homeManager.enable`.
+It switches from `dotfiles.homeManager.flakePath` (`~/src/github.com/UnstoppableMango/dotfiles` by default), lets home-manager resolve `$USER@$HOSTNAME` unless `dotfiles.homeManager.configuration` names one, and passes any unrecognized argument through to `home-manager switch`.
+`homeup -u` runs `nix flake update` first, which rewrites `flake.lock` in the checkout.
 
 Darter and hades both run standalone Home Manager, so `make home` and `make system` mean the same thing on either.
 On hades `make system` rebuilds NixOS from the [nixos](https://github.com/UnstoppableMango/nixos) repo, which configures the machine and erik's system account and nothing about his home environment; that repo consumes this flake only for `overlays.default` and the dev shell.
@@ -147,7 +150,9 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `opencode.nix` passes the key as `{file:...}`, which opencode resolves when it loads its config.
   `opencommit.nix` sets `dotfiles.git.openCommit`'s key, provider, and model at `mkDefault`, reusing that module's `~/.opencommit` template.
   `zed.nix` wraps `zeditor` to export `OPENROUTER_API_KEY` from the key file at launch, because Zed has no file route for the key; on macOS, launching Zed.app from Finder bypasses the wrapper.
-- `flake-update/` - flake-update automation
+- `home-manager/` - the `homeup` command, a `home-manager switch` from a local checkout that works from any directory.
+  `dotfiles.homeManager.flakePath` names the checkout and is baked into the script, so it needs neither a cwd nor an environment; `configuration` overrides the `$USER@$HOSTNAME` name home-manager infers, and `backupExtension` the `-b hm-backup` it passes.
+- `flake-update/` - flake-update automation, switching the same checkout `home-manager/` names (`dotfiles.automation.flakeUpdate.flakePath` defaults to `dotfiles.homeManager.flakePath`)
 - `brave/` - Brave
 - `launch-services/`: macOS-only, and unreached, since no darwin configuration is defined.
   `launch-services.nix` registers the app bundles under `~/Applications/Home Manager Apps` with Launch Services (`lsregister`, which backs `open -a`, the Dock, and Launchpad) and the Spotlight metadata index (`mdimport`, which backs Cmd+Space) on every activation.

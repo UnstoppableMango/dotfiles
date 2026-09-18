@@ -19,6 +19,7 @@ in
     git.gitkraken.enable = true;
     git.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMsFkHA8jLd9sHV5a/zcMsaxo/o+ZnEB95CBSRnu3YfD erik@darter";
     gnupg.enable = true;
+    homeManager.enable = true;
     nix.enable = true;
     sops.enable = true;
     ssh.enable = true;

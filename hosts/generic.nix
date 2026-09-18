@@ -20,6 +20,7 @@ in
   dotfiles = {
     git.enable = true;
     gnupg.enable = true;
+    homeManager.enable = true;
     nix.enable = true;
     onePassword.enable = true;
     sops.enable = true;

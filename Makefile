@@ -30,8 +30,7 @@ watch:
 update: flake.lock
 
 home:
-	nix flake update --flake ${HOME}/.config/home-manager
-	home-manager switch --flake ${HOME}/.config/home-manager -b hm-backup
+	home-manager switch --flake ${CURDIR}#${HOME_CONFIG} -b hm-backup
 
 system:
 	sudo nix flake update --flake /etc/nixos

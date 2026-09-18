@@ -13,8 +13,9 @@ in
 
     flakePath = lib.mkOption {
       type = lib.types.str;
-      default = "%h/.config/home-manager";
-      description = "Path (systemd specifiers like %h allowed) to the flake to update and switch.";
+      default = config.dotfiles.homeManager.flakePath;
+      defaultText = lib.literalExpression "config.dotfiles.homeManager.flakePath";
+      description = "Path to the flake to update and switch, the same checkout `homeup` switches from.";
     };
 
     onCalendar = lib.mkOption {
