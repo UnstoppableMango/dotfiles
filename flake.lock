@@ -1,5 +1,98 @@
 {
   "nodes": {
+    "a2b": {
+      "inputs": {
+        "flake-parts": [
+          "zettelkasten",
+          "apis",
+          "flake-parts"
+        ],
+        "mangopkgs": "mangopkgs_2",
+        "nixpkgs": [
+          "zettelkasten",
+          "apis",
+          "nixpkgs"
+        ],
+        "pulumi2nix": "pulumi2nix",
+        "pulumipkgs": "pulumipkgs",
+        "systems": [
+          "zettelkasten",
+          "apis",
+          "systems"
+        ],
+        "treefmt-nix": [
+          "zettelkasten",
+          "apis",
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1787815824,
+        "narHash": "sha256-zoYNlcKCYzULqFmw2mvFVWvCcgj+zIMnqf6f4TZ/C5Q=",
+        "owner": "UnstoppableMango",
+        "repo": "a2b",
+        "rev": "57840bd2a352316c2afe598e6e6d0be63088ab53",
+        "type": "github"
+      },
+      "original": {
+        "owner": "UnstoppableMango",
+        "repo": "a2b",
+        "type": "github"
+      }
+    },
+    "apimachinery": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1787233644,
+        "narHash": "sha256-jilEi+WiYZw6g9fxX4S+0e9q3KpUr3EudfAL+fi+hdU=",
+        "owner": "kubernetes",
+        "repo": "apimachinery",
+        "rev": "612c0eced3341bcb6be9f19fb99d5b79cb4cd617",
+        "type": "github"
+      },
+      "original": {
+        "owner": "kubernetes",
+        "ref": "v0.36.4",
+        "repo": "apimachinery",
+        "type": "github"
+      }
+    },
+    "apis": {
+      "inputs": {
+        "a2b": "a2b",
+        "apimachinery": "apimachinery",
+        "flake-parts": [
+          "zettelkasten",
+          "flake-parts"
+        ],
+        "googleapis": "googleapis",
+        "nixpkgs": [
+          "zettelkasten",
+          "nixpkgs"
+        ],
+        "systems": [
+          "zettelkasten",
+          "systems"
+        ],
+        "treefmt-nix": [
+          "zettelkasten",
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788924371,
+        "narHash": "sha256-h6zqG1FPzpz9W3IGXCdvljCjuZNVBP+P5GhBii0a1U4=",
+        "owner": "unmango",
+        "repo": "apis",
+        "rev": "0179b5c5becfbd5dd07f1e0fa3315f3283384a11",
+        "type": "github"
+      },
+      "original": {
+        "owner": "unmango",
+        "repo": "apis",
+        "type": "github"
+      }
+    },
     "base16": {
       "inputs": {
         "fromYaml": "fromYaml"
@@ -318,6 +411,30 @@
         "type": "github"
       }
     },
+    "flake-utils_2": {
+      "inputs": {
+        "systems": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "mangopkgs",
+          "systems"
+        ]
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "fromYaml": {
       "flake": false,
       "locked": {
@@ -373,6 +490,47 @@
       "original": {
         "owner": "nix-community",
         "repo": "gomod2nix",
+        "type": "github"
+      }
+    },
+    "gomod2nix_2": {
+      "inputs": {
+        "flake-utils": "flake-utils_2",
+        "nixpkgs": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "mangopkgs",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1770585520,
+        "narHash": "sha256-yBz9Ozd5Wb56i3e3cHZ8WcbzCQ9RlVaiW18qDYA/AzA=",
+        "owner": "nix-community",
+        "repo": "gomod2nix",
+        "rev": "1201ddd1279c35497754f016ef33d5e060f3da8d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "gomod2nix",
+        "type": "github"
+      }
+    },
+    "googleapis": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1787804983,
+        "narHash": "sha256-xJoZlXn+WDW/0yFrP75evNtZL9+3RJ6tg2iV2Z402Vw=",
+        "owner": "googleapis",
+        "repo": "googleapis",
+        "rev": "de3c0d362adbaafc7a0cd1254a8cd49a528505ee",
+        "type": "github"
+      },
+      "original": {
+        "owner": "googleapis",
+        "repo": "googleapis",
         "type": "github"
       }
     },
@@ -448,6 +606,49 @@
         "owner": "unmango",
         "repo": "pkgs",
         "rev": "4679b1af60f48331fcd7a679fd03cd7950d4b8db",
+        "type": "github"
+      },
+      "original": {
+        "owner": "unmango",
+        "repo": "pkgs",
+        "type": "github"
+      }
+    },
+    "mangopkgs_2": {
+      "inputs": {
+        "flake-parts": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "flake-parts"
+        ],
+        "gomod2nix": "gomod2nix_2",
+        "nix2container": "nix2container_3",
+        "nixpkgs": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "nixpkgs"
+        ],
+        "systems": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "systems"
+        ],
+        "treefmt-nix": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1783445806,
+        "narHash": "sha256-DrvYv4ILDZ5r5dlzquXC4649ZkJzCczdGGmjuvtxbxI=",
+        "owner": "unmango",
+        "repo": "pkgs",
+        "rev": "35140ced558a52b52bd952970974561e934771d5",
         "type": "github"
       },
       "original": {
@@ -657,6 +858,30 @@
         "type": "github"
       }
     },
+    "nix2container_3": {
+      "inputs": {
+        "nixpkgs": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "mangopkgs",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775487831,
+        "narHash": "sha256-2lguQpLPQaxpQCJjXhmEEAfabwsAhkP29Z7fgLzHARA=",
+        "owner": "nlewo",
+        "repo": "nix2container",
+        "rev": "76be9608a7f4d6c985d28b0e7be903ae2547df3e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nlewo",
+        "repo": "nix2container",
+        "type": "github"
+      }
+    },
     "nix2git": {
       "inputs": {
         "flake-parts": [
@@ -812,6 +1037,94 @@
         "type": "github"
       }
     },
+    "pulumi2nix": {
+      "inputs": {
+        "flake-parts": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "nixpkgs"
+        ],
+        "systems": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "systems"
+        ],
+        "treefmt-nix": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1787597684,
+        "narHash": "sha256-pbr/s3/JzLLI2lDI8tueABsWl6TE5Fe/aHye4cYjrBY=",
+        "owner": "UnstoppableMango",
+        "repo": "pulumi2nix",
+        "rev": "f30295373306f79a00c35327a9f4cacc2a1cf557",
+        "type": "github"
+      },
+      "original": {
+        "owner": "UnstoppableMango",
+        "repo": "pulumi2nix",
+        "type": "github"
+      }
+    },
+    "pulumipkgs": {
+      "inputs": {
+        "flake-parts": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "nixpkgs"
+        ],
+        "pulumi2nix": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "pulumi2nix"
+        ],
+        "systems": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "systems"
+        ],
+        "treefmt-nix": [
+          "zettelkasten",
+          "apis",
+          "a2b",
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1787604135,
+        "narHash": "sha256-IVoCrElWkobsHK5MHn6ckgIXIDukHjwyZmWBOMCb/IE=",
+        "owner": "unmango",
+        "repo": "pulumipkgs",
+        "rev": "c1d8761340fc4d98a6a79e17709c9b580b9b67ec",
+        "type": "github"
+      },
+      "original": {
+        "owner": "unmango",
+        "repo": "pulumipkgs",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "clan-core": "clan-core",
@@ -839,7 +1152,8 @@
         "tdl": "tdl",
         "treefmt-nix": "treefmt-nix",
         "ux": "ux",
-        "zed": "zed"
+        "zed": "zed",
+        "zettelkasten": "zettelkasten"
       }
     },
     "rust-overlay": {
@@ -1107,6 +1421,41 @@
         "owner": "zed-industries",
         "ref": "v0.217.3",
         "repo": "zed",
+        "type": "github"
+      }
+    },
+    "zettelkasten": {
+      "inputs": {
+        "a2b": [
+          "zettelkasten",
+          "apis",
+          "a2b"
+        ],
+        "apis": "apis",
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "systems": [
+          "systems"
+        ],
+        "treefmt-nix": [
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789706099,
+        "narHash": "sha256-yTI9BL/M+jEyF8OF27Rb3vsOwUfgAGk1XmOs2zQIbUQ=",
+        "owner": "UnstoppableMango",
+        "repo": "zettelkasten",
+        "rev": "065d90cff2fa2cb9b5cc1977264c9f2a34ff7925",
+        "type": "github"
+      },
+      "original": {
+        "owner": "UnstoppableMango",
+        "repo": "zettelkasten",
         "type": "github"
       }
     }

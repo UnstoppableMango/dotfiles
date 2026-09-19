@@ -21,6 +21,7 @@ in
     gnupg.enable = true;
     homeManager.enable = true;
     nix.enable = true;
+    slip.enable = true;
     sops.enable = true;
     ssh.enable = true;
     yubikey.enable = true;

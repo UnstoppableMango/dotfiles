@@ -111,7 +111,8 @@ The flake uses `flake-parts`.
 There is no category layer, because deciding whether git is a `toolchain/` or a top-level concern, or whether kitty is `terminals/` or part of the shell setup, is a question with no correct answer and a different answer each time.
 `modules/default.nix` imports every subdirectory that has a `default.nix`, read from disk rather than listed, so adding a module is creating the directory and nothing else.
 Dropping a directory in there enables its options repo-wide, which is the tradeoff for not maintaining a list.
-`hosts/common.nix` imports `homeModules.dotfiles` (`./modules` plus `tdl.homeModules.tdl`) and the stylix, nixvim, sops-nix, and nix2git modules once; `flake.nix` pairs it with each host file, so every configuration gets the whole option set.
+`hosts/common.nix` imports `homeModules.dotfiles` (`./modules` plus `nix2git.homeModules.nix2git` and `tdl.homeModules.tdl`) and the stylix, nixvim, and sops-nix modules once; `flake.nix` pairs it with each host file, so every configuration gets the whole option set.
+Those two are folded in for opposite reasons: tdl declares the `programs.tdl.*` options this repo deliberately does not re-declare, while nix2git declares `nix2git.repositories`, which `modules/slip/` writes to, so the option has to exist wherever `./modules` does rather than only where `hosts/common.nix` is.
 Everything is `mkIf`-gated, so importing a module a host does not use costs nothing.
 
 `home/default.nix` collects erik's personal config: git identity/aliases, vscode's default-profile settings, GNOME dconf taste, the direnv/nix-direnv setup, the sops secrets (and `dotfiles.openrouter.apiKeySecret` naming the OpenRouter key), and the `home.username` default.
@@ -191,12 +192,17 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
 - `kitty/`, `ghostty/` - terminals
 - `signal/` - Signal, both halves: the desktop app (`dotfiles.signal.desktop`) and `signal-cli` (`dotfiles.signal.cli`), each on by default under `dotfiles.signal.enable`.
   A headless host that wants the CLI alone sets `dotfiles.signal.desktop = false`.
+- `slip/` - slip, the zettelkasten capture tool from https://github.com/UnstoppableMango/zettelkasten, which hands any command it does not implement to zk.
+  slip has no config file of its own, so the whole surface is one directory: `dotfiles.slip.notebook.path` (`notes`, relative to the home directory) is exported as `ZK_NOTEBOOK_DIR` rather than slip's own `ZK_DIR`, because zk honours that variable too and one value has to aim both halves of the passthrough at the same corpus.
+  The path is relative because `dotfiles.slip.notebook.init` declares it as a `nix2git.repositories` entry, and nix2git resolves a repository path against the home directory.
+  nix2git runs `git init` for a declared path that does not exist yet and never clones, rewrites, or deletes, so this is safe alongside a corpus cloned by hand.
+  `dotfiles.slip.zk.settings` renders zk's global `~/.config/zk/config.toml`, which a notebook's own `.zk/config.toml` inherits from.
+  Its default is the one stanza `slip init` would append to a notebook (`creation-date-key = "create_time"`), which is what makes zk read a note's creation time from slip's frontmatter rather than the file's mtime; declaring it globally covers every notebook at once and keeps the setting out of a notes repository's history.
 - `c/`, `containers/`, `dotnet/`, `git/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - per-language dev tooling.
   There is no `tdl/` module: the tdl flake exports its own `homeModules.tdl` declaring `programs.tdl.*` (the CLI plus the VS Code extension), so `homeModules.dotfiles` folds that module in alongside `./modules` and a host sets `programs.tdl.enable`, rather than this repo re-declaring a `dotfiles.tdl` toggle over `pkgs.tdl`.
   `git/signing.nix` signs commits (not tags) with `dotfiles.git.signing.key`, an SSH public key by default, which each host sets for itself; the private half is whatever the host's `dotfiles.ssh.agent` holds.
   `dotfiles.git.signing.allowedSigners` comes from `home/git.nix`, every machine's key, and becomes `gpg.ssh.allowedSignersFile` so a commit signed on one machine verifies on the others.
   A bare key verifies as `user.email`; an `{ email, key }` entry is for a key that signs under another email.
-  `git/repos.nix` imports the nix2git home-manager module from https://github.com/unmango/nix2git, whose `nix2git.repositories` runs `git init` for declared paths under the home directory that do not exist yet, and never clones, rewrites, or deletes.
   `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
   `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its defaults entirely once that file exists.
   The file route rather than `OCO_API_KEY` in the environment, since the `prepare-commit-msg` hook also fires for editor and GUI commits that never see a login shell.
@@ -238,7 +244,7 @@ Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-ex
 `zed.overlays.default` is commented out: nixpkgs' livekit-libwebrtc is out of sync with zed 0.217.3's expected webrtc API (`no type named 'AudioDeviceSink' in namespace 'webrtc'`).
 
 `tdl.overlays.default` composes gomod2nix's overlay in (tdl is built with its `buildGoApplication`), so `buildGoApplication` and `mkGoEnv` land in `pkgs` alongside `tdl` and `vscode-tdl`.
-`overlays/` holds the ones that are not a bare re-export of a flake input: `clan.nix` adapts an input's packages, and `vscode.nix` symlinks `node_modules.asar.unpacked` into the built product, without which oniguruma never loads and every file renders untokenized.
+`overlays/` holds the ones no input provides: `clan.nix` and `slip.nix` lift a package out of an input that exports no overlay of its own (`clan-core`, and the `zettelkasten` flake whose package is `slip`), and `vscode.nix` symlinks `node_modules.asar.unpacked` into the built product, without which oniguruma never loads and every file renders untokenized.
 It patches vscode and vscodium alike, both being built from the same nixpkgs generic builder.
 Software with no nixpkgs package and no upstream flake is packaged in https://github.com/unmango/pkgs and reaches this flake through the `mangopkgs` overlay, so a module can take it as a `package` option default the same as any nixpkgs attribute.
 There is no `pkgs/` directory here.

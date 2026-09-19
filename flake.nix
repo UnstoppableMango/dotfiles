@@ -166,6 +166,14 @@
       inputs.home-manager.follows = "home-manager";
     };
 
+    zettelkasten = {
+      url = "github:UnstoppableMango/zettelkasten";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.systems.follows = "systems";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+    };
+
     nix2container = {
       url = "github:nlewo/nix2container";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -176,6 +184,7 @@
     inputs@{ flake-parts, self, ... }:
     let
       clan = import ./overlays/clan.nix { inherit (inputs) clan-core; };
+      slip = import ./overlays/slip.nix { inherit (inputs) zettelkasten; };
       vscodePkg = import ./overlays/vscode.nix;
 
       overlay = inputs.nixpkgs.lib.composeManyExtensions (
@@ -191,6 +200,7 @@
           # alongside `tdl` and `vscode-tdl`.
           tdl.overlays.default
           clan.overlays.default
+          slip.overlays.default
           vscodePkg.overlays.default
 
           # cargo-about pin conflict is resolved upstream (zed's own nix/build.nix
@@ -221,8 +231,15 @@
           # homeModule is folded in here too, letting a consumer of
           # `homeModules.dotfiles` set `programs.tdl.enable` without also
           # importing `tdl.homeModules.tdl` themselves.
+          #
+          # nix2git is folded in for the other direction: `modules/slip`
+          # declares its notebook as a `nix2git.repositories` entry, so the
+          # option has to exist wherever `./modules` does. Importing it beside
+          # the modules that set it keeps `dotfiles.slip.enable` from failing
+          # on an undeclared option in a consumer's flake.
           dotfiles.imports = with inputs; [
             ./modules
+            nix2git.homeModules.nix2git
             tdl.homeModules.tdl
           ];
         };

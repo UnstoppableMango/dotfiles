@@ -23,6 +23,7 @@ in
     homeManager.enable = true;
     nix.enable = true;
     onePassword.enable = true;
+    slip.enable = true;
     sops.enable = true;
     ssh.enable = true;
     # Builds the 1Password socket branch on both platforms.
