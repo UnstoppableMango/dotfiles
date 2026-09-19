@@ -21,6 +21,7 @@ in
     gnupg.enable = true;
     homeManager.enable = true;
     nix.enable = true;
+    slip.enable = true;
     sops.enable = true;
     ssh.enable = true;
     # darter's key is not at the default path. Which path is local to the
