@@ -8,6 +8,10 @@ let
   cfg = config.dotfiles.yubikey;
 
   withSshKey = lib.filterAttrs (_: key: key.sshKey != null) cfg.keys;
+
+  offered = lib.filterAttrs (name: _: lib.elem name cfg.availableKeys) withSshKey;
+
+  undeclared = lib.subtractLists (lib.attrNames cfg.keys) cfg.availableKeys;
 in
 {
   options.dotfiles.yubikey = {
@@ -47,9 +51,36 @@ in
         application (`ssh:<name>`), which fixes the handle's file name.
       '';
     };
+
+    availableKeys = lib.mkOption {
+      type = with lib.types; listOf str;
+      default = lib.attrNames cfg.keys;
+      defaultText = lib.literalExpression "lib.attrNames config.dotfiles.yubikey.keys";
+      example = lib.literalExpression ''[ "darter" "keychain" ]'';
+      description = ''
+        Names of the keys this machine is ever plugged into, whose credential
+        handles ssh offers. Which keys a machine has is true of that machine
+        alone, so a host sets this; `keys` stays the whole set the user owns.
+
+        Defaults to every declared key, which is right for a consumer that
+        declares only the keys it holds. Narrowing matters because each
+        offered identity costs one authentication attempt, and a server's
+        `MaxAuthTries` is 6 by default.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = undeclared == [ ];
+        message = ''
+          dotfiles.yubikey.availableKeys names keys absent from
+          dotfiles.yubikey.keys: ${lib.concatStringsSep ", " undeclared}.
+        '';
+      }
+    ];
+
     home.packages =
       with pkgs;
       [
@@ -62,13 +93,16 @@ in
       # Decrypts with a key's PIV slot, for when the machine's age key is gone.
       ++ lib.optional config.dotfiles.sops.enable age-plugin-yubikey;
 
+    # Only the keys this machine has, since a handle for a key that is never
+    # plugged in here is an authentication attempt spent for nothing.
+    #
     # Missing handles are skipped, so a machine that has not run
     # `ssh-keygen -K` yet still connects with its other keys. These go in
     # `identityFiles`, which is additive, rather than ahead of the machine's own
     # key in `dotfiles.ssh.primaryIdentityFile`.
     dotfiles.ssh.identityFiles = lib.mapAttrsToList (
       name: _: "~/.ssh/id_ed25519_sk_rk_${name}"
-    ) withSshKey;
+    ) offered;
 
     # Go through pcscd and share the card, so a running gpg-agent does not
     # lock ykman, age-plugin-yubikey, and Yubico Authenticator out of the key.
