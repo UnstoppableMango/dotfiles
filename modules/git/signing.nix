@@ -10,6 +10,11 @@ let
 
   defaultEmail = config.programs.git.settings.user.email;
 
+  # ssh-keygen(1) ALLOWED SIGNERS: `YYYYMMDD` or `YYYYMMDDHHMM[SS]`, optionally
+  # suffixed `Z` for UTC rather than the verifying machine's zone. Matched here
+  # so a typo fails the build instead of silently never matching a signature.
+  timestamp = lib.types.strMatching "[0-9]{8}([0-9]{4}([0-9]{2})?)?Z?";
+
   signer = lib.types.submodule {
     options = {
       key = lib.mkOption {
@@ -23,18 +28,63 @@ let
         defaultText = lib.literalExpression "config.programs.git.settings.user.email";
         description = "Identity the key's signatures verify as.";
       };
+
+      validAfter = lib.mkOption {
+        type = lib.types.nullOr timestamp;
+        default = null;
+        example = "20260920";
+        description = ''
+          Earliest signature this key verifies, as `valid-after`. Null places
+          no lower bound.
+        '';
+      };
+
+      validBefore = lib.mkOption {
+        type = lib.types.nullOr timestamp;
+        default = null;
+        example = "20260920Z";
+        description = ''
+          Latest signature this key verifies, as `valid-before`. Null places no
+          upper bound.
+
+          Git checks a signature against the time it was created rather than
+          the time it is verified, so bounding a key on the day it is retired
+          leaves every commit it already signed verifying. Without a bound,
+          dropping the key from this list unverifies its whole history.
+
+          A bare date is midnight, so a key retired partway through a day
+          needs the day after it or an explicit `HHMM`.
+        '';
+      };
     };
   };
+
+  # `principals [options] keytype base64 comment`, where the key option here
+  # already carries the last three.
+  signerLine =
+    s:
+    let
+      options = lib.concatStringsSep "," (
+        lib.optional (s.validAfter != null) ''valid-after="${s.validAfter}"''
+        ++ lib.optional (s.validBefore != null) ''valid-before="${s.validBefore}"''
+      );
+    in
+    lib.concatStringsSep " " ([ s.email ] ++ lib.optional (options != "") options ++ [ s.key ]);
 
   # `git log --show-signature` needs each key mapped to an identity.
   allowedSigners = pkgs.writeText "allowed_signers" (
     lib.concatMapStrings (line: line + "\n") (
       lib.unique (
-        map (s: "${s.email} ${s.key}") (
+        map signerLine (
           [
+            # The machine's current key, which is valid now by definition, so
+            # it carries no bounds. Retiring it means moving it into
+            # `allowedSigners` with a `validBefore`.
             {
               inherit (cfg) key;
               email = defaultEmail;
+              validAfter = null;
+              validBefore = null;
             }
           ]
           ++ cfg.allowedSigners
@@ -73,6 +123,7 @@ in
         [
           "ssh-ed25519 AAAA... erik@darter"
           { email = "erik@example.com"; key = "ssh-ed25519 AAAA..."; }
+          { key = "ssh-ed25519 AAAA..."; validBefore = "20260920"; }
         ]
       '';
       description = ''
@@ -81,6 +132,10 @@ in
         elsewhere verify here too. A bare key verifies as the git
         `user.email`; `{ email, key }` names a different identity, for a key
         that signs under another email.
+
+        `validAfter` and `validBefore` bound the window a key's signatures
+        verify in, which is what makes a retired key keep verifying the
+        commits it already signed. See those options.
       '';
     };
   };

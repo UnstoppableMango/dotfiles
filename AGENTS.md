@@ -206,6 +206,9 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `git/signing.nix` signs commits (not tags) with `dotfiles.git.signing.key`, an SSH public key by default, which each host sets for itself; the private half is whatever the host's `dotfiles.ssh.agent` holds.
   `dotfiles.git.signing.allowedSigners` comes from `home/git.nix`, every machine's key, and becomes `gpg.ssh.allowedSignersFile` so a commit signed on one machine verifies on the others.
   A bare key verifies as `user.email`; an `{ email, key }` entry is for a key that signs under another email.
+  An entry also takes `validAfter` and `validBefore`, rendered as ssh-keygen's `valid-after`/`valid-before` options, which bound the window a key's signatures verify in.
+  Git checks a signature against the time it was created rather than the time it is verified, so retiring a key means moving it out of a host's `signing.key` and into this list with a `validBefore`, which keeps every commit it already signed verifying.
+  Dropping a key outright unverifies its whole history.
   `dotfiles.git.localConfig` (`~/.config/git/config.local` by default) is git's equivalent of `modules/ssh`'s `config.d`: an `include` Home Manager renders after every generated section, so a later directive there overrides anything above it.
   That is where a work account's conditional include, a client's credential helper, and anything else whose existence is not public lives, and git ignores the include when the file is absent, so nothing creates it.
   `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
