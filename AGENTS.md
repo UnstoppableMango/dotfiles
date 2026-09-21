@@ -238,7 +238,7 @@ No machine is actually named `server`; that entry exists so `hosts/server.nix` i
 `nix flake check` does not evaluate `homeConfigurations`, so CI builds them explicitly.
 That takes two jobs: `check` on `ubuntu-latest` for the linux configurations, and `darwin` on `macos-latest` (Apple Silicon, so aarch64-darwin) for the darwin one, which gets a real build rather than an evaluation.
 
-`generic@container` builds `hosts/container.nix`, the headless, identity-free configuration behind `packages.container` (x86_64-linux only, defined in `flake.nix`).
+`generic@container` builds `hosts/container.nix`, the headless, identity-free configuration behind `packages.container` (x86_64-linux only, built by `container.nix`).
 It leaves off every GUI module plus 1Password (its agent socket belongs to the desktop app), sops (an image holds no age key), gnupg (pinentry needs a session), and containers (rootless podman does not run inside a container).
 It sets `dotfiles.ssh.agent = null`, since the image runs no systemd user manager to host an agent.
 It also leaves off neovim, whose curated LSP set bundles every language server, and every agent CLI other than Claude Code (`ai.copilot`, `ai.cursor.cli`, `ai.coderabbit`, `ai.omnigent`, `ai.opencode`).
