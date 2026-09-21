@@ -22,8 +22,7 @@
       kubectl-get-all
       kubectl-get-resources
       kubectl-rook-ceph
-      # Provides kubectl-oidc_login, the plugin the rosequartz OIDC context
-      # shells out to as `kubectl oidc-login`.
+      # `kubectl oidc-login`, used by the rosequartz OIDC context.
       kubelogin-oidc
     ];
 

@@ -9,10 +9,7 @@ let
   inherit (pkgs.stdenv.hostPlatform) isDarwin;
   usesAgent = config.dotfiles.ssh.agent == "1password";
 
-  # The desktop app owns the agent socket and the signing helper; neither is
-  # in the CLI package, and the app is not installable from nixpkgs on macOS,
-  # where it is a sandboxed bundle that keeps the socket under its group
-  # container and the helper inside the bundle.
+  # The desktop app owns both paths; on macOS it is installed by hand, not from nixpkgs.
   agentSocket =
     if isDarwin then
       "${config.home.homeDirectory}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
@@ -38,8 +35,7 @@ in
         # Quoted because the macOS group container path contains spaces.
         ''"${agentSocket}"'';
 
-    # Keys held by 1Password never reach ssh-keygen, so git signs through the
-    # app's helper instead.
+    # 1Password keys never reach ssh-keygen.
     programs.git.settings.gpg.ssh.program = lib.mkIf (
       usesAgent && config.dotfiles.git.signing.key != null && config.dotfiles.git.signing.format == "ssh"
     ) sshSignProgram;

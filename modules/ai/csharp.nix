@@ -7,9 +7,7 @@
 let
   cfg = config.dotfiles.ai;
 
-  # csharp-ls is the modern recommended C# LSP server, but nixpkgs marks it
-  # badPlatforms = [ "aarch64-darwin" ] and doesn't build it for x86_64-darwin
-  # either, so omnisharp-roslyn (which builds everywhere) is used on Darwin.
+  # nixpkgs builds csharp-ls on neither darwin platform.
   lspPackage = if pkgs.stdenv.hostPlatform.isLinux then pkgs.csharp-ls else pkgs.omnisharp-roslyn;
   lspArgs = if pkgs.stdenv.hostPlatform.isLinux then [ ] else [ "-lsp" ];
   lspCommand = lib.getExe lspPackage;

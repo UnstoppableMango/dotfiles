@@ -9,9 +9,7 @@ let
   inherit (cfg) zed;
   pkg = pkgs.zed-editor;
 
-  # Zed reads the key from its keychain or from OPENROUTER_API_KEY in its own
-  # process environment, with no file route, so the binary exports it at
-  # launch rather than every shell carrying it.
+  # Zed has no file route for the key, only its keychain or OPENROUTER_API_KEY.
   wrapped = pkgs.symlinkJoin {
     name = "zed-editor-openrouter-${pkg.version}";
     paths = [ pkg ];

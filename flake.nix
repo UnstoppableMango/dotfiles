@@ -22,7 +22,7 @@
 
     home-manager = {
       url = "github:nix-community/home-manager";
-      # Explicitly leaving nixpkgs unpinned because hm likes to provide its own
+      # nixpkgs deliberately not followed.
     };
 
     clan-core = {
@@ -61,7 +61,7 @@
 
     nixvim = {
       url = "github:nix-community/nixvim";
-      # Explicitly leaving nixpkgs unpinned because nixvim likes to provide its own
+      # nixpkgs deliberately not followed.
       inputs.flake-parts.follows = "flake-parts";
       inputs.systems.follows = "systems";
     };
@@ -195,18 +195,14 @@
           nil.overlays.default
           nix-direnv.overlays.default
           nix-vscode-extensions.overlays.default
-          # Composes gomod2nix's overlay in, since tdl is built with its
-          # buildGoApplication, so buildGoApplication and mkGoEnv land in pkgs
-          # alongside `tdl` and `vscode-tdl`.
+          # Also brings in gomod2nix's buildGoApplication and mkGoEnv.
           tdl.overlays.default
           clan.overlays.default
           slip.overlays.default
           vscodePkg.overlays.default
 
-          # cargo-about pin conflict is resolved upstream (zed's own nix/build.nix
-          # now vendors cargo-about via fetchFromGitHub), but a new mismatch surfaced:
-          # nixpkgs' livekit-libwebrtc is out of sync with zed 0.217.3's expected
-          # webrtc API (`no type named 'AudioDeviceSink' in namespace 'webrtc'`).
+          # nixpkgs' livekit-libwebrtc lacks the webrtc API zed 0.217.3 expects
+          # (`no type named 'AudioDeviceSink' in namespace 'webrtc'`).
           # zed.overlays.default
         ]
       );
@@ -226,17 +222,8 @@
         overlays.default = overlay;
 
         homeModules = {
-          # ./modules alone declares no programs.tdl.* option (tdl has no
-          # dotfiles.* toggle of its own, see AGENTS.md), so the tdl flake's
-          # homeModule is folded in here too, letting a consumer of
-          # `homeModules.dotfiles` set `programs.tdl.enable` without also
-          # importing `tdl.homeModules.tdl` themselves.
-          #
-          # nix2git is folded in for the other direction: `modules/slip`
-          # declares its notebook as a `nix2git.repositories` entry, so the
-          # option has to exist wherever `./modules` does. Importing it beside
-          # the modules that set it keeps `dotfiles.slip.enable` from failing
-          # on an undeclared option in a consumer's flake.
+          # tdl declares `programs.tdl.*`; nix2git declares the
+          # `nix2git.repositories` option that `modules/slip` writes to.
           dotfiles.imports = with inputs; [
             ./modules
             nix2git.homeModules.nix2git
@@ -263,15 +250,12 @@
             "erik@darter" = home "x86_64-linux" ./hosts/darter.nix;
             "erik@hades" = home "x86_64-linux" ./hosts/hades.nix;
 
-            # No machine is named `server`. This exists so `hosts/server.nix`
-            # is built by `nix flake check` like the other two, rather than
-            # being an export that only breaks in whatever flake consumes it.
+            # No machine is named `server`; this keeps `hosts/server.nix` built in CI.
             "erik@server" = home "x86_64-linux" ./hosts/server.nix;
 
             "generic@x86_64-linux" = home "x86_64-linux" ./hosts/generic.nix;
             "generic@aarch64-darwin" = home "aarch64-darwin" ./hosts/generic.nix;
 
-            # The headless configuration that `packages.container` is built from.
             "generic@container" = home "x86_64-linux" ./hosts/container.nix;
           };
       };

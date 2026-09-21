@@ -7,8 +7,7 @@
 let
   cfg = config.dotfiles.homeManager;
 
-  # Omitted when null so home-manager resolves the configuration itself,
-  # `$USER@$HOSTNAME` first and `$USER` second.
+  # Null lets home-manager try `$USER@$HOSTNAME`, then `$USER`.
   flakeRef = cfg.flakePath + lib.optionalString (cfg.configuration != null) "#${cfg.configuration}";
 
   backupArgs = lib.optionalString (cfg.backupExtension != null) "-b ${cfg.backupExtension}";

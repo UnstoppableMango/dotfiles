@@ -33,8 +33,7 @@ in
 
   config = lib.mkIf (cfg.enable && opencode.enable && ai.enable && ai.opencode.enable) {
     programs.opencode.settings = {
-      # opencode substitutes `{file:...}` when it loads the config, so the key
-      # reaches it without an exported OPENROUTER_API_KEY.
+      # opencode substitutes `{file:...}` when it loads the config.
       provider.openrouter.options.apiKey = "{file:${cfg.apiKeyFile}}";
       model = "openrouter/${opencode.model}";
       small_model = "openrouter/${opencode.smallModel}";

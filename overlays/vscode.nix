@@ -1,12 +1,6 @@
 {
-  # VS Code and VSCodium are built from the same nixpkgs generic builder, and
-  # both release builds fetch `onig.wasm` from
-  # `node_modules.asar.unpacked/vscode-oniguruma/release/onig.wasm`, and the
-  # nixpkgs build ships `node_modules` and `node_modules.asar` without that
-  # directory. The fetch fails, oniguruma never loads, TextMate tokenization
-  # never initializes, and every file in the editor renders as plain text.
-  # `node_modules` holds the same packages, so pointing the missing path at it
-  # satisfies every fetch the built product makes.
+  # The editors fetch `onig.wasm` from `node_modules.asar.unpacked`, which the
+  # nixpkgs build omits; without it every file renders untokenized.
   overlays.default =
     _final: prev:
     let

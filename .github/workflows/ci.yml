@@ -8,7 +8,7 @@ on:
 
 jobs:
   check:
-    # It broke atm
+    # dotfiles-runners is broken.
     # runs-on: dotfiles-runners
     runs-on: ubuntu-latest
     steps:
@@ -30,19 +30,13 @@ jobs:
           --flake ${{ github.workspace }}#erik@darter \
           --no-out-link
 
-      # The identity-free configuration. `nix flake check` does not evaluate
-      # homeConfigurations, so without this the modules no host turns on would
-      # only break in whatever flake consumes `homeModules.dotfiles`. The
-      # darwin half is the `darwin` job below.
+      # `nix flake check` does not evaluate homeConfigurations.
       - run: |
           nix run home-manager -- build \
           --flake ${{ github.workspace }}#generic@x86_64-linux \
           --no-out-link
 
-  # `generic@aarch64-darwin` is the only consumer the darwin branches in
-  # `modules/` have had since the darwin host was removed, so it gets a real
-  # build on a real mac rather than an evaluation on the linux runner.
-  # `macos-latest` is Apple Silicon, which is the aarch64-darwin this builds.
+  # The only build of the darwin branches in `modules/`. macos-latest is aarch64.
   darwin:
     runs-on: macos-latest
     steps:
@@ -62,7 +56,6 @@ jobs:
           --flake ${{ github.workspace }}#generic@aarch64-darwin \
           --no-out-link
 
-  # Builds `packages.container` on every run and publishes it from main only.
   image:
     runs-on: ubuntu-latest
     needs: check

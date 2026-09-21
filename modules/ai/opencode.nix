@@ -8,7 +8,6 @@ let
   cfg = config.dotfiles.ai.opencode;
 in
 {
-  # The OpenRouter provider lives in modules/openrouter/opencode.nix.
   imports = [
     (lib.mkRenamedOptionModule
       [ "dotfiles" "ai" "opencode" "openrouter" "enable" ]

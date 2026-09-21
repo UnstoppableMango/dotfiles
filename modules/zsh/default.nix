@@ -63,7 +63,6 @@ in
         ".p10k.zsh".source = cfg.p10kConfig;
       };
 
-      # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zsh.enable
       programs.zsh = {
         enable = true;
         enableCompletion = true;

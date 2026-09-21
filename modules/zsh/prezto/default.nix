@@ -6,7 +6,6 @@ in
   options.dotfiles.zsh.prezto.enable = lib.mkEnableOption "prezto";
 
   config = lib.mkIf (cfg.enable && cfg.prezto.enable) {
-    # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zsh.prezto
     programs.zsh = {
       initContent = ''
         # Remove prezto autoload stubs that break Claude Code shell snapshots.
@@ -22,7 +21,6 @@ in
         caseSensitive = true;
         prompt.theme = "powerlevel10k";
 
-        # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zsh.prezto.pmodules
         pmodules = [
           # Default
           "environment"

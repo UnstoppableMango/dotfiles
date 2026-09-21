@@ -2,8 +2,6 @@
 let
   cfg = config.dotfiles.kubernetes.rosequartz;
 
-  # The admin identity is privileged material a host has to supply for itself.
-  # Without both halves we emit the OIDC context alone.
   adminEnabled = cfg.admin.certFile != null && cfg.admin.keyFile != null;
 
   lines = [
@@ -55,9 +53,7 @@ let
     "      interactiveMode: IfAvailable"
   ];
 
-  # Assembled line by line rather than as an indented string literal: the
-  # admin blocks are conditional, and interpolating multi-line chunks into a
-  # '' block would not re-indent them.
+  # Line by line: multi-line chunks interpolated into a '' string are not re-indented.
   rendered = lib.concatMapStrings (line: line + "\n") lines;
 in
 {
@@ -133,10 +129,8 @@ in
 
       extraScopes = lib.mkOption {
         type = with lib.types; listOf str;
-        # The apiserver maps the username from the email claim and the groups
-        # from groups, and Dex leaves a claim out entirely when its scope was
-        # not granted. A mapping that finds no claim fails the login, so both
-        # are required rather than nice to have.
+        # Required: the apiserver maps both claims, and Dex omits a claim
+        # whose scope was not granted, which fails the login.
         default = [
           "email"
           "groups"

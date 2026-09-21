@@ -6,7 +6,7 @@
         email = "erik.rasmussen@unmango.dev";
       };
 
-      # this is what was forcing annotated tags
+      # Signing tags forces them to be annotated.
       tag.gpgsign = false;
 
       alias = {
@@ -31,13 +31,11 @@
     enable = true;
     spice.enable = true;
 
-    # Every machine's signing key, so a commit made on one verifies on all.
     signing.allowedSigners = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKd+FX/6k9udgORS0uCLkvrKNaK5BXzsYYq1WaQ7+rOO erik@darter"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEwW6dUPKvKXXzj+gKJS7EXh6UzyLjzatrcPXa0Y2qvz erik@hades"
     ];
 
-    # Provider, model, and key come from dotfiles.openrouter.
     openCommit = {
       enable = true;
       settings = {

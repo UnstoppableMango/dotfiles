@@ -6,9 +6,7 @@
 let
   cfg = config.dotfiles.openrouter;
 
-  # Thrown only when an integration reads the key while OpenRouter is
-  # misconfigured, so the message names the actual mistake instead of an
-  # attribute-missing error from deep inside sops.secrets.
+  # Replaces an attribute-missing error from inside sops.secrets.
   secret =
     if cfg.apiKeySecret == null then
       throw "dotfiles.openrouter.enable needs apiKeySecret set: every integration authenticates with it."

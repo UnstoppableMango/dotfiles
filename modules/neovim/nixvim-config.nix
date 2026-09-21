@@ -111,12 +111,7 @@
     };
   };
 
-  # Gossamer has no lspconfig preset. gossamer.nvim (from the gossamer
-  # package's editorSupport passthru) ships ftdetect/, lsp/, and
-  # tree-sitter queries/ that Neovim auto-discovers once on the
-  # runtimepath, so it's added as a plugin rather than hand-written here.
-  # Highlight queries are inert without nvim-treesitter, which isn't
-  # configured in this repo.
+  # Highlight queries in gossamer.nvim are inert without nvim-treesitter.
   extraPlugins = [ pkgs.gossamer.passthru.editorSupport.neovim ];
 
   extraConfigLua = ''
