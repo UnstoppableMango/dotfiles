@@ -11,7 +11,6 @@
     ./git.nix
     ./gnome.nix
     ./ssh.nix
-    ./taste.nix
     ./vscode
     ./vscodium.nix
   ];
