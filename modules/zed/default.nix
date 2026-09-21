@@ -93,7 +93,6 @@
 
   config = lib.mkMerge [
     (lib.mkIf config.dotfiles.zed.enable {
-      # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.zed-editor.enable
       programs.zed-editor = {
         enable = true;
         installRemoteServer = true;
@@ -101,11 +100,8 @@
         inherit (config.dotfiles.zed) extensions;
 
         userSettings = {
-          # Gossamer isn't a published Zed extension. The extension directory
-          # is materialized at ~/.config/zed/dev-extensions/gossamer; run
-          # "zed: install dev extension" once, pointing at that path (and
-          # again whenever the gossamer package updates, since the target is
-          # a nix store path).
+          # Run "zed: install dev extension" on ~/.config/zed/dev-extensions/gossamer
+          # once, and again after each gossamer package update.
           languages.Gossamer.language_servers = [ "gossamer-lsp" ];
           lsp.gossamer-lsp.binary = {
             path = "${pkgs.gossamer}/bin/gos";
@@ -120,17 +116,8 @@
 
       xdg.configFile."zed/dev-extensions/gossamer".source = pkgs.gossamer.passthru.editorSupport.zed;
 
-      # Zed's own binary cache, so a host that runs Zed does not build it.
-      # Home Manager only writes the user's nix.conf, which Nix honours only
-      # with the system's permission: this cache in `trusted-substituters` and
-      # its key in `trusted-public-keys`, or the user in `trusted-users`. See
-      # hosts/common.nix, which says the same of the flake's own cache and why
-      # the narrower of the two is worth preferring.
-      #
-      # Writing nix.settings needs a non-null `nix.package`, which this module
-      # leaves to whoever owns the nix instance (`hosts/common.nix` here), since
-      # a package is not a mergeable value and naming it in two modules is a
-      # conflict rather than a merge.
+      # Used only if the system nix.conf trusts this cache or the user.
+      # Needs a non-null `nix.package`, which the nix instance owner sets.
       nix.settings = {
         extra-substituters = [ "https://zed.cachix.org" ];
         extra-trusted-public-keys = [

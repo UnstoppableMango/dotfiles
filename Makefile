@@ -5,9 +5,6 @@ SRC != find -path '*.nix' -printf '%P\n'
 HOST ?= $(shell hostname -s)
 UNAME_S := $(shell uname -s)
 
-# The most specific home configuration for the current host: darwin builds
-# the identity-free generic config, darter/hades build their own named
-# config, and any other Linux box falls back to erik@server.
 ifeq (${UNAME_S},Darwin)
 HOME_CONFIG ?= generic@aarch64-darwin
 else ifeq (${HOST},darter)
@@ -45,12 +42,10 @@ flake.lock: ${SRC}
 flake.nix:
 	nix flake init
 
-p10k: # This doesn't actually work in make, but its copy-pastable
+p10k: # Does not work under make; run the command by hand.
 	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/modules/zsh/.p10k.zsh p10k configure
 
-# `home` names a real directory in this repo, so without this make treats the
-# target as already built and refuses to run it. The rest are listed for the
-# same reason should a directory ever grow into their name.
+# `home` is also a directory, so make would otherwise consider it up to date.
 .PHONY: build check watch update home system format fmt p10k
 
 .PHONY: flake.lock

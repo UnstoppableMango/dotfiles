@@ -24,8 +24,7 @@ let
       ]) headers
     );
 
-  # claude_desktop_config.json spawns subprocesses and speaks no HTTP, so a
-  # remote server reaches the app through the mcp-remote stdio bridge.
+  # claude_desktop_config.json supports stdio servers only, hence mcp-remote.
   remoteServer = server: {
     command = "npx";
     args = [
@@ -85,8 +84,8 @@ in
   };
 
   config = lib.mkIf (cfg.enable && cfg.claudeDesktop.enable) {
-    # The app writes its own keys (`preferences`, `coworkUserFilesPath`) into
-    # this file, so it stays a regular file and only `mcpServers` is assigned.
+    # The app writes other keys (`preferences`, `coworkUserFilesPath`) here, so
+    # only `mcpServers` is assigned.
     home.activation.claudeDesktopMcpServers = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
       $DRY_RUN_CMD mkdir -p "$(dirname ${configFile})"
       if [ -L ${configFile} ]; then

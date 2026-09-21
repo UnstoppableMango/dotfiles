@@ -7,9 +7,7 @@ let
   inherit (homeConfiguration.config.home) username homeDirectory path;
   inherit (homeConfiguration) activationPackage;
 
-  # Activation needs a writable home, so it cannot run at build time.
-  # home-files is the symlink tree activation would link into place, so it is
-  # copied in directly instead.
+  # Activation needs a writable home, so copy the tree it would link instead.
   homeRoot = pkgs.runCommand "container-home" { } ''
     mkdir -p $out${homeDirectory} $out/tmp
     cp -a ${activationPackage}/home-files/. $out${homeDirectory}/

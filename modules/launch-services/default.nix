@@ -26,22 +26,14 @@ in
   };
 
   config = lib.mkIf (cfg.enable && isDarwin) {
-    # Home Manager drops app bundles into ~/Applications/Home Manager Apps but
-    # tells neither Launch Services nor Spotlight about them. Launch Services
-    # backs `open -a`, the Dock, and Launchpad; Spotlight's metadata index backs
-    # Cmd+Space. rsync writes the bundles with normalized timestamps and no
-    # mtime updates, so the fsevents that would normally trigger an automatic
-    # reindex do not reliably fire, and an app can sit on disk fully installed
-    # yet unreachable from every launcher. Registering explicitly on activation
-    # closes that gap.
+    # rsync's normalized timestamps keep fsevents from triggering a reindex.
     home.activation.registerDarwinApps =
       lib.hm.dag.entryAfter ([ "linkGeneration" ] ++ lib.optional copyApps.enable "copyApps")
         ''
           appsDirectory="''${HOME}/${appsDirectory}"
 
           if [[ -d "$appsDirectory" ]]; then
-            # Both tools only refresh an index, so a failure costs a launcher
-            # entry rather than a broken generation. Never fail activation.
+            # Only an index refresh, so warn rather than fail activation.
             run ${lsregister} -f -R "$appsDirectory" || \
               warnEcho "failed to register apps with Launch Services"
             run /usr/bin/mdimport "$appsDirectory" || \

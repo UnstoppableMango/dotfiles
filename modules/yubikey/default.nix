@@ -93,19 +93,12 @@ in
       # Decrypts with a key's PIV slot, for when the machine's age key is gone.
       ++ lib.optional config.dotfiles.sops.enable age-plugin-yubikey;
 
-    # Only the keys this machine has, since a handle for a key that is never
-    # plugged in here is an authentication attempt spent for nothing.
-    #
-    # Missing handles are skipped, so a machine that has not run
-    # `ssh-keygen -K` yet still connects with its other keys. These go in
-    # `identityFiles`, which is additive, rather than ahead of the machine's own
-    # key in `dotfiles.ssh.primaryIdentityFile`.
+    # Only this machine's keys: each offered handle costs an authentication attempt.
     dotfiles.ssh.identityFiles = lib.mapAttrsToList (
       name: _: "~/.ssh/id_ed25519_sk_rk_${name}"
     ) offered;
 
-    # Go through pcscd and share the card, so a running gpg-agent does not
-    # lock ykman, age-plugin-yubikey, and Yubico Authenticator out of the key.
+    # Share the card through pcscd so gpg-agent does not lock out ykman.
     programs.gpg.scdaemonSettings = lib.mkIf config.programs.gpg.enable {
       disable-ccid = true;
       pcsc-shared = true;

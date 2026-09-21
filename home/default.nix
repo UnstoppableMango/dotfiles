@@ -1,10 +1,5 @@
 { pkgs, lib, ... }:
 {
-  # Erik's preferences: git identity/aliases, kitty colors, k9s skin, GNOME
-  # dconf taste, the ai/vscode/zed setup, and the sops secrets. `account.nix`
-  # is generic account mechanics with no identity of its own, so the only
-  # erik-specific bit here is the username default below, and it's an
-  # `mkDefault` a consumer can override without a conflict.
   imports = [
     ./account.nix
     ./direnv.nix
@@ -34,14 +29,12 @@
     vhs
   ];
 
-  # Encrypted to both of erik's age keys (see .sops.yaml), so these decrypt on
-  # darter and hades alike. Edit with `sops home/secrets/<file>.yaml`.
+  # Edit with `sops home/secrets/<file>.yaml`.
   sops.secrets."openrouter-api-key" = {
     sopsFile = ./secrets/openrouter.yaml;
     key = "openrouter_api_key";
   };
 
-  # Every paid model goes through OpenRouter; see modules/openrouter/.
   dotfiles.openrouter.apiKeySecret = "openrouter-api-key";
 
   programs = {
@@ -56,9 +49,7 @@
 
     micro.enable = true;
 
-    # Disabled: yt-dlp depends on curl-cffi, whose test suite currently fails
-    # to build in nixpkgs (SSL error message regex mismatch in test_verify).
-    # Re-enable once upstream is fixed.
+    # Its curl-cffi dependency fails test_verify in nixpkgs.
     yt-dlp.enable = false;
   };
 }

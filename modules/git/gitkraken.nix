@@ -38,9 +38,7 @@ in
   config = lib.mkIf (config.dotfiles.git.enable && cfg.enable) {
     home.packages = [ cfg.package ];
 
-    # Runs after `oh-my-zsh.sh` is sourced, which is where the alias comes
-    # from. Tolerates the alias being absent so the line is safe if the git
-    # plugin ever drops it.
+    # Runs after `oh-my-zsh.sh` is sourced, which defines the alias.
     programs.zsh.initContent = lib.mkIf config.dotfiles.zsh.ohMyZsh.enable ''
       unalias gk 2>/dev/null || true
     '';

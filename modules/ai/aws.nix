@@ -16,9 +16,7 @@ let
   };
   awsCoreSrc = "${awsToolkitSrc}/plugins/aws-core";
 
-  # Managed AWS MCP Server (GA), fronted by mcp-proxy-for-aws, which signs
-  # requests with whatever AWS credentials are already on this machine
-  # (env vars, ~/.aws/credentials, SSO, IAM role) rather than an OAuth popup.
+  # mcp-proxy-for-aws signs requests with the local AWS credentials, not OAuth.
   mcpServer = {
     type = "stdio";
     command = "uvx";

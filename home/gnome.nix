@@ -1,12 +1,9 @@
 { lib, config, ... }:
 {
-  # Taste only. The option, the extension packages, and keeping the enabled
-  # list in step with them live in modules/desktop/gnome.
   config = lib.mkIf config.dotfiles.gnome.enable {
     dconf.settings = {
       "org/freedesktop/ibus/panel/emoji" = {
-        # Disable ctrl+shift+u unicode shortcut, conflicts with JetBrains keybinds
-        # https://superuser.com/questions/358749/how-to-disable-ctrlshiftu/1392682#1392682
+        # Frees ctrl+shift+u for JetBrains keybinds.
         unicode-hotkey = "@as []";
       };
 

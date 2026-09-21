@@ -39,8 +39,7 @@ in
       package = pkgs.git;
       lfs.enable = true;
 
-      # Home Manager renders includes after the settings, and a later
-      # directive wins, so anything here overrides everything above it.
+      # Rendered after the settings, so it overrides them.
       includes = lib.optional (cfg.localConfig != null) {
         path = "${config.home.homeDirectory}/${cfg.localConfig}";
       };
@@ -53,7 +52,6 @@ in
       };
     };
 
-    # Still fiddling with these
     # https://github.com/git/git/blob/master/contrib/diff-highlight/README
     programs.diff-highlight = {
       enable = true;

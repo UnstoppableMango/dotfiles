@@ -25,8 +25,7 @@ let
     url = "https://gitlab.com/api/v4/mcp";
   };
 
-  # The `${...}` is expanded by the reading client, not by nix. Copilot CLI does
-  # so; a client that does not passes the literal string as the bearer token.
+  # The client expands `${...}`, not nix; one that does not sends it literally.
   github = {
     type = "http";
     url = "https://api.githubcopilot.com/mcp/";

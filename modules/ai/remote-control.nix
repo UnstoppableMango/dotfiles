@@ -19,12 +19,8 @@ let
     (lib.escapeShellArg rc.name)
   ];
 
-  # Each of these disables the feature-flag evaluation Remote Control
-  # availability depends on, and `DO_NOT_TRACK` is set for every program this
-  # user runs. Dropping them on the unit scopes the exception to Remote
-  # Control rather than widening it to the whole session. `ANTHROPIC_BASE_URL`
-  # is refused for the same reason when it points anywhere but
-  # api.anthropic.com.
+  # Each makes Remote Control refuse to start (they disable the feature-flag
+  # evaluation it depends on, or point away from api.anthropic.com).
   ineligibilityVars = [
     "DO_NOT_TRACK"
     "DISABLE_TELEMETRY"
@@ -115,7 +111,6 @@ in
     };
   };
 
-  # home-manager's systemd.user.* options are Linux-only.
   config = lib.mkIf (cfg.enable && rc.enable && pkgs.stdenv.hostPlatform.isLinux) {
     systemd.user.services.claude-remote-control = {
       Unit = {
@@ -123,10 +118,8 @@ in
         Documentation = [ "https://code.claude.com/docs/en/remote-control" ];
         After = [ "network-online.target" ];
         Wants = [ "network-online.target" ];
-        # An ineligible login or a disabling environment variable fails the
-        # same way on every attempt, so give up rather than retry against
-        # Anthropic forever. The systemd defaults (5 starts per 10s) never
-        # trip at RestartSec=10.
+        # Ineligibility fails identically every attempt; the systemd default
+        # limit (5 starts per 10s) never trips at RestartSec=10.
         StartLimitIntervalSec = 300;
         StartLimitBurst = 5;
       };
@@ -135,16 +128,13 @@ in
         WorkingDirectory = rc.rootDir;
         UnsetEnvironment = ineligibilityVars;
 
-        # A user unit gets no login shell, so the commands sessions run
-        # resolve against this PATH rather than an inherited one.
+        # A user unit inherits no login shell PATH.
         Environment = [
           "PATH=${config.home.profileDirectory}/bin:/run/wrapper/bin:/run/current-system/sw/bin"
         ];
 
-        # Plain `remote-control` reattaches to every session the previous
-        # server was serving. `--continue` would narrow that to one and error
-        # out when nothing was recorded in the last four hours, turning
-        # `Restart` into a crash loop.
+        # No `--continue`: it errors when no session ran in the last four
+        # hours, turning `Restart` into a crash loop.
         ExecStart = lib.concatStringsSep " " (
           [
             (lib.getExe config.programs.claude-code.finalPackage)
@@ -153,10 +143,8 @@ in
           ++ flags
         );
 
-        # stdout is a status panel that repaints on a ticker, around 30MB a
-        # day of identical frames whatever TERM says, and it carries nothing
-        # the session list at claude.ai does not. Failures print to stderr and
-        # exit non-zero, so the journal keeps what matters.
+        # stdout is a repainting status panel (about 30MB a day); failures go
+        # to stderr.
         StandardOutput = "null";
         StandardError = "journal";
 

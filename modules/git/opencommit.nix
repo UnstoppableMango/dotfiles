@@ -7,11 +7,8 @@
 let
   cfg = config.dotfiles.git.openCommit;
 
-  # opencommit's own DEFAULT_CONFIG, mirrored. It only applies those defaults
-  # when ~/.opencommit is absent: `getGlobalConfig` returns `ini.parse` of the
-  # file verbatim once it exists, so a sparse file leaves OCO_MODEL and friends
-  # undefined and the commit request goes out malformed. Rendering the file
-  # therefore means rendering the whole config, not just the key.
+  # opencommit's DEFAULT_CONFIG, mirrored: `getGlobalConfig` applies none of it
+  # once ~/.opencommit exists, so a sparse file sends a malformed request.
   defaultSettings = {
     OCO_AI_PROVIDER = "openai";
     OCO_MODEL = "gpt-4o-mini";
@@ -33,21 +30,15 @@ let
 
   renderValue = value: if lib.isBool value then lib.boolToString value else toString value;
 
-  # `ini.stringify` output, which is what `oco config set` writes and
-  # `ini.parse` reads back: bare `KEY=value`, one per line, no sections.
+  # `ini.stringify` format: bare `KEY=value` lines, no sections.
   rendered =
     lib.concatMapStrings (name: "${name}=${renderValue settings.${name}}\n") (lib.attrNames settings)
     + "OCO_API_KEY=${config.sops.placeholder.${cfg.apiKeySecret}}\n";
 
-  # opencommit's model cache, a sibling of the config file and likewise fixed
-  # at `join(homedir(), ...)`.
   cachePath = "${config.home.homeDirectory}/.opencommit-models.json";
 
-  # `{ timestamp, models }` is the shape `writeCache` produces. The timestamp
-  # is stamped at activation rather than at build time so the seed reads as
-  # fresh for opencommit's 7 day CACHE_TTL_MS: `fetchModelsForProvider` takes a
-  # valid cache as-is and refetches on its own once it expires, which is what a
-  # real refresh would have left behind.
+  # The shape `writeCache` produces, stamped at activation so it counts as
+  # fresh for the 7 day CACHE_TTL_MS.
   seedModelCache = pkgs.writeShellScript "opencommit-seed-models" ''
     set -euo pipefail
     exec ${lib.getExe pkgs.jq} -n \
@@ -170,36 +161,23 @@ in
           }
         ];
 
-        # Curated overrides of upstream's defaults, at mkDefault so a host or a
-        # consumer replaces any of them with a plain assignment.
         dotfiles.git.openCommit.settings = {
-          # The conventional-commit prompt only forbids "a list of commit per
-          # file change" when this is on. Off, nothing holds the model to one
-          # subject and it emits a conventional-commit line per change.
+          # Off, the model emits one conventional-commit line per file change.
           OCO_ONE_LINE_COMMIT = lib.mkDefault true;
 
-          # Committing and pushing are separate decisions, and the hook fires
-          # on every commit, including ones made mid-rebase.
+          # The hook fires on every commit, including mid-rebase.
           OCO_GITPUSH = lib.mkDefault false;
 
-          # In hook mode oco otherwise prefixes the message with `# ` and asks
-          # for the `#` to be removed in the editor. On, the draft lands ready
-          # to use, which is also the only form that survives a commit that
-          # never opens an editor.
+          # Off, hook mode prefixes the draft with `# `, which a commit that
+          # never opens an editor discards.
           OCO_HOOK_AUTO_UNCOMMENT = lib.mkDefault true;
         };
 
         home.packages = [ pkgs.opencommit ];
 
-        # oco detects "I'm running as a git hook" by checking that
-        # process.argv[1] ends with `$(git config core.hooksPath)/prepare-commit-msg`.
-        # nixpkgs' `bin/oco` is a bash wrapper that execs node with the store
-        # path to cli.cjs as the script argument, which overwrites argv[1] and
-        # breaks that detection. cli.cjs itself is unusable as the hook, since
-        # its `#!/usr/bin/env node` shebang depends on PATH. The hook is a node
-        # script that require()s cli.cjs instead, which keeps the hook path in
-        # argv[1]. The test fails the build if nixpkgs moves cli.cjs, rather
-        # than leaving a hook that cannot run.
+        # oco detects hook mode by argv[1] ending in
+        # `$(git config core.hooksPath)/prepare-commit-msg`, which nixpkgs'
+        # `bin/oco` wrapper overwrites, so the hook require()s cli.cjs instead.
         xdg.configFile."git/hooks/prepare-commit-msg".source =
           let
             cli = "${pkgs.opencommit}/lib/opencommit/cli.cjs";
@@ -213,16 +191,13 @@ in
             chmod +x $out
           '';
 
-        # A global hooksPath rather than init.templateDir, because git copies a
-        # template symlink's target, which pins a Home Manager generation that a
-        # later GC removes. oco compares argv[1] against the raw config value,
-        # so the path has to be absolute, without `~`.
+        # oco compares argv[1] against the raw value, so no `~`. Not
+        # init.templateDir: git copies a symlink's target, pinning a generation.
         programs.git.settings.core.hooksPath = "${config.xdg.configHome}/git/hooks";
       }
 
       (lib.mkIf (cfg.apiKeySecret != null) {
-        # ~/.opencommit, not an XDG path: `defaultConfigPath` is
-        # `join(homedir(), ".opencommit")` with no override of any kind.
+        # `defaultConfigPath` is fixed at `join(homedir(), ".opencommit")`.
         sops.templates."opencommit" = {
           path = "${config.home.homeDirectory}/.opencommit";
           inherit (cfg) mode;
@@ -231,10 +206,8 @@ in
       })
 
       (lib.mkIf (cfg.models != { }) {
-        # The cache is opencommit's file: `oco models --refresh` has to keep
-        # working, so this seeds an absent one and never touches it again.
-        # `writeCache` swallows every error, so a store symlink here would fail
-        # the refresh silently rather than loudly.
+        # Not a store symlink: `writeCache` swallows errors, so the refresh
+        # would fail silently.
         home.activation.opencommitModelCache = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           if [ ! -s ${lib.escapeShellArg cachePath} ]; then
             $DRY_RUN_CMD ${seedModelCache} ${lib.escapeShellArg cachePath}
