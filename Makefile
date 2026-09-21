@@ -43,7 +43,7 @@ flake.lock: ${SRC}
 flake.nix:
 	nix flake init
 
-p10k: # This doesn't actually work in make, but it's copy-pastable
+p10k: # Does not work under make; run the command by hand.
 	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/modules/zsh/.p10k.zsh p10k configure
 
 .PHONY: build check watch update home system format fmt p10k

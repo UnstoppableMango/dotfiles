@@ -10,9 +10,7 @@ let
 
   defaultEmail = config.programs.git.settings.user.email;
 
-  # ssh-keygen(1) ALLOWED SIGNERS: `YYYYMMDD` or `YYYYMMDDHHMM[SS]`, optionally
-  # suffixed `Z` for UTC rather than the verifying machine's zone. Matched here
-  # so a typo fails the build instead of silently never matching a signature.
+  # ssh-keygen(1) ALLOWED SIGNERS; a malformed one silently never matches.
   timestamp = lib.types.strMatching "[0-9]{8}([0-9]{4}([0-9]{2})?)?Z?";
 
   signer = lib.types.submodule {
@@ -59,8 +57,7 @@ let
     };
   };
 
-  # `principals [options] keytype base64 comment`, where the key option here
-  # already carries the last three.
+  # `principals [options] keytype base64 comment`; `key` carries the last three.
   signerLine =
     s:
     let
@@ -71,15 +68,11 @@ let
     in
     lib.concatStringsSep " " ([ s.email ] ++ lib.optional (options != "") options ++ [ s.key ]);
 
-  # `git log --show-signature` needs each key mapped to an identity.
   allowedSigners = pkgs.writeText "allowed_signers" (
     lib.concatMapStrings (line: line + "\n") (
       lib.unique (
         map signerLine (
           [
-            # The machine's current key, which is valid now by definition, so
-            # it carries no bounds. Retiring it means moving it into
-            # `allowedSigners` with a `validBefore`.
             {
               inherit (cfg) key;
               email = defaultEmail;
@@ -147,8 +140,7 @@ in
         key = if isSsh then "key::${cfg.key}" else cfg.key;
       };
 
-      # Commits only. signByDefault would sign tags too, which makes every
-      # lightweight tag an annotated one.
+      # Not signByDefault, which turns every lightweight tag into an annotated one.
       settings = {
         commit.gpgSign = true;
         gpg.ssh.allowedSignersFile = lib.mkIf isSsh (toString allowedSigners);

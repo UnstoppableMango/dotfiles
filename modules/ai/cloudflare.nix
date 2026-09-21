@@ -15,8 +15,7 @@ let
     sha256 = "sha256-r8HeH9XWV9qhbMq3fPASNfT5Y1mrfsgBI5STiUi/LVA=";
   };
 
-  # Mirrors the repo's own .mcp.json, bundled into the Claude plugin below
-  # but not something Copilot CLI can pick up automatically.
+  # Mirrors the repo's .mcp.json, which Copilot CLI does not pick up.
   mcpServers = {
     cloudflare-api = {
       type = "http";

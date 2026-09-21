@@ -3,14 +3,7 @@ let
   inherit (pkgs.stdenv.hostPlatform) isDarwin isLinux;
 in
 {
-  # A home configuration with no identity in it: most of the modules on, plus
-  # the account fields Home Manager requires. Nothing from `home/`.
-  #
-  # No machine is named `generic` and no person is either. It exists so
-  # `homeModules.dotfiles` is built here rather than only breaking in whatever
-  # flake consumes it, which is the same reason `erik@server` exists. The
-  # darwin build is also the only consumer of the darwin branches in
-  # `modules/`.
+  # Identity-free build coverage for `homeModules.dotfiles`; not a real machine.
   home = {
     username = "generic";
     homeDirectory = if isDarwin then "/Users/generic" else "/home/generic";
@@ -57,15 +50,12 @@ in
     vscodium.enable = true;
     zed.enable = true;
 
-    # A Linux desktop session.
     brave.enable = isLinux;
     gnome.enable = isLinux;
   };
 
-  # This is the one configuration installing both editors, and they collide on
-  # `lib/vscode/LICENSES.chromium.html`. VSCodium's wrapper and desktop entries
-  # point at its own store path, so losing the overlapping files in the profile
-  # costs it nothing.
+  # Both editors ship `lib/vscode/LICENSES.chromium.html`; VSCodium does not
+  # read its copy from the profile.
   programs.vscodium.package = lib.lowPrio pkgs.vscodium;
 
   programs = {

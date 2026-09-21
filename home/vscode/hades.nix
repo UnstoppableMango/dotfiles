@@ -7,16 +7,7 @@
   config = {
     programs.vscode.profiles.Hades = {
       # https://github.com/microsoft/vscode-dotnettools/issues/2266#issuecomment-3571804122
-      # NOTE: settings.json sets terminal.integrated.gpuAcceleration = "off" as
-      # a workaround for upstream Claude Code terminal corruption. Root cause is
-      # an upstream xterm.js webgl-renderer bug; the actual fix is
-      # https://github.com/xtermjs/xterm.js/pull/5883 (merged 2026-05-21 but not
-      # yet in a published xterm.js release, so VS Code hasn't picked it up).
-      # Revert once fixed. Tracking:
-      # https://github.com/anthropics/claude-code/issues/8097
-      # https://github.com/anthropics/claude-code/issues/59163
-      # https://github.com/anthropics/claude-code/issues/59539
-      # https://github.com/anthropics/claude-code/issues/8618
+      # hades.settings.json turns GPU acceleration off for the reason in ./default.nix.
       userSettings = lib.importJSON ./hades.settings.json;
       enableMcpIntegration = true;
 
@@ -43,19 +34,15 @@
         humao.rest-client
         ionide.ionide-fake
         ionide.ionide-fsharp
-        # NOTE: pkgs.vscode-marketplace resolves resharper-code to 0.0.2, an
-        # expired ReSharper 2025.2 EAP 2 build. Its backend aborts on startup with
-        # "Some of the packages cannot be loaded because they are expired"
-        # (CommandLineTimebombExplosionReporter) and VS Code reports the extension
-        # as failing to start. vscode-marketplace-release pins the stable 2026.2.1
-        # release, which still ships the linux-x64 backend.
+        # vscode-marketplace resolves this to 0.0.2, an expired EAP build whose
+        # backend aborts on startup; the release set has a stable one.
         pkgs.vscode-marketplace-release.jetbrains.resharper-code
         jnoortheen.nix-ide
         microsoft-aspire.aspire-vscode
         mkhl.direnv
         ms-azuretools.vscode-containers
         ms-dotnettools.csharp
-        # blah blah blah, doesn't match anything in file 'dist/extension.js'
+        # Build fails: a substitution matches nothing in 'dist/extension.js'.
         # ms-dotnettools.csdevkit
         ms-dotnettools.vscode-dotnet-runtime
         ms-kubernetes-tools.vscode-kubernetes-tools

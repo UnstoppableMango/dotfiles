@@ -8,15 +8,9 @@ let
   cfg = config.dotfiles.ai;
   coderabbit = cfg.coderabbit;
 
-  # `~/.coderabbit` is the CLI's own state directory: auth.json alongside
-  # doctor.json, logs/, reviews/, skills.json, and stats.json, all of which the
-  # binary owns. Only auth.json is declared here.
   authPath = "${config.home.homeDirectory}/.coderabbit/auth.json";
 
-  # What `coderabbit auth login --api-key <key>` writes. The api_key branch of
-  # the CLI's auth reader returns the file verbatim rather than consulting the
-  # OS credential store, which the OAuth branch does for its access and refresh
-  # tokens, so this file on its own is a complete authenticated state.
+  # What `coderabbit auth login --api-key <key>` writes.
   authFile = builtins.toJSON {
     type = "api_key";
     apiKey = "@apiKey@";

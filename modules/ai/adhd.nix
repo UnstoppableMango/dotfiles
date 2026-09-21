@@ -29,8 +29,7 @@ in
 
     programs.github-copilot-cli.skills."i-have-adhd" = "${iHaveAdhdSrc}/skills/i-have-adhd";
 
-    # Presence alone enables always-on mode; hooks/always-on.mjs only checks
-    # fs.existsSync on this path, content is irrelevant.
+    # hooks/always-on.mjs only checks that this file exists.
     home.file."${lib.removePrefix "${config.home.homeDirectory}/" config.programs.claude-code.configDir}/.i-have-adhd-always".text =
       "";
 

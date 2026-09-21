@@ -9,8 +9,7 @@
       shellIntegration.mode = "no-cursor";
 
       font = {
-        # mkForce: stylix's kitty target (see modules/stylix) also sets
-        # font.name at normal priority, which conflicts outright.
+        # mkForce: stylix's kitty target also sets the font.
         name = lib.mkForce "${config.dotfiles.zsh.font} Regular";
         size = lib.mkForce 12.0;
       };
