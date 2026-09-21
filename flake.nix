@@ -299,7 +299,7 @@
             container = import ./container.nix {
               inherit pkgs;
               inherit (inputs'.nix2container.packages) nix2container;
-              hm = self.homeConfigurations."generic@container";
+              homeConfiguration = self.homeConfigurations."generic@container";
             };
           };
 

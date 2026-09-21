@@ -1,17 +1,18 @@
 {
   pkgs,
   nix2container,
-  hm,
+  homeConfiguration,
 }:
 let
-  inherit (hm.config.home) username homeDirectory path;
+  inherit (homeConfiguration.config.home) username homeDirectory path;
+  inherit (homeConfiguration) activationPackage;
 
   # Activation needs a writable home, so it cannot run at build time.
   # home-files is the symlink tree activation would link into place, so it is
   # copied in directly instead.
   homeRoot = pkgs.runCommand "container-home" { } ''
     mkdir -p $out${homeDirectory} $out/tmp
-    cp -a ${hm.activationPackage}/home-files/. $out${homeDirectory}/
+    cp -a ${activationPackage}/home-files/. $out${homeDirectory}/
   '';
 
   # Kept out of homeRoot: nix2container rejects a directory that appears in two
