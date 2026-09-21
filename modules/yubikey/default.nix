@@ -12,6 +12,22 @@ let
   offered = lib.filterAttrs (name: _: lib.elem name cfg.availableKeys) withSshKey;
 
   undeclared = lib.subtractLists (lib.attrNames cfg.keys) cfg.availableKeys;
+
+  # The name `ssh-keygen -K` gives a downloaded handle: the FIDO2 application
+  # with the `ssh:` prefix stripped, so the bare default yields an unsuffixed
+  # file. Only a default, since `handle` names the path outright.
+  downloadedAs =
+    application:
+    let
+      suffix = lib.removePrefix "ssh:" application;
+    in
+    "~/.ssh/id_ed25519_sk_rk" + lib.optionalString (suffix != "") "_${suffix}";
+
+  offeredHandles = lib.mapAttrsToList (_: key: key.handle) offered;
+
+  handleCounts = lib.foldl' (acc: h: acc // { ${h} = (acc.${h} or 0) + 1; }) { } offeredHandles;
+
+  collidingHandles = lib.attrNames (lib.filterAttrs (_: n: n > 1) handleCounts);
 in
 {
   options.dotfiles.yubikey = {
@@ -31,24 +47,72 @@ in
 
     keys = lib.mkOption {
       type = lib.types.attrsOf (
-        lib.types.submodule {
-          options.sshKey = lib.mkOption {
-            type = with lib.types; nullOr str;
-            default = null;
-            example = "sk-ssh-ed25519@openssh.com AAAA... erik@yubikey-nano";
-            description = ''
-              Public half of the key's resident FIDO2 SSH credential, created
-              with `-O application=ssh:<name>`. Recorded for authorized_keys
-              and forges; ssh itself reads the credential handle that
-              `ssh-keygen -K` writes to `~/.ssh/id_ed25519_sk_rk_<name>`.
-            '';
-          };
-        }
+        lib.types.submodule (
+          # `config` here is the key's own options, not the home configuration.
+          { name, config, ... }:
+          {
+            options = {
+              sshKey = lib.mkOption {
+                type = with lib.types; nullOr str;
+                default = null;
+                example = "sk-ssh-ed25519@openssh.com AAAA... erik@yubikey-nano";
+                description = ''
+                  Public half of the key's resident FIDO2 SSH credential.
+                  Recorded for authorized_keys and forges; ssh itself reads
+                  the credential handle that `ssh-keygen -K` writes, at the
+                  path `application` decides.
+                '';
+              };
+
+              application = lib.mkOption {
+                type = lib.types.strMatching "ssh:.*";
+                default = "ssh:${name}";
+                defaultText = lib.literalExpression ''"ssh:''${name}"'';
+                example = "ssh:";
+                description = ''
+                  FIDO2 application the credential was created under, fixed at
+                  creation by `-O application=`. ssh-keygen requires the
+                  `ssh:` prefix and uses a bare `ssh:` by default.
+
+                  Whatever follows the prefix is what `ssh-keygen -K` appends
+                  to a handle it downloads, which is where `handle` gets its
+                  default. The application also scopes the credential on the
+                  authenticator, so two credentials on one key need different
+                  applications, while the same application across different
+                  keys is the ordinary case.
+                '';
+              };
+
+              handle = lib.mkOption {
+                type = lib.types.str;
+                default = downloadedAs config.application;
+                defaultText = lib.literalMD ''
+                  `~/.ssh/id_ed25519_sk_rk`, with `_` and `application`'s
+                  suffix appended when it has one.
+                '';
+                example = "~/.ssh/yubikey";
+                description = ''
+                  Path ssh offers for this key's credential handle, and so the
+                  path the downloaded file has to end up at.
+
+                  Defaults to the name `ssh-keygen -K` writes, which follows
+                  `application`. Setting it decouples the two, which is safe
+                  because ssh reads a handle by its content and never checks
+                  the path against the credential. The cost is that `-K` then
+                  writes a name this does not match, leaving a rename to do by
+                  hand, and ssh passes over a handle that is not there without
+                  saying so.
+                '';
+              };
+            };
+          }
+        )
       );
       default = { };
       description = ''
-        The user's YubiKeys by name. The name is the suffix of the FIDO2
-        application (`ssh:<name>`), which fixes the handle's file name.
+        The user's YubiKeys by name. The name labels the key for
+        `availableKeys` and defaults its FIDO2 `application`, which in turn
+        defaults the `handle` ssh offers.
       '';
     };
 
@@ -79,6 +143,15 @@ in
           dotfiles.yubikey.keys: ${lib.concatStringsSep ", " undeclared}.
         '';
       }
+      {
+        assertion = collidingHandles == [ ];
+        message = ''
+          dotfiles.yubikey: more than one available key offers the handle
+          ${lib.concatStringsSep ", " collidingHandles}. Two keys cannot share
+          one file, so give each its own `handle`, or distinct FIDO2
+          applications to default them apart.
+        '';
+      }
     ];
 
     home.packages =
@@ -100,9 +173,7 @@ in
     # `ssh-keygen -K` yet still connects with its other keys. These go in
     # `identityFiles`, which is additive, rather than ahead of the machine's own
     # key in `dotfiles.ssh.primaryIdentityFile`.
-    dotfiles.ssh.identityFiles = lib.mapAttrsToList (
-      name: _: "~/.ssh/id_ed25519_sk_rk_${name}"
-    ) offered;
+    dotfiles.ssh.identityFiles = offeredHandles;
 
     # Go through pcscd and share the card, so a running gpg-agent does not
     # lock ykman, age-plugin-yubikey, and Yubico Authenticator out of the key.

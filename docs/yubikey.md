@@ -19,9 +19,12 @@ Commits are signed with each machine's `id_ed25519`, not a YubiKey (see `modules
 
 1. Set the FIDO2 PIN, which resident credentials require:
    `ykman --device <serial> fido access change-pin`
-2. Create the SSH credential. The application name fixes the handle file name the ssh config expects:
-   `ssh-keygen -t ed25519-sk -O resident -O application=ssh:<name> -C erik@yubikey-<name> -f ~/.ssh/id_ed25519_sk_rk_<name>`
-   Add the `.pub` contents to `home/ssh.nix`, and to GitHub as an authentication key.
+2. Create the SSH credential.
+   The application identifies the credential on the key and must stay distinct per credential; the file name is a separate choice, because ssh reads a handle by its content:
+   `ssh-keygen -t ed25519-sk -O resident -O application=ssh:<name> -C erik@yubikey-<name> -f ~/.ssh/<handle>`
+   Record the `.pub` in `home/ssh.nix`, along with `application` and, when `<handle>` is not the `id_ed25519_sk_rk_<name>` that `ssh-keygen -K` would write, `handle`.
+   Add it to GitHub as an authentication key.
+   The comment keeps the key's full name whatever the file is called: the handle is local to one machine, while the comment shows up in GitHub's key list and in `authorized_keys` next to every other machine's keys.
 3. Replace the PIV defaults (PIN `123456`, PUK `12345678`, and the management key):
    `ykman --device <serial> piv access change-pin`
    `ykman --device <serial> piv access change-puk`
@@ -36,7 +39,9 @@ An existing key that already has a FIDO2 PIN skips step 1, and step 2 leaves its
 
 ## New machine
 
-- `cd ~/.ssh && ssh-keygen -K` writes each key's handle as `id_ed25519_sk_rk_<name>`, the file the ssh config offers.
+- `cd ~/.ssh && ssh-keygen -K` writes each key's handle, naming it for the credential's application with the `ssh:` prefix stripped: `id_ed25519_sk_rk_<name>`, or plain `id_ed25519_sk_rk` for a key on the bare default.
+  It downloads from the first authenticator touched, so with two keys plugged in, touch the one whose handle is wanted.
+  Where a key sets `handle` to something else, rename the downloaded file to match, since ssh passes over a handle that is not there without saying so.
 - `age-plugin-yubikey --identity` prints the identity lines for `~/.config/sops/age/yubikey.txt`.
 
 ## Recovery

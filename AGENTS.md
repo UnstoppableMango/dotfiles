@@ -237,7 +237,10 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
 - `gnome/` - the GNOME option, the extension packages, and the derived `enabled-extensions` list.
   The dconf preferences that go with it are taste and live in `home/gnome.nix`.
 - `yubikey/` - ykman, yubico-piv-tool, libfido2, and yubikey-personalization, with Yubico Authenticator behind `dotfiles.yubikey.gui` (Linux only), and age-plugin-yubikey when sops is on.
-  `dotfiles.yubikey.keys.<name>.sshKey` records each key's resident FIDO2 SSH credential (values in `home/ssh.nix`), and ssh offers the handle `ssh-keygen -K` writes as `~/.ssh/id_ed25519_sk_rk_<name>`.
+  `dotfiles.yubikey.keys.<name>.sshKey` records each key's resident FIDO2 SSH credential (values in `home/ssh.nix`), and ssh offers that key's `handle`.
+  The two are separate options because they answer to different things: `application` identifies the credential on the authenticator and is fixed when it is created, while `handle` is only a path, which ssh reads by content and never checks against the credential.
+  `handle` therefore defaults to the name `ssh-keygen -K` derives from `application` (`ssh:<name>` by default, so `~/.ssh/id_ed25519_sk_rk_<name>`, and a bare `ssh:` giving the unsuffixed `~/.ssh/id_ed25519_sk_rk`), and setting it to anything else means renaming the downloaded file into place by hand.
+  An assertion catches two of a host's available keys offering one handle, since ssh skips a missing handle silently and would otherwise leave the clash to be found at connection time.
   `docs/yubikey.md` is the onboarding runbook.
   When gpg is on, scdaemon is set to `disable-ccid` and `pcsc-shared`, so it reaches the key through pcscd without holding it exclusively and ykman keeps working alongside gpg-agent.
   `pcscd` and the udev rules are system services outside Home Manager's reach: the nixos repo supplies them on hades, and darter needs the distribution packages.
