@@ -17,16 +17,13 @@ in
   dotfiles = {
     git.enable = true;
     git.gitkraken.enable = true;
-    git.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMsFkHA8jLd9sHV5a/zcMsaxo/o+ZnEB95CBSRnu3YfD erik@darter";
+    git.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKd+FX/6k9udgORS0uCLkvrKNaK5BXzsYYq1WaQ7+rOO erik@darter";
     gnupg.enable = true;
     homeManager.enable = true;
     nix.enable = true;
     slip.enable = true;
     sops.enable = true;
     ssh.enable = true;
-    # darter's key is not at the default path. Which path is local to the
-    # machine, so it comes from ~/.ssh/config.d/ rather than from here.
-    ssh.primaryIdentityFile = null;
     yubikey.enable = true;
     yubikey.gui = true;
     zsh.enable = true;
@@ -61,6 +58,10 @@ in
   programs = {
     home-manager.enable = true;
     tdl.enable = true;
+
+    # Pop!_OS ships the libsecret helper built but unlinked, under /usr/share.
+    # It backs every host the gh helper does not already cover.
+    git.settings.credential.helper = "/usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret";
 
     fzf.enable = true;
     grep.enable = true;
