@@ -52,6 +52,8 @@ let
         exit 1
       fi
 
+      set -x
+
       if [ "$update" -eq 1 ]; then
         nix flake update --flake '${cfg.flakePath}'
       fi
