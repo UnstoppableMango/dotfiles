@@ -215,7 +215,7 @@
               system: host:
               inputs.home-manager.lib.homeManagerConfiguration {
                 pkgs = inputs.nixpkgs.legacyPackages.${system};
-                extraSpecialArgs = { inherit inputs self; };
+                extraSpecialArgs = { inherit self; };
                 modules =
                   (with inputs; [
                     stylix.homeModules.stylix
@@ -225,7 +225,7 @@
                     self.homeModules.dotfiles
                   ])
                   ++ [
-                    ./hosts/common.nix
+                    (import ./hosts/common.nix { inherit inputs; })
                     host
                   ];
               };
