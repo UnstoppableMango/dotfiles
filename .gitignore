@@ -8,6 +8,8 @@ result
 *.bak
 .envrc
 .DS_Store
+.vscode/*
+!.vscode/extensions.json
 
 # .NET core dumps
 core.*

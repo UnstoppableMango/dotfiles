@@ -1,18 +1,18 @@
 {
   pkgs,
   nix2container,
-  homeConfiguration,
+  username,
+  homeDirectory,
+  homeFiles,
+  path,
 }:
 let
-  inherit (homeConfiguration.config.home) username homeDirectory path;
-  inherit (homeConfiguration) activationPackage;
-
   # Activation needs a writable home, so it cannot run at build time.
   # home-files is the symlink tree activation would link into place, so it is
   # copied in directly instead.
   homeRoot = pkgs.runCommand "container-home" { } ''
     mkdir -p $out${homeDirectory} $out/tmp
-    cp -a ${activationPackage}/home-files/. $out${homeDirectory}/
+    cp -a ${homeFiles}/. $out${homeDirectory}/
   '';
 
   # Kept out of homeRoot: nix2container rejects a directory that appears in two
@@ -47,10 +47,12 @@ nix2container.buildImage {
   name = "ghcr.io/unstoppablemango/dotfiles";
   tag = "latest";
   maxLayers = 100;
+
   copyToRoot = [
     base
     homeRoot
   ];
+
   perms = [
     {
       path = homeRoot;
@@ -68,13 +70,16 @@ nix2container.buildImage {
       mode = "1777";
     }
   ];
+
   config = {
     User = username;
     WorkingDir = homeDirectory;
+
     Cmd = [
       "${path}/bin/zsh"
       "-l"
     ];
+
     Env = [
       "HOME=${homeDirectory}"
       "USER=${username}"

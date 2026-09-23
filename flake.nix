@@ -238,10 +238,32 @@
               inputs.home-manager.lib.homeManagerConfiguration {
                 pkgs = inputs.nixpkgs.legacyPackages.${system};
                 extraSpecialArgs = { inherit inputs self; };
-                modules = [
-                  ./hosts/common.nix
-                  host
-                ];
+                modules =
+                  (with inputs; [
+                    stylix.homeModules.stylix
+                    nixvim.homeModules.nixvim
+                    sops-nix.homeManagerModules.sops
+                    direnv-instant.homeModules.direnv-instant
+                    self.homeModules.dotfiles
+                  ])
+                  ++ [
+                    ./hosts/common.nix
+                    host
+                  ];
+
+                nixpkgs.overlays = [ self.overlays.default ];
+                nixpkgs.config.allowUnfree = true;
+
+                # Home Manager asserts `nix.package != null` whenever `nix.settings` is set.
+                nix.package = inputs.nixpkgs.legacyPackages.${system}.nix;
+                nix.settings = {
+                  extra-substituters = [ "https://unstoppablemango.cachix.org" ];
+                  extra-trusted-public-keys = [
+                    "unstoppablemango.cachix.org-1:m7uEI6X1Ov8DyFWJQX4WsRFRWFuzRW5c/Xms8ZaP74U="
+                  ];
+                };
+
+                dotfiles.ssh.hosts = inputs.hosts.lib.addresses;
               };
           in
           {
@@ -277,7 +299,8 @@
             container = import ./container.nix {
               inherit pkgs;
               inherit (inputs'.nix2container.packages) nix2container;
-              homeConfiguration = self.homeConfigurations."generic@container";
+              inherit (self.homeConfigurations."generic@container".config.home) username homeDirectory path;
+              homeFiles = "${self.homeConfigurations."generic@container".activationPackage}/home-files";
             };
           };
 

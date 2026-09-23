@@ -21,6 +21,9 @@ endif
 build:
 	home-manager build --flake ${CURDIR}#${HOME_CONFIG}
 
+container:
+	nix build .#container
+
 check:
 	nix flake check
 
