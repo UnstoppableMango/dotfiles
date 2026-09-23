@@ -252,8 +252,7 @@ Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-ex
 `zed.overlays.default` is commented out: nixpkgs' livekit-libwebrtc is out of sync with zed 0.217.3's expected webrtc API (`no type named 'AudioDeviceSink' in namespace 'webrtc'`).
 
 `tdl.overlays.default` composes gomod2nix's overlay in (tdl is built with its `buildGoApplication`), so `buildGoApplication` and `mkGoEnv` land in `pkgs` alongside `tdl` and `vscode-tdl`.
-`overlays/` holds the ones no input provides: `clan.nix` and `slip.nix` lift a package out of an input that exports no overlay of its own (`clan-core`, and the `zettelkasten` flake whose package is `slip`), and `vscode.nix` symlinks `node_modules.asar.unpacked` into the built product, without which oniguruma never loads and every file renders untokenized.
-It patches vscode and vscodium alike, both being built from the same nixpkgs generic builder.
+`overlays/` holds the ones no input provides: `clan.nix` and `slip.nix` lift a package out of an input that exports no overlay of its own (`clan-core`, and the `zettelkasten` flake whose package is `slip`).
 Software with no nixpkgs package and no upstream flake is packaged in https://github.com/unmango/pkgs and reaches this flake through the `mangopkgs` overlay, so a module can take it as a `package` option default the same as any nixpkgs attribute.
 There is no `pkgs/` directory here.
 
