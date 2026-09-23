@@ -2,6 +2,7 @@
 let
   inherit (inputs.nixpkgs.lib) composeManyExtensions;
 
+  claude-code = import ./overlays/claude-code.nix;
   clan = import ./overlays/clan.nix { inherit (inputs) clan-core; };
   slip = import ./overlays/slip.nix { inherit (inputs) zettelkasten; };
 in
@@ -15,6 +16,7 @@ composeManyExtensions (
     nix-vscode-extensions.overlays.default
     # Composes gomod2nix's overlay in
     tdl.overlays.default
+    claude-code.overlays.default
     clan.overlays.default
     slip.overlays.default
 

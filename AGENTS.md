@@ -253,6 +253,9 @@ Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-ex
 
 `tdl.overlays.default` composes gomod2nix's overlay in (tdl is built with its `buildGoApplication`), so `buildGoApplication` and `mkGoEnv` land in `pkgs` alongside `tdl` and `vscode-tdl`.
 `overlays/` holds the ones no input provides: `clan.nix` and `slip.nix` lift a package out of an input that exports no overlay of its own (`clan-core`, and the `zettelkasten` flake whose package is `slip`).
+`claude-code.nix` overrides nixpkgs' claude-code with a newer release by pointing its `manifest` argument at `overlays/claude-code-manifest.zst.json`, a copy of `https://downloads.claude.ai/claude-code-releases/<version>/manifest.zst.json`.
+nixpkgs tracks the CLI a few releases behind, and the model list is baked into the binary, so a model newer than the packaged release is unreachable until the manifest moves.
+Refresh it by downloading the manifest for the wanted version; the derivation takes both the version and the per-platform checksums from that file.
 Software with no nixpkgs package and no upstream flake is packaged in https://github.com/unmango/pkgs and reaches this flake through the `mangopkgs` overlay, so a module can take it as a `package` option default the same as any nixpkgs attribute.
 There is no `pkgs/` directory here.
 
