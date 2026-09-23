@@ -233,7 +233,7 @@
 
         homeConfigurations =
           let
-            home =
+            homeFor =
               system: host:
               inputs.home-manager.lib.homeManagerConfiguration {
                 pkgs = inputs.nixpkgs.legacyPackages.${system};
@@ -250,29 +250,15 @@
                     ./hosts/common.nix
                     host
                   ];
-
-                nixpkgs.overlays = [ self.overlays.default ];
-                nixpkgs.config.allowUnfree = true;
-
-                # Home Manager asserts `nix.package != null` whenever `nix.settings` is set.
-                nix.package = inputs.nixpkgs.legacyPackages.${system}.nix;
-                nix.settings = {
-                  extra-substituters = [ "https://unstoppablemango.cachix.org" ];
-                  extra-trusted-public-keys = [
-                    "unstoppablemango.cachix.org-1:m7uEI6X1Ov8DyFWJQX4WsRFRWFuzRW5c/Xms8ZaP74U="
-                  ];
-                };
-
-                dotfiles.ssh.hosts = inputs.hosts.lib.addresses;
               };
           in
           {
-            "erik@darter" = home "x86_64-linux" ./hosts/darter.nix;
-            "erik@hades" = home "x86_64-linux" ./hosts/hades.nix;
-            "erik@server" = home "x86_64-linux" ./hosts/server.nix;
-            "generic@x86_64-linux" = home "x86_64-linux" ./hosts/generic.nix;
-            "generic@aarch64-darwin" = home "aarch64-darwin" ./hosts/generic.nix;
-            "generic@container" = home "x86_64-linux" ./hosts/container.nix;
+            "erik@darter" = homeFor "x86_64-linux" ./hosts/darter.nix;
+            "erik@hades" = homeFor "x86_64-linux" ./hosts/hades.nix;
+            "erik@server" = homeFor "x86_64-linux" ./hosts/server.nix;
+            "generic@x86_64-linux" = homeFor "x86_64-linux" ./hosts/generic.nix;
+            "generic@aarch64-darwin" = homeFor "aarch64-darwin" ./hosts/generic.nix;
+            "generic@container" = homeFor "x86_64-linux" ./hosts/container.nix;
           };
       };
 
