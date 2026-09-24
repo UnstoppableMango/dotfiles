@@ -43,6 +43,14 @@
   # Every paid model goes through OpenRouter; see modules/openrouter/.
   dotfiles.openrouter.apiKeySecret = "openrouter-api-key";
 
+  # Fine-grained PAT for the GitHub MCP server; see docs/github-token.md.
+  sops.secrets."github-pat" = {
+    sopsFile = ./secrets/github.yaml;
+    key = "github_pat";
+  };
+
+  dotfiles.github.token.secret = "github-pat";
+
   programs = {
     ripgrep-all.enable = true;
 

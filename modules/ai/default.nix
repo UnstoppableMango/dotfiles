@@ -24,14 +24,6 @@ let
     type = "http";
     url = "https://gitlab.com/api/v4/mcp";
   };
-
-  # The `${...}` is expanded by the reading client, not by nix. Copilot CLI does
-  # so; a client that does not passes the literal string as the bearer token.
-  github = {
-    type = "http";
-    url = "https://api.githubcopilot.com/mcp/";
-    headers.Authorization = "Bearer \${GITHUB_PERSONAL_ACCESS_TOKEN}";
-  };
 in
 {
   imports = [
@@ -53,6 +45,7 @@ in
     ./figma.nix
     ./fsharp.nix
     ./gh-stack.nix
+    ./github.nix
     ./git-mcp.nix
     ./go.nix
     ./gossamer.nix
@@ -93,7 +86,7 @@ in
     programs.mcp.enable = true;
 
     programs.mcp.servers = {
-      inherit pulumi gitlab github;
+      inherit pulumi gitlab;
     };
 
     programs.claude-code = {
@@ -112,7 +105,7 @@ in
       enable = cfg.copilot.enable;
       context = ./global-context.md;
       mcpServers = {
-        inherit pulumi gitlab github;
+        inherit pulumi gitlab;
       };
     };
 
