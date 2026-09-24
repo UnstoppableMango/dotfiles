@@ -201,9 +201,9 @@
 
         homeModules = {
           dotfiles.imports = with inputs; [
-            ./modules
             nix2git.homeModules.nix2git
             tdl.homeModules.tdl
+            ./modules
           ];
         };
 

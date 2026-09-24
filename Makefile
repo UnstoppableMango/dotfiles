@@ -1,14 +1,8 @@
 SRC != find -path '*.nix' -printf '%P\n'
 
-# `$(shell ...)` rather than `!=`: macOS ships GNU Make 3.81, which predates
-# the `!=` shell assignment and would silently leave this empty.
 HOST ?= $(shell hostname -s)
-UNAME_S := $(shell uname -s)
 
-# The most specific home configuration for the current host: darwin builds
-# the identity-free generic config, darter/hades build their own named
-# config, and any other Linux box falls back to erik@server.
-ifeq (${UNAME_S},Darwin)
+ifeq ($(shell uname -s),Darwin)
 HOME_CONFIG ?= generic@aarch64-darwin
 else ifeq (${HOST},darter)
 HOME_CONFIG ?= erik@darter
@@ -42,18 +36,14 @@ system:
 format fmt:
 	nix fmt
 
+.PHONY: flake.lock
 flake.lock: ${SRC}
 	nix flake update
 
 flake.nix:
 	nix flake init
 
-p10k: # This doesn't actually work in make, but its copy-pastable
+p10k: # This doesn't actually work in make, but it's copy-pastable
 	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/modules/zsh/.p10k.zsh p10k configure
 
-# `home` names a real directory in this repo, so without this make treats the
-# target as already built and refuses to run it. The rest are listed for the
-# same reason should a directory ever grow into their name.
 .PHONY: build check watch update home system format fmt p10k
-
-.PHONY: flake.lock
