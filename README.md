@@ -4,6 +4,7 @@
 [![Last commit](https://img.shields.io/github/last-commit/UnstoppableMango/dotfiles)](https://github.com/UnstoppableMango/dotfiles/commits/main)
 [![License: MIT](https://img.shields.io/github/license/UnstoppableMango/dotfiles)](LICENSE)
 [![Nix flake](https://img.shields.io/badge/nix-flake-blue?logo=nixos)](flake.nix)
+[![Hercules CI](https://hercules-ci.com/api/v1/site/github/account/UnstoppableMango/project/dotfiles/badge)](https://hercules-ci.com/github/UnstoppableMango/dotfiles)
 
 [Nix](https://nixos.org) has consumed my dotfiles.
 `main` is not stable, my NixOS system configurations live over at [UnstoppableMango/nixos](https://github.com/UnstoppableMango/nixos).
