@@ -157,6 +157,13 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `dotfiles.homeManager.flakePath` names the checkout and is baked into the script, so it needs neither a cwd nor an environment; `configuration` overrides the `$USER@$HOSTNAME` name home-manager infers, and `backupExtension` the `-b hm-backup` it passes.
 - `flake-update/` - flake-update automation, switching the same checkout `home-manager/` names (`dotfiles.automation.flakeUpdate.flakePath` defaults to `dotfiles.homeManager.flakePath`)
 - `brave/` - Brave
+- `github/` - a GitHub personal access token held in sops, for the GitHub MCP server.
+  `dotfiles.github.token.secret` names a `sops.secrets` entry and turns the module on, the same shape as `dotfiles.openrouter.apiKeySecret`; `home/default.nix` sets it to `github-pat` from `home/secrets/github.yaml`.
+  GitHub has no API for creating a PAT, so rotation keeps one manual step, and the module automates the rest.
+  A daily `github-token-expiry` user timer reads the `github-authentication-token-expiration` header GitHub returns on any authenticated request, and sends a desktop notification (`notify-send`, a no-op without a session bus) inside `warnDays` of expiry or on a 401.
+  `github-token-rotate` reads a new token from stdin, checks it against the API, and writes it into the sops file in `dotfiles.homeManager.flakePath` with `sops set`.
+  `modules/ai/github.nix` wraps `claude` and `copilot` to export `GITHUB_PERSONAL_ACCESS_TOKEN` from the decrypted file at launch, since both the Claude `github` plugin and Copilot CLI expand that variable in the server's `Authorization` header; the remote-control unit runs the wrapped `claude` through `finalPackage`.
+  `docs/github-token.md` is the rotation runbook.
 - `launch-services/`: macOS-only, and unreached, since no darwin configuration is defined.
   `launch-services.nix` registers the app bundles under `~/Applications/Home Manager Apps` with Launch Services (`lsregister`, which backs `open -a`, the Dock, and Launchpad) and the Spotlight metadata index (`mdimport`, which backs Cmd+Space) on every activation.
   Home Manager copies the bundles there but tells neither, and rsync writes them with normalized timestamps, so the fsevents that would trigger an automatic reindex do not reliably fire and an app can sit fully installed yet unreachable from every launcher.
