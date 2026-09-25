@@ -293,6 +293,10 @@
           treefmt = {
             programs.nixfmt.enable = true;
             programs.prettier.enable = true;
+
+            # sops rewrites these files in its own YAML layout on every edit,
+            # so prettier re-indenting them turns each edit into two diffs.
+            settings.global.excludes = [ "home/secrets/*" ];
           };
         };
     };
