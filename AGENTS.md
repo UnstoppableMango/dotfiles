@@ -97,7 +97,7 @@ That also keeps the tree composable into someone else's Home Manager NixOS modul
 `nix.package` follows the same rule for the same reason: Home Manager needs a non-null one to render a nix.conf at all, a package is not a mergeable value, so naming it in two modules is a conflict rather than a merge, and its own null default occupies the rung below `mkOptionDefault`.
 `hosts/common.nix` names it once and modules that write `nix.settings` (`modules/zed/`, and the Cachix substituter below) leave it alone; a consumer taking `homeModules.dotfiles` without that file sets it themselves.
 
-`make build` builds a configuration picked from `hostname -s`: darter and hades build their own, macOS builds `generic@aarch64-darwin`, and any other Linux box falls back to `erik@server`.
+`make build` builds a configuration picked from `hostname -s`: darter and hades build their own (on hades, `$USER@hades`), macOS builds `generic@aarch64-darwin`, and any other Linux box falls back to `erik@server`.
 Set `HOME_CONFIG` to build a different one, e.g. `make build HOME_CONFIG=erik@hades`.
 
 Environment variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC`, `HOME_CONFIG` (all have defaults).
@@ -237,7 +237,8 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   When gpg is on, scdaemon is set to `disable-ccid` and `pcsc-shared`, so it reaches the key through pcscd without holding it exclusively and ykman keeps working alongside gpg-agent.
   `pcscd` and the udev rules are system services outside Home Manager's reach: the nixos repo supplies them on hades, and darter needs the distribution packages.
 
-Six home configurations are built: `erik@darter`, `erik@hades`, `erik@server`, and `generic@container` on x86_64-linux, plus `generic@x86_64-linux` and `generic@aarch64-darwin`.
+Seven home configurations are built: `erik@darter`, `erik@hades`, `erik@server`, `tz@hades`, and `generic@container` on x86_64-linux, plus `generic@x86_64-linux` and `generic@aarch64-darwin`.
+`tz@hades` builds `hosts/tz-hades.nix`, a second account on hades that imports nothing from `home/`; the nixos repo creates the account and installs the `home-manager` CLI for it.
 No machine is actually named `server`; that entry exists so `hosts/server.nix` is covered by `nix flake check` rather than only breaking whenever someone next touches it.
 
 `generic@x86_64-linux` and `generic@aarch64-darwin` are the same idea one layer out: both build `hosts/generic.nix`, which turns most modules on (brave and gnome on Linux only), imports nothing from `home/`, and sets a throwaway account whose home directory follows the platform, so `homeModules.dotfiles` is built here rather than only breaking in somebody else's flake.

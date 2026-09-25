@@ -18,6 +18,7 @@ This repo manages my [Home Manager](https://nix-community.github.io/home-manager
 | `erik@darter`            | x86_64-linux   |
 | `erik@hades`             | x86_64-linux   |
 | `erik@server`            | x86_64-linux   |
+| `tz@hades`               | x86_64-linux   |
 | `generic@x86_64-linux`   | x86_64-linux   |
 | `generic@aarch64-darwin` | aarch64-darwin |
 
@@ -25,7 +26,8 @@ No machine is named `server`; that entry exists so the headless host file is cov
 Neither is any machine or person named `generic`.
 Those two build most of the modules with no identity attached, so the export below stays working for somebody who is not me instead of only breaking in their flake.
 
-`erik@darter` and `erik@hades` are both standalone Home Manager installs, switched with `make home`.
+`erik@darter`, `erik@hades` and `tz@hades` are standalone Home Manager installs, switched with `make home`.
+On hades, `make home` picks the configuration matching `$USER`.
 Hades is also a NixOS machine, so its system half comes from the [nixos](https://github.com/UnstoppableMango/nixos) repo via `make system`; that repo takes only `overlays.default` and the dev shell from here.
 
 ## Layout

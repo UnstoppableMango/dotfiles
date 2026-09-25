@@ -234,6 +234,7 @@
             "erik@darter" = homeFor "x86_64-linux" ./hosts/darter.nix;
             "erik@hades" = homeFor "x86_64-linux" ./hosts/hades.nix;
             "erik@server" = homeFor "x86_64-linux" ./hosts/server.nix;
+            "tz@hades" = homeFor "x86_64-linux" ./hosts/tz-hades.nix;
             "generic@x86_64-linux" = homeFor "x86_64-linux" ./hosts/generic.nix;
             "generic@aarch64-darwin" = homeFor "aarch64-darwin" ./hosts/generic.nix;
             "generic@container" = homeFor "x86_64-linux" ./hosts/container.nix;

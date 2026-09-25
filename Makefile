@@ -7,7 +7,7 @@ HOME_CONFIG ?= generic@aarch64-darwin
 else ifeq (${HOST},darter)
 HOME_CONFIG ?= erik@darter
 else ifeq (${HOST},hades)
-HOME_CONFIG ?= erik@hades
+HOME_CONFIG ?= ${USER}@hades
 else
 HOME_CONFIG ?= erik@server
 endif
