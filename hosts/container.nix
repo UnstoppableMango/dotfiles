@@ -4,7 +4,9 @@
   # Same shape as `generic.nix` minus anything that needs a session or a
   # machine: no GUI, no 1Password (its agent socket belongs to the desktop
   # app), no sops (an image holds no age key), no gpg-agent (pinentry needs
-  # a session), and no containers (rootless podman does not run inside one).
+  # a session). It runs as the Claude agent in the-cluster's `apps/claude`
+  # pod, which supplies dockerd, a nix-daemon, and the user namespace that
+  # rootless podman needs.
   home = {
     username = "generic";
     homeDirectory = "/home/generic";
@@ -33,6 +35,27 @@
       xz
       zip
       zstd
+
+      # What the owner's repositories use outside a devShell: Makefiles,
+      # CI steps, and the repositories that have no flake.
+      age
+      buf
+      bun
+      chart-testing
+      cosign
+      dprint
+      golangci-lint
+      goreleaser
+      kind
+      kubeseal
+      kustomize
+      opentofu
+      pulumi-bin
+      regclient
+      shellcheck
+      sops
+      yarn
+      yq-go
     ];
 
     sessionVariables = {
@@ -54,6 +77,28 @@
     c.enable = true;
     go.enable = true;
     python.enable = true;
+    rust.enable = true;
+    nix.enable = true;
+    dotnet = {
+      enable = true;
+      # 8 for the repositories still on it, 10 for the rest.
+      sdks = with pkgs.dotnetCorePackages; [
+        sdk_8_0
+        sdk_10_0
+      ];
+    };
+
+    # Clients only: the pod runs dockerd as a sidecar and podman rootless in
+    # this container, so there is no socket unit to start and no TUI to use.
+    containers = {
+      enable = true;
+      tui = false;
+      # No system layer provides /etc/containers here.
+      userRegistryConfig = true;
+    };
+    # kubectl reads the pod's in-cluster ServiceAccount token.
+    kubernetes.enable = true;
+    k9s.enable = false;
 
     ai = {
       enable = true;
@@ -82,9 +127,12 @@
       # Size, not function: gossamer alone pulls in LLVM 18.
       gitMcp.enable = false;
       gossamer.enable = false;
-      nix.enable = false;
-      rust.enable = false;
-      typescript.enable = false;
+
+      # These sign in through a browser, which a headless session never
+      # opens. Context7 covers documentation lookups.
+      cloudflare.enable = false;
+      gitlab.enable = false;
+      pulumi.enable = false;
     };
   };
 
@@ -106,6 +154,18 @@
     # Its git integration sets pagers that pipe into less.
     diff-highlight.enable = lib.mkForce false;
   };
+
+  # Rootless podman with no systemd and no cgroup delegated to this user:
+  # cgroupfs, containers without their own cgroups, and events to a file
+  # rather than the journal.
+  xdg.configFile."containers/containers.conf".text = ''
+    [containers]
+    cgroups = "disabled"
+
+    [engine]
+    cgroup_manager = "cgroupfs"
+    events_logger = "file"
+  '';
 
   i18n.glibcLocales = pkgs.glibcLocales.override {
     allLocales = false;
