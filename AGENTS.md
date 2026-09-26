@@ -253,7 +253,12 @@ It also leaves off neovim, whose curated LSP set bundles every language server, 
 The `ai.*` integrations that default on but need a display or a toolchain the image lacks (azure, chromeDevtools, playwright, csharp, fsharp, haskell, ocaml) are off too.
 For size it also drops the nix, javascript, and kubernetes toolchains, helix, the `home-manager` CLI (the image is never activated or switched), `programs.vim` (Home Manager builds it from `vim-full`), the gitMcp, gossamer, nix, rust, and typescript `ai.*` integrations, and every glibc locale except `en_US.UTF-8`.
 The image is built with nix2container.
-Activation needs a writable home, so it cannot run at build time; the image copies the activation package's `home-files` tree into `/home/generic` instead, and puts `home.path/bin` on `PATH`.
+Nothing in `/home/generic` is baked in, so `$HOME` can be a volume that keeps state across restarts (the-cluster mounts a PVC there for Claude Code's remote-control).
+The entrypoint places home files at every start with putter, Home Manager's alternative file activator, which is the whole of `linkGeneration` in that mode and needs no nix; the full `activate` script cannot run, since it calls `nix-build` and `nix-env`.
+Putter reads the manifest Home Manager generates (`home.internal.filePutterConfig`) and keeps its state in `~/.local/state/home-manager/putter-state.json`, so a file a later image drops is removed and every other file in `$HOME` is left alone.
+A regular file at a managed path fails the start, as `home-manager switch` does without `-b`.
+Kubernetes callers pass their command as `args`, because `command` replaces the entrypoint.
+`home.path/bin` is on `PATH`.
 A third CI job, `image`, builds it on every run and pushes `ghcr.io/unstoppablemango/dotfiles` as `:latest` and `:<short-sha>` from `main` only.
 
 Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-extensions, tdl) are composed in `flake.nix` and applied to nixpkgs, alongside the local ones from `overlays/`.

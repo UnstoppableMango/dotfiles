@@ -265,7 +265,7 @@
               inherit pkgs;
               inherit (inputs'.nix2container.packages) nix2container;
               inherit (self.homeConfigurations."generic@container".config.home) username homeDirectory path;
-              homeFiles = "${self.homeConfigurations."generic@container".activationPackage}/home-files";
+              putterManifest = self.homeConfigurations."generic@container".config.home.internal.filePutterConfig;
             };
           };
 
