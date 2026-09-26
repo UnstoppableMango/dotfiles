@@ -223,7 +223,10 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   The file route rather than `OCO_API_KEY` in the environment, since the `prepare-commit-msg` hook also fires for editor and GUI commits that never see a login shell.
   `dotfiles.git.openCommit.models` seeds `~/.opencommit-models.json` when it is absent or empty, because only `oco models --refresh` ever writes that file and the package's own MODEL_LIST lags the provider API by months.
   It is a discovery aid rather than a gate: opencommit validates `OCO_MODEL` as a string and nothing more.
-  With OpenRouter on, `openrouter/opencommit.nix` supplies the key, provider, and model.
+  `dotfiles.git.openCommit.typeEmoji` has the hook insert an emoji after the generated Conventional Commit prefix (`feat(git): ✨ ...`), keyed by type.
+  The hook does this rather than `OCO_EMOJI`, which replaces the conventional-commit prompt with a GitMoji one that drops the type, so an assertion rejects the two together.
+  With OpenRouter on, `openrouter/opencommit.nix` supplies the key, provider, and model, and raises `OCO_TOKENS_MAX_INPUT` to 128000.
+  Below that limit oco drafts one message for the whole diff; above it, it drafts one per file chunk and joins them, which puts several title lines in one commit.
   `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); a host supplies the admin cert and key paths, and omitting them yields the OIDC context alone (which is what darter takes).
   `containers/` installs both stacks side by side: podman (with buildah, skopeo, podman-compose) and `docker-client`, the CLI without the daemon, since a system dockerd is outside Home Manager's reach.
   `docker compose` and `docker buildx` are linked into `~/.docker/cli-plugins` because the CLI resolves subcommands there rather than from PATH.

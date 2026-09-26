@@ -30,6 +30,12 @@ in
       settings = {
         OCO_AI_PROVIDER = lib.mkDefault "openrouter";
         OCO_MODEL = lib.mkDefault opencommit.model;
+
+        # Past this limit oco splits the diff per file, drafts a message for
+        # each chunk, and joins them, so one commit gets several title lines.
+        # Upstream's 4096 is sized for small local models; both tiers here
+        # take far more.
+        OCO_TOKENS_MAX_INPUT = lib.mkDefault 128000;
       };
     };
   };

@@ -121,6 +121,34 @@ in
       '';
     };
 
+    typeEmoji = lib.mkOption {
+      type = with lib.types; attrsOf str;
+      default = {
+        feat = "✨";
+        fix = "🐛";
+        docs = "📝";
+        style = "🎨";
+        refactor = "♻️";
+        perf = "⚡️";
+        test = "✅";
+        build = "📦️";
+        ci = "👷";
+        chore = "🔧";
+        revert = "⏪️";
+        deps = "⬆️";
+      };
+      description = ''
+        Emoji the hook inserts after a generated message's Conventional
+        Commit prefix, keyed by type, so `feat(git): add x` becomes
+        `feat(git): ✨ add x`. A type missing here is left alone, and an
+        empty set turns the rewrite off.
+
+        This is done in the hook rather than with `OCO_EMOJI`, because that
+        setting swaps the conventional-commit prompt for a GitMoji one that
+        drops the type entirely.
+      '';
+    };
+
     models = lib.mkOption {
       type = with lib.types; attrsOf (listOf str);
       default = { };
@@ -158,6 +186,15 @@ in
               which is not declared in sops.secrets. sops-nix resolves
               placeholders against that set, so the template would render the
               literal placeholder string as the API key.
+            '';
+          }
+          {
+            assertion = cfg.typeEmoji == { } || !(cfg.settings.OCO_EMOJI or false);
+            message = ''
+              dotfiles.git.openCommit.settings.OCO_EMOJI replaces the
+              conventional-commit prompt with a GitMoji one that has no type
+              prefix, so typeEmoji has nothing to attach to. Leave OCO_EMOJI
+              off, or set typeEmoji = { } to use GitMoji alone.
             '';
           }
           {
@@ -200,16 +237,33 @@ in
         # script that require()s cli.cjs instead, which keeps the hook path in
         # argv[1]. The test fails the build if nixpkgs moves cli.cjs, rather
         # than leaving a hook that cannot run.
+        #
+        # The exit handler applies typeEmoji once oco has written the draft.
+        # It skips any commit with a source (-m, amend, merge, squash), which
+        # is the same condition oco uses to skip generating.
         xdg.configFile."git/hooks/prepare-commit-msg".source =
           let
             cli = "${pkgs.opencommit}/lib/opencommit/cli.cjs";
+            hook = pkgs.writeText "prepare-commit-msg.js" ''
+              const typeEmoji = ${builtins.toJSON cfg.typeEmoji};
+              const [file, source] = process.argv.slice(2);
+              if (file && !source && Object.keys(typeEmoji).length > 0) {
+                process.on("exit", () => {
+                  const fs = require("fs");
+                  const [title, ...rest] = fs.readFileSync(file, "utf8").split("\n");
+                  const m = title.match(/^(\w+)(\([^)]*\))?(!?): (.*)$/);
+                  const emoji = m && Object.hasOwn(typeEmoji, m[1]) && typeEmoji[m[1]];
+                  if (!emoji || m[4].startsWith(emoji)) return;
+                  const newTitle = `''${m[1]}''${m[2] ?? ""}''${m[3]}: ''${emoji} ''${m[4]}`;
+                  fs.writeFileSync(file, [newTitle, ...rest].join("\n"));
+                });
+              }
+              require("${cli}");
+            '';
           in
           pkgs.runCommand "opencommit-prepare-commit-msg" { } ''
             test -f ${cli}
-            cat > $out <<'EOF'
-            #!${lib.getExe pkgs.nodejs}
-            require("${cli}");
-            EOF
+            { echo '#!${lib.getExe pkgs.nodejs}'; cat ${hook}; } > $out
             chmod +x $out
           '';
 
