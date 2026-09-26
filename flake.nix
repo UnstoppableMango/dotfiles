@@ -261,14 +261,22 @@
                 ];
               }).config.build.package;
           }
-          // lib.optionalAttrs (system == "x86_64-linux") {
-            container = import ./container.nix {
-              inherit pkgs;
-              inherit (inputs'.nix2container.packages) nix2container;
-              inherit (self.homeConfigurations."generic@container".config.home) username homeDirectory path;
-              putterManifest = self.homeConfigurations."generic@container".config.home.internal.filePutterConfig;
-            };
-          };
+          // lib.optionalAttrs (system == "x86_64-linux") (
+            let
+              container = import ./container.nix {
+                inherit pkgs lib;
+                inherit (inputs'.nix2container.packages) nix2container;
+                inherit (self.homeConfigurations."generic@container".config.home) username homeDirectory path;
+                putterManifest = self.homeConfigurations."generic@container".config.home.internal.filePutterConfig;
+              };
+            in
+            {
+              container = container.image;
+              # The profile the image names but does not carry. CI builds it
+              # so the cache holds it before any pod asks for it.
+              container-env = container.env;
+            }
+          );
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
