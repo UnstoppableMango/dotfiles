@@ -34,6 +34,12 @@
       zip
       zstd
     ];
+
+    sessionVariables = {
+      GH_PAGER = "cat";
+      MANPAGER = "cat";
+      PAGER = "cat";
+    };
   };
 
   dotfiles = {
@@ -42,7 +48,8 @@
     # The image runs no systemd user manager to host an agent.
     ssh.agent = null;
     zsh.enable = true;
-    zsh.ohMyZsh.enable = true;
+    # No terminal ever renders a prompt here.
+    zsh.p10kConfig = null;
 
     c.enable = true;
     go.enable = true;
@@ -84,12 +91,20 @@
   programs = {
     tdl.enable = true;
 
-    fzf.enable = true;
     grep.enable = true;
-    htop.enable = true;
     jq.enable = true;
-    less.enable = true;
     ripgrep.enable = true;
+
+    # Nothing reads a pager or an editor here: output goes to an agent, not a
+    # terminal. `cat` keeps paging commands printing, and `true` lets a merge
+    # or rebase keep its default message instead of waiting on nvim.
+    git.settings.core = {
+      editor = lib.mkForce "true";
+      pager = "cat";
+    };
+    gh.settings.pager = "cat";
+    # Its git integration sets pagers that pipe into less.
+    diff-highlight.enable = lib.mkForce false;
   };
 
   i18n.glibcLocales = pkgs.glibcLocales.override {

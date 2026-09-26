@@ -254,6 +254,10 @@ It leaves off every GUI module plus 1Password (its agent socket belongs to the d
 It sets `dotfiles.ssh.agent = null`, since the image runs no systemd user manager to host an agent.
 Coreutils come from uutils (`uutils-coreutils-noprefix`), in both the image's base layer and the profile, and the base layer adds `/usr/bin/env` for env-shebang scripts.
 The profile carries the rest of the userland scripts expect (sed, awk, diffutils, findutils, make, tar and the compressors, curl, ssh, procps, which, file, patch, rsync), since nothing else in it does.
+Nothing in it is interactive: its output goes to an agent, not a terminal.
+So it sets `dotfiles.zsh.p10kConfig = null` and leaves off oh-my-zsh, fzf, htop, and less.
+`PAGER`, `GH_PAGER`, `MANPAGER`, git's `core.pager`, and gh's `pager` are `cat`, and git's diff-highlight integration is off, since it pipes into less.
+Git's `core.editor` is `true`, so a merge or rebase keeps its default message instead of waiting on nvim, which the image does not install.
 It also leaves off neovim, whose curated LSP set bundles every language server, and every agent CLI other than Claude Code (`ai.copilot`, `ai.cursor.cli`, `ai.coderabbit`, `ai.omnigent`, `ai.opencode`).
 The `ai.*` integrations that default on but need a display or a toolchain the image lacks (azure, chromeDevtools, playwright, csharp, fsharp, haskell, ocaml) are off too.
 For size it also drops the nix, javascript, and kubernetes toolchains, helix, the `home-manager` CLI (the image is never activated or switched), `programs.vim` (Home Manager builds it from `vim-full`), the gitMcp, gossamer, nix, rust, and typescript `ai.*` integrations, and every glibc locale except `en_US.UTF-8`.
