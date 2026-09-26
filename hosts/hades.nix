@@ -75,11 +75,6 @@
     # behind the house firewall: the server itself authenticates nothing.
     ai.omnigent.listenAddress = "0.0.0.0";
 
-    # Keep this machine reachable from claude.ai/code and the mobile apps
-    # without a terminal open. Outbound-only: the server registers with
-    # Anthropic and opens no inbound port.
-    ai.remoteControl.enable = true;
-
     # hades holds the admin identity, so it owns ~/.kube/config outright
     # rather than merging a side file into KUBECONFIG the way darter does.
     kubernetes.rosequartz = {
