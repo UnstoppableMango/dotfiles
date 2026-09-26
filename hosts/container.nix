@@ -26,6 +26,9 @@
     ai = {
       enable = true;
 
+      # gh holds the GitHub App token the-cluster's sidecar rotates hourly.
+      github.ghAuth = true;
+
       # Claude Code only: every other agent CLI is off.
       copilot.enable = false;
       cursor.cli.enable = false;
