@@ -228,8 +228,10 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   With OpenRouter on, `openrouter/opencommit.nix` supplies the key, provider, and model, and raises `OCO_TOKENS_MAX_INPUT` to 128000.
   Below that limit oco drafts one message for the whole diff; above it, it drafts one per file chunk and joins them, which puts several title lines in one commit.
   `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); a host supplies the admin cert and key paths, and omitting them yields the OIDC context alone (which is what darter takes).
+  It also installs `kubelogin-oidc`, the `kubectl oidc-login` plugin that context calls, so a host without the context goes without it.
   `containers/` installs both stacks side by side: podman (with buildah, skopeo, podman-compose) and `docker-client`, the CLI without the daemon, since a system dockerd is outside Home Manager's reach.
   `docker compose` and `docker buildx` are linked into `~/.docker/cli-plugins` because the CLI resolves subcommands there rather than from PATH.
+  podman-tui follows `dotfiles.containers.tui`, on by default.
   `REGISTRY_AUTH_FILE` points podman, skopeo, and buildah at `~/.docker/config.json`, so one `docker login` serves both (`dotfiles.containers.sharedAuth`).
   `dotfiles.containers.podmanSocket` and `.userRegistryConfig` default to `targets.genericLinux.enable`: non-NixOS hosts get the rootless `podman.socket`/`podman.service` user units and `~/.config/containers/{policy.json,registries.conf}`, which the podman package carries no defaults for, while NixOS hosts keep the system layer's units and `/etc/containers` authoritative.
 - `gnome/` - the GNOME option, the extension packages, and the derived `enabled-extensions` list.
@@ -250,7 +252,7 @@ No machine is actually named `server`; that entry exists so `hosts/server.nix` i
 That takes two jobs: `check` on `ubuntu-latest` for the linux configurations, and `darwin` on `macos-latest` (Apple Silicon, so aarch64-darwin) for the darwin one, which gets a real build rather than an evaluation.
 
 `generic@container` builds `hosts/container.nix`, the headless, identity-free configuration behind `packages.container` (x86_64-linux only, built by `container.nix`).
-It leaves off every GUI module plus 1Password (its agent socket belongs to the desktop app), sops (an image holds no age key), gnupg (pinentry needs a session), and containers (rootless podman does not run inside a container).
+It leaves off every GUI module plus 1Password (its agent socket belongs to the desktop app), sops (an image holds no age key), and gnupg (pinentry needs a session).
 It sets `dotfiles.ssh.agent = null`, since the image runs no systemd user manager to host an agent.
 Coreutils come from uutils (`uutils-coreutils-noprefix`), in both the image's base layer and the profile, and the base layer adds `/usr/bin/env` for env-shebang scripts.
 The profile carries the rest of the userland scripts expect (sed, awk, diffutils, findutils, make, tar and the compressors, curl, ssh, procps, which, file, patch, rsync), since nothing else in it does.
@@ -260,7 +262,14 @@ So it sets `dotfiles.zsh.p10kConfig = null` and leaves off oh-my-zsh, fzf, htop,
 Git's `core.editor` is `true`, so a merge or rebase keeps its default message instead of waiting on nvim, which the image does not install.
 It also leaves off neovim, whose curated LSP set bundles every language server, and every agent CLI other than Claude Code (`ai.copilot`, `ai.cursor.cli`, `ai.coderabbit`, `ai.omnigent`, `ai.opencode`).
 The `ai.*` integrations that default on but need a display or a toolchain the image lacks (azure, chromeDevtools, playwright, csharp, fsharp, haskell, ocaml) are off too.
-For size it also drops the nix, javascript, and kubernetes toolchains, helix, the `home-manager` CLI (the image is never activated or switched), `programs.vim` (Home Manager builds it from `vim-full`), the gitMcp, gossamer, nix, rust, and typescript `ai.*` integrations, and every glibc locale except `en_US.UTF-8`.
+For size it also drops helix, the `home-manager` CLI (the image is never activated or switched), `programs.vim` (Home Manager builds it from `vim-full`), the gitMcp and gossamer `ai.*` integrations, and every glibc locale except `en_US.UTF-8`.
+The cloudflare, gitlab, and pulumi `ai.*` integrations are off because they sign in through a browser.
+It carries the toolchains the owner's repositories need: c, go, python, rust, nix, and dotnet with SDKs 8 and 10 (`dotfiles.dotnet.sdks`).
+Node comes from `pkgs.nodejs`, which several `ai.*` modules install, rather than the javascript module's fnm, plus bun and yarn.
+Its `home.packages` also lists the CLIs those repositories use outside a devShell (buf, dprint, golangci-lint, goreleaser, kind, kustomize, kubeseal, opentofu, pulumi, sops, and similar); a repository with a devShell gets the rest from `nix develop`.
+It runs as the Claude agent in the-cluster's `apps/claude` pod, which supplies a dockerd sidecar, a nix-daemon, a ServiceAccount token, and the user namespace rootless podman runs in.
+So `dotfiles.containers` is on with the clients only (`tui = false`, `userRegistryConfig = true`), and `containers.conf` sets the cgroupfs manager, `cgroups = "disabled"`, and a file event logger, since the pod has no systemd and delegates no cgroup to the user.
+`dotfiles.kubernetes` is on with k9s off, and kubectl finds the in-cluster token without a kubeconfig.
 The image is built with nix2container.
 Nothing in `/home/generic` is baked in, so `$HOME` can be a volume that keeps state across restarts (the-cluster mounts a PVC there for Claude Code's remote-control).
 The entrypoint places home files at every start with putter, Home Manager's alternative file activator, which is the whole of `linkGeneration` in that mode and needs no nix; the full `activate` script cannot run, since it calls `nix-build` and `nix-env`.

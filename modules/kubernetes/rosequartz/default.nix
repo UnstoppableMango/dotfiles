@@ -1,4 +1,9 @@
-{ lib, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 let
   cfg = config.dotfiles.kubernetes.rosequartz;
 
@@ -200,6 +205,10 @@ in
             '';
           }
         ];
+
+        # Provides kubectl-oidc_login, the plugin the OIDC context shells out
+        # to as `kubectl oidc-login`.
+        home.packages = [ pkgs.kubelogin-oidc ];
       }
 
       (lib.mkIf (cfg.sopsTemplate == null) {
