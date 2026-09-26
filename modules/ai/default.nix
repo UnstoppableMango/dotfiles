@@ -14,16 +14,6 @@ let
     rev = "67a666efc8524ff7abaa266f84e514aa77aee48f";
     sha256 = "sha256-PZNjydvhQh2fSbIxRk6+5plJMdD5cYLwZsHNzh3Eowg=";
   };
-
-  pulumi = {
-    type = "http";
-    url = "https://mcp.ai.pulumi.com/mcp";
-  };
-
-  gitlab = {
-    type = "http";
-    url = "https://gitlab.com/api/v4/mcp";
-  };
 in
 {
   imports = [
@@ -47,6 +37,7 @@ in
     ./gh-stack.nix
     ./github.nix
     ./git-mcp.nix
+    ./gitlab.nix
     ./go.nix
     ./gossamer.nix
     ./haskell.nix
@@ -58,6 +49,7 @@ in
     ./omnigent.nix
     ./opencode.nix
     ./playwright.nix
+    ./pulumi.nix
     ./remote-control.nix
     ./rust.nix
     ./slack.nix
@@ -85,10 +77,6 @@ in
   config = lib.mkIf cfg.enable {
     programs.mcp.enable = true;
 
-    programs.mcp.servers = {
-      inherit pulumi gitlab;
-    };
-
     programs.claude-code = {
       enable = true;
       context = ./global-context.md;
@@ -96,17 +84,11 @@ in
         github = "${claudePluginsOfficial}/external_plugins/github";
         claude-md-management = "${claudePluginsOfficial}/plugins/claude-md-management";
       };
-      mcpServers = {
-        inherit pulumi gitlab;
-      };
     };
 
     programs.github-copilot-cli = {
       enable = cfg.copilot.enable;
       context = ./global-context.md;
-      mcpServers = {
-        inherit pulumi gitlab;
-      };
     };
 
     home.packages = lib.optional cfg.cursor.cli.enable pkgs.cursor-cli;
