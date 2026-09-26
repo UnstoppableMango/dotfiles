@@ -44,6 +44,9 @@
         OCO_OMIT_SCOPE = false;
         OCO_GITPUSH = false;
         OCO_HOOK_AUTO_UNCOMMENT = true;
+        OCO_EMOJI = true;
+        OCO_EMOJI_POSITION_BEFORE_DESCRIPTION = true;
+        OCO_DESCRIPTION = true;
       };
     };
   };
