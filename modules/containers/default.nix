@@ -14,6 +14,12 @@ in
 
     podmanAutostart = lib.mkEnableOption "podman machine autostart";
 
+    tui = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Install podman-tui, the terminal UI for podman.";
+    };
+
     podmanSocket = lib.mkOption {
       type = lib.types.bool;
       default = pkgs.stdenv.hostPlatform.isLinux && config.targets.genericLinux.enable;
@@ -53,16 +59,18 @@ in
     # docker-client rather than docker: the daemon is a system service that
     # Home Manager cannot start, so the user profile carries the CLI only and
     # talks to whatever dockerd the host runs.
-    home.packages = with pkgs; [
-      buildah
-      docker-buildx
-      docker-client
-      docker-compose
-      podman
-      podman-compose
-      podman-tui
-      skopeo
-    ];
+    home.packages =
+      with pkgs;
+      [
+        buildah
+        docker-buildx
+        docker-client
+        docker-compose
+        podman
+        podman-compose
+        skopeo
+      ]
+      ++ lib.optional cfg.tui podman-tui;
 
     # `docker compose` and `docker buildx` resolve as CLI plugins, not as the
     # standalone binaries on PATH, and docker-client ships neither.
