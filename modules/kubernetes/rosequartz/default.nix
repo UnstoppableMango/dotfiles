@@ -127,7 +127,8 @@ in
 
       clientId = lib.mkOption {
         type = lib.types.str;
-        default = "rosequartz-kubernetes";
+        # Must match a staticClients id in the-cluster's apps/dex/helm-release.yml.
+        default = "kubernetes";
         description = "OIDC client id for the `<name>-github` user.";
       };
 
