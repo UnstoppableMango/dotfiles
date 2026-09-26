@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   # The headless, identity-free configuration behind `packages.container`.
   # Same shape as `generic.nix` minus anything that needs a session or a
@@ -9,6 +9,31 @@
     username = "generic";
     homeDirectory = "/home/generic";
     stateVersion = "25.05";
+
+    # The base userland scripts and agents expect, which the image's base
+    # layer leaves out. hiPrio settles the utilities uutils shares with
+    # procps and others in its favour.
+    packages = with pkgs; [
+      (lib.hiPrio uutils-coreutils-noprefix)
+      curl
+      diffutils
+      file
+      findutils
+      gawk
+      gnumake
+      gnused
+      gnutar
+      gzip
+      openssh
+      patch
+      procps
+      rsync
+      unzip
+      which
+      xz
+      zip
+      zstd
+    ];
   };
 
   dotfiles = {
