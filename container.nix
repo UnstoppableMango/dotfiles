@@ -3,16 +3,27 @@
   nix2container,
   username,
   homeDirectory,
-  homeFiles,
+  putterManifest,
   path,
 }:
 let
-  # Activation needs a writable home, so it cannot run at build time.
-  # home-files is the symlink tree activation would link into place, so it is
-  # copied in directly instead.
+  # Home files are placed at start rather than baked in, so $HOME can be a
+  # volume. Home Manager's activate script needs nix, but its putter file
+  # activator does not: this is the whole of linkGeneration in putter mode.
+  # The state file sits in $HOME, so files a later image drops are removed.
+  entrypoint = pkgs.writeShellApplication {
+    name = "hm-files";
+    runtimeInputs = [ pkgs.putter ];
+    text = ''
+      putter apply \
+        --state-file "$HOME/.local/state/home-manager/putter-state.json" \
+        ${putterManifest}
+      exec "$@"
+    '';
+  };
+
   homeRoot = pkgs.runCommand "container-home" { } ''
     mkdir -p $out${homeDirectory} $out/tmp
-    cp -a ${homeFiles}/. $out${homeDirectory}/
   '';
 
   # Kept out of homeRoot: nix2container rejects a directory that appears in two
@@ -75,6 +86,7 @@ nix2container.buildImage {
     User = username;
     WorkingDir = homeDirectory;
 
+    Entrypoint = [ "${entrypoint}/bin/hm-files" ];
     Cmd = [
       "${path}/bin/zsh"
       "-l"
