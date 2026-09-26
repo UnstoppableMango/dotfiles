@@ -270,14 +270,19 @@ Its `home.packages` also lists the CLIs those repositories use outside a devShel
 It runs as the Claude agent in the-cluster's `apps/claude` pod, which supplies a dockerd sidecar, a nix-daemon, a ServiceAccount token, and the user namespace rootless podman runs in.
 So `dotfiles.containers` is on with the clients only (`tui = false`, `userRegistryConfig = true`), and `containers.conf` sets the cgroupfs manager, `cgroups = "disabled"`, and a file event logger, since the pod has no systemd and delegates no cgroup to the user.
 `dotfiles.kubernetes` is on with k9s off, and kubectl finds the in-cluster token without a kubeconfig.
-The image is built with nix2container.
+The image is built with nix2container, and it carries no store paths.
+The pod mounts a nix-daemon's store over `/nix`, which would hide them, so the image holds only real, statically linked files outside the store (the technique of unmango/containers' actions-runner image): `nix`, busybox, setuid `newuidmap`/`newgidmap` for rootless podman, `/etc` (accounts including `nixbld1`-`32`, `subuid`/`subgid`, `nix.conf` with the sandbox on, a CA bundle), and two entrypoints.
+`dotfiles-daemon` resets the ownership kubelet gives the `/nix` volume and runs `nix-daemon` as root.
+`dotfiles-env` realises the profile, `packages.container-env`, through that daemon (`NIX_REMOTE=daemon`), with `~/.local/state/dotfiles/profile` as an indirect GC root, then runs its arguments.
+The image names that profile in `/etc/dotfiles/profile` without its closure, so it is an ordinary substitution from the Cachix cache, fetched once per image and kept on the store's volume.
+`/bin/sh` and `/usr/bin/env` link into the profile, and `PATH` is `/usr/local/bin` then the profile's `bin`.
+The profile is `home.path`, `hm-files`, and bash.
 Nothing in `/home/generic` is baked in, so `$HOME` can be a volume that keeps state across restarts (the-cluster mounts a PVC there for Claude Code's remote-control).
-The entrypoint places home files at every start with putter, Home Manager's alternative file activator, which is the whole of `linkGeneration` in that mode and needs no nix; the full `activate` script cannot run, since it calls `nix-build` and `nix-env`.
+`hm-files` places home files with putter, Home Manager's alternative file activator, which is the whole of `linkGeneration` in that mode and needs no nix; the full `activate` script cannot run, since it calls `nix-build` and `nix-env`.
 Putter reads the manifest Home Manager generates (`home.internal.filePutterConfig`) and keeps its state in `~/.local/state/home-manager/putter-state.json`, so a file a later image drops is removed and every other file in `$HOME` is left alone.
 A regular file at a managed path fails the start, as `home-manager switch` does without `-b`.
-Kubernetes callers pass their command as `args`, because `command` replaces the entrypoint.
-`home.path/bin` is on `PATH`.
-A third CI job, `image`, builds it on every run and pushes `ghcr.io/unstoppablemango/dotfiles` as `:latest` and `:<short-sha>` from `main` only.
+The image has no entrypoint of its own: a caller runs `dotfiles-env hm-files <command>` for the main process and `dotfiles-env <command>` for anything beside it, so only one process runs putter.
+A third CI job, `image`, builds `container-env` and then the image on every run, which pushes the profile to Cachix, and pushes `ghcr.io/unstoppablemango/dotfiles` as `:latest` and `:<short-sha>` from `main` only.
 
 Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-extensions, tdl) are composed in `flake.nix` and applied to nixpkgs, alongside the local ones from `overlays/`.
 `zed.overlays.default` is commented out: nixpkgs' livekit-libwebrtc is out of sync with zed 0.217.3's expected webrtc API (`no type named 'AudioDeviceSink' in namespace 'webrtc'`).
