@@ -166,12 +166,13 @@
       inputs.home-manager.follows = "home-manager";
     };
 
-    zettelkasten = {
-      url = "github:UnstoppableMango/zettelkasten";
+    slip = {
+      url = "github:unmango/slip";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
       inputs.systems.follows = "systems";
       inputs.treefmt-nix.follows = "treefmt-nix";
+      inputs.mangopkgs.follows = "mangopkgs";
     };
 
     nix2container = {

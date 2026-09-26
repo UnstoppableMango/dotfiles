@@ -24,7 +24,7 @@ in
       default = pkgs.slip;
       defaultText = lib.literalExpression "pkgs.slip";
       description = ''
-        The slip package. The zettelkasten flake exports packages and no
+        The slip package. The slip flake exports packages and no
         overlay, so this flake's own overlay adapts them (`overlays/slip.nix`).
 
         The default build wraps `zk` onto slip's PATH, which is what makes

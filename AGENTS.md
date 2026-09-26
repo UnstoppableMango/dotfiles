@@ -202,7 +202,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
 - `kitty/`, `ghostty/` - terminals
 - `signal/` - Signal, both halves: the desktop app (`dotfiles.signal.desktop`) and `signal-cli` (`dotfiles.signal.cli`), each on by default under `dotfiles.signal.enable`.
   A headless host that wants the CLI alone sets `dotfiles.signal.desktop = false`.
-- `slip/` - slip, the zettelkasten capture tool from https://github.com/UnstoppableMango/zettelkasten, which hands any command it does not implement to zk.
+- `slip/` - slip, the zettelkasten capture tool from https://github.com/unmango/slip, which hands any command it does not implement to zk.
   slip has no config file of its own, so the whole surface is one directory: `dotfiles.slip.notebook.path` (`notes`, relative to the home directory) is exported as `ZK_NOTEBOOK_DIR` rather than slip's own `ZK_DIR`, because zk honours that variable too and one value has to aim both halves of the passthrough at the same corpus.
   The path is relative because `dotfiles.slip.notebook.init` declares it as a `nix2git.repositories` entry, and nix2git resolves a repository path against the home directory.
   nix2git runs `git init` for a declared path that does not exist yet and never clones, rewrites, or deletes, so this is safe alongside a corpus cloned by hand.
@@ -268,7 +268,7 @@ Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-ex
 `zed.overlays.default` is commented out: nixpkgs' livekit-libwebrtc is out of sync with zed 0.217.3's expected webrtc API (`no type named 'AudioDeviceSink' in namespace 'webrtc'`).
 
 `tdl.overlays.default` composes gomod2nix's overlay in (tdl is built with its `buildGoApplication`), so `buildGoApplication` and `mkGoEnv` land in `pkgs` alongside `tdl` and `vscode-tdl`.
-`overlays/` holds the ones no input provides: `clan.nix` and `slip.nix` lift a package out of an input that exports no overlay of its own (`clan-core`, and the `zettelkasten` flake whose package is `slip`).
+`overlays/` holds the ones no input provides: `clan.nix` and `slip.nix` lift a package out of an input that exports no overlay of its own (`clan-core` and `slip`).
 `claude-code.nix` overrides nixpkgs' claude-code with a newer release by pointing its `manifest` argument at `overlays/claude-code-manifest.zst.json`, a copy of `https://downloads.claude.ai/claude-code-releases/<version>/manifest.zst.json`.
 nixpkgs tracks the CLI a few releases behind, and the model list is baked into the binary, so a model newer than the packaged release is unreachable until the manifest moves.
 Refresh it by downloading the manifest for the wanted version; the derivation takes both the version and the per-platform checksums from that file.

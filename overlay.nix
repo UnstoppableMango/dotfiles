@@ -4,7 +4,7 @@ let
 
   claude-code = import ./overlays/claude-code.nix;
   clan = import ./overlays/clan.nix { inherit (inputs) clan-core; };
-  slip = import ./overlays/slip.nix { inherit (inputs) zettelkasten; };
+  slip = import ./overlays/slip.nix { inherit (inputs) slip; };
 in
 composeManyExtensions (
   with inputs;
