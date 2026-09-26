@@ -40,17 +40,26 @@ let
     EOF
   '';
 
+  # Scripts with a `#!/usr/bin/env` shebang, which npx bins and most
+  # repositories' scripts use, fail without it.
+  usrBinEnv = pkgs.runCommand "container-usr-bin-env" { } ''
+    mkdir -p $out/usr/bin
+    ln -s ${pkgs.uutils-coreutils-noprefix}/bin/env $out/usr/bin/env
+  '';
+
   base = pkgs.buildEnv {
     name = "container-base";
     paths = with pkgs; [
       accounts
       bashInteractive
       cacert
-      coreutils
+      uutils-coreutils-noprefix
+      usrBinEnv
     ];
     pathsToLink = [
       "/bin"
       "/etc"
+      "/usr/bin"
     ];
   };
 in
