@@ -81,7 +81,8 @@ in
       enable = true;
       context = ./global-context.md;
       plugins = {
-        github = "${claudePluginsOfficial}/external_plugins/github";
+        # github.nix supplies the server itself when ghAuth is on.
+        github = lib.mkIf (!cfg.github.ghAuth) "${claudePluginsOfficial}/external_plugins/github";
         claude-md-management = "${claudePluginsOfficial}/plugins/claude-md-management";
       };
     };
