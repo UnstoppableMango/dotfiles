@@ -90,7 +90,7 @@ in
 
     caFile = lib.mkOption {
       type = lib.types.str;
-      default = { ./ca.crt };
+      default = "${./ca.crt}";
       description = ''
         Path to the cluster CA certificate.
 
