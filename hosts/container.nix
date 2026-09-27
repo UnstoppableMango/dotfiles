@@ -133,6 +133,9 @@
       cloudflare.enable = false;
       gitlab.enable = false;
       pulumi.enable = false;
+
+      # Unused here, and each session starts its own uvx proxy (~160MiB).
+      aws.enable = false;
     };
   };
 
