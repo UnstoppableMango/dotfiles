@@ -35,6 +35,9 @@
       xz
       zip
       zstd
+      # PID 1 for the claude container, in front of remote-control, which
+      # never reaps the orphans its sessions leave behind.
+      tini
 
       # What the owner's repositories use outside a devShell: Makefiles,
       # CI steps, and the repositories that have no flake.
@@ -150,6 +153,10 @@
       editor = lib.mkForce "true";
       pager = "cat";
     };
+    # git ends a commit by detaching `git maintenance run --auto` into its
+    # own session, which orphans it; nothing here gains from repacking.
+    git.settings.maintenance.auto = false;
+    git.settings.gc.auto = 0;
     gh.settings.pager = "cat";
     # Its git integration sets pagers that pipe into less.
     diff-highlight.enable = lib.mkForce false;
