@@ -260,6 +260,8 @@ Nothing in it is interactive: its output goes to an agent, not a terminal.
 So it sets `dotfiles.zsh.p10kConfig = null` and leaves off oh-my-zsh, fzf, htop, and less.
 `PAGER`, `GH_PAGER`, `MANPAGER`, git's `core.pager`, and gh's `pager` are `cat`, and git's diff-highlight integration is off, since it pipes into less.
 Git's `core.editor` is `true`, so a merge or rebase keeps its default message instead of waiting on nvim, which the image does not install.
+Git's `maintenance.auto` and `gc.auto` are off: a commit otherwise detaches `git maintenance run --auto` into a session of its own, which leaves an orphan behind every commit.
+The profile carries tini, which the-cluster runs as the claude container's PID 1 in front of `claude remote-control`, since remote-control reaps none of the orphans its sessions leave.
 It also leaves off neovim, whose curated LSP set bundles every language server, and every agent CLI other than Claude Code (`ai.copilot`, `ai.cursor.cli`, `ai.coderabbit`, `ai.omnigent`, `ai.opencode`).
 The `ai.*` integrations that default on but need a display or a toolchain the image lacks (azure, chromeDevtools, playwright, csharp, fsharp, haskell, ocaml) are off too.
 For size it also drops helix, the `home-manager` CLI (the image is never activated or switched), `programs.vim` (Home Manager builds it from `vim-full`), the gitMcp and gossamer `ai.*` integrations, and every glibc locale except `en_US.UTF-8`.
