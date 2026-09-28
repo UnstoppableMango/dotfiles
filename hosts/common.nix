@@ -1,6 +1,7 @@
 { inputs }:
 {
   self,
+  config,
   pkgs,
   lib,
   ...
@@ -17,6 +18,8 @@
       "unstoppablemango.cachix.org-1:m7uEI6X1Ov8DyFWJQX4WsRFRWFuzRW5c/Xms8ZaP74U="
     ];
   };
+  # `!include` skips a missing file, where a bare `include` would fail.
+  nix.extraOptions = "!include ${config.xdg.configHome}/nix/nix.conf.local";
 
   dotfiles.ssh.hosts = inputs.hosts.lib.addresses;
 }
