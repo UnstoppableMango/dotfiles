@@ -190,7 +190,7 @@
       systems = import inputs.systems;
 
       imports = with inputs; [
-        systems.flakeModule
+        systems.flakeModule or { }
 
         home-manager.flakeModules.home-manager
         treefmt-nix.flakeModule
