@@ -71,8 +71,8 @@
       PAGER = "cat";
     };
 
-    # Claude Code writes settings.json itself on first run, so the home
-    # volume already holds one.
+    # Home volumes from images that left settings.json unmanaged hold one
+    # Claude Code wrote.
     file."${config.programs.claude-code.configDir}/settings.json".force = true;
   };
 

@@ -273,7 +273,7 @@ The `ai.*` integrations that default on but need a display or a toolchain the im
 For size it also drops helix, the `home-manager` CLI (the image is never activated or switched), `programs.vim` (Home Manager builds it from `vim-full`), the gitMcp and gossamer `ai.*` integrations, and every glibc locale except `en_US.UTF-8`.
 The cloudflare, gitlab, and pulumi `ai.*` integrations are off because they sign in through a browser.
 The aws integration is off because nothing in the container uses it, and every session would start its own `uvx` proxy at about 160MiB.
-Its Claude Code `settings.json` denies the claude.ai connectors that sign in through a browser (Prisma, Stack Overflow, Supabase), and is forced over the copy Claude Code writes on the home volume.
+Its Claude Code `settings.json` denies the claude.ai connectors that sign in through a browser (Prisma, Stack Overflow, Supabase), and is forced over the copy Claude Code wrote on home volumes from images that left it unmanaged.
 It carries the toolchains the owner's repositories need: c, go, python, rust, nix, and dotnet with SDKs 8 and 10 (`dotfiles.dotnet.sdks`).
 Node comes from `pkgs.nodejs`, which several `ai.*` modules install, rather than the javascript module's fnm, plus bun and yarn.
 Its `home.packages` also lists the CLIs those repositories use outside a devShell (buf, dprint, golangci-lint, goreleaser, kind, kustomize, kubeseal, opentofu, pulumi, sops, and similar); a repository with a devShell gets the rest from `nix develop`.
