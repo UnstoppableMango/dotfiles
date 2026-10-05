@@ -136,6 +136,9 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
 
 - `ai/` - claude-code, github-copilot-cli, cursor-cli.
   Each MCP integration and third-party service (aws, azure, cloudflare, figma, slack, gossamer, per-language servers, etc.) gets its own `.nix` toggle file; `moer/`, `nix-skill/`, and `tdd-orchestrator/` are skill submodules (a SKILL.md plus agents), following the same one-file-per-concern pattern as the rest of `modules/`.
+  Every configured MCP server starts with each Claude Code and Copilot CLI session, so modules that run a local stdio server split `enable` (packages, LSP servers, skills) from `mcp.enable` (the server registration, default `false`).
+  A project that wants one of those servers declares it in a repo-local `.mcp.json`.
+  HTTP servers start no local process and register under `enable` alone.
   `global-context.md` is the user-level agent instructions, rendered to both `~/.claude/CLAUDE.md` and `~/.copilot/copilot-instructions.md`; `.claude/skills/agent-context/` covers how to change it.
   `checkout-root.nix` renders `modules/ai/checkout-root.md` to `~/src/AGENTS.md` with a `CLAUDE.md` include beside it, matching the pairing the repos underneath use, so conventions spanning the whole checkout root are stated once instead of per repo.
   The document is an option, `dotfiles.ai.checkoutRoot.context`, defaulting to the bundled file; a consumer supplies their own or sets it to null to write nothing.

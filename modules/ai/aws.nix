@@ -16,6 +16,14 @@ let
   };
   awsCoreSrc = "${awsToolkitSrc}/plugins/aws-core";
 
+  # aws-core with its MCP server removed, keeping the skills and the
+  # secret-safety hook, which also screens Bash commands.
+  awsCoreNoMcp = pkgs.runCommand "aws-core-no-mcp" { } ''
+    cp -r ${awsCoreSrc} $out
+    chmod -R u+w $out
+    rm $out/.mcp.json $out/mcp.json
+  '';
+
   # Managed AWS MCP Server (GA), fronted by mcp-proxy-for-aws, which signs
   # requests with whatever AWS credentials are already on this machine
   # (env vars, ~/.aws/credentials, SSO, IAM role) rather than an OAuth popup.
@@ -60,25 +68,33 @@ in
     enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
-      description = "AWS support: the aws-core plugin (skills, the managed AWS MCP Server, and a secret-safety PreToolUse hook) for Claude Code, and the same MCP server plus mirrored skills for Copilot CLI, which has no plugin/hook system. Installs uv and python3 when enabled.";
+      description = "AWS support: the aws-core plugin (skills, the managed AWS MCP Server, and a secret-safety PreToolUse hook) for Claude Code, and the same MCP server plus mirrored skills for Copilot CLI, which has no plugin/hook system. Installs uv and python3 when enabled. Without `mcp.enable`, the plugin ships without its MCP server.";
+    };
+
+    mcp.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Register the managed AWS MCP Server. Every configured MCP server starts with each Claude Code and Copilot CLI session, so a project that wants this one declares it in a repo-local .mcp.json instead.";
     };
   };
 
-  config = lib.mkIf (cfg.enable && cfg.aws.enable) {
-    programs.claude-code.plugins."aws-core" = awsCoreSrc;
+  config = lib.mkMerge [
+    (lib.mkIf (cfg.enable && cfg.aws.enable) {
+      programs.claude-code.plugins."aws-core" = if cfg.aws.mcp.enable then awsCoreSrc else awsCoreNoMcp;
 
-    programs.github-copilot-cli = {
-      mcpServers.aws = mcpServer;
-      skills = lib.listToAttrs (
+      programs.github-copilot-cli.skills = lib.listToAttrs (
         map (name: lib.nameValuePair name "${awsCoreSrc}/skills/${name}") skillNames
       );
-    };
 
-    programs.mcp.servers.aws = mcpServer;
+      home.packages = [
+        pkgs.uv
+        pkgs.python3
+      ];
+    })
 
-    home.packages = [
-      pkgs.uv
-      pkgs.python3
-    ];
-  };
+    (lib.mkIf (cfg.enable && cfg.aws.enable && cfg.aws.mcp.enable) {
+      programs.github-copilot-cli.mcpServers.aws = mcpServer;
+      programs.mcp.servers.aws = mcpServer;
+    })
+  ];
 }
