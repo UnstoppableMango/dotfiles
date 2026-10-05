@@ -6,59 +6,6 @@
 }:
 let
   cfg = config.dotfiles.ai;
-
-  jsonFormat = pkgs.formats.json { };
-
-  configPath =
-    if pkgs.stdenv.hostPlatform.isDarwin then
-      "Library/Application Support/Claude/claude_desktop_config.json"
-    else
-      ".config/Claude/claude_desktop_config.json";
-
-  headerArgs =
-    headers:
-    lib.concatLists (
-      lib.mapAttrsToList (name: value: [
-        "--header"
-        "${name}: ${value}"
-      ]) headers
-    );
-
-  # claude_desktop_config.json spawns subprocesses and speaks no HTTP, so a
-  # remote server reaches the app through the mcp-remote stdio bridge.
-  remoteServer = server: {
-    command = "npx";
-    args = [
-      "-y"
-      "mcp-remote"
-      server.url
-    ]
-    ++ headerArgs server.headers;
-  };
-
-  localServer =
-    name: server:
-    lib.hm.mcp.transformMcpServer {
-      inherit server;
-      extraTransforms = [ (lib.hm.mcp.wrapEnvFilesCommand { inherit pkgs name; }) ];
-      exclude = [
-        "type"
-        "enabled"
-        "url"
-        "headers"
-      ];
-    };
-
-  toServer =
-    name: server: if server.url != null then remoteServer server else localServer name server;
-
-  servers = lib.mapAttrs toServer (
-    lib.filterAttrs (_: server: server.enabled != false) config.programs.mcp.servers
-  );
-
-  serversFragment = jsonFormat.generate "claude_desktop_config.json" { mcpServers = servers; };
-
-  configFile = lib.escapeShellArg "${config.home.homeDirectory}/${configPath}";
 in
 {
   options.dotfiles.ai.claudeDesktop = {
@@ -66,9 +13,8 @@ in
       type = lib.types.bool;
       default = false;
       description = ''
-        Render the Claude Desktop MCP config from `programs.mcp.servers`, so the
-        per-service `dotfiles.ai.<tool>.enable` toggles configure the desktop app
-        alongside Claude Code and Copilot CLI.
+        Install Claude Desktop. Its MCP servers come from claude.ai connectors,
+        and the app owns `claude_desktop_config.json`.
       '';
     };
 
@@ -77,33 +23,14 @@ in
       default = if pkgs.stdenv.hostPlatform.isLinux then pkgs.claude-desktop-fhs else null;
       defaultText = lib.literalExpression "if isLinux then pkgs.claude-desktop-fhs else null";
       description = ''
-        The Claude Desktop app to install. The FHS variant gives the MCP servers
+        The Claude Desktop app to install. The FHS variant gives any MCP server
         the app spawns a normal filesystem layout. Null on macOS, where the app
         has no package and is installed by hand.
       '';
     };
   };
 
-  config = lib.mkIf (cfg.enable && cfg.claudeDesktop.enable) {
-    # The app writes its own keys (`preferences`, `coworkUserFilesPath`) into
-    # this file, so it stays a regular file and only `mcpServers` is assigned.
-    home.activation.claudeDesktopMcpServers = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-      $DRY_RUN_CMD mkdir -p "$(dirname ${configFile})"
-      if [ -L ${configFile} ]; then
-        $DRY_RUN_CMD cp --remove-destination "$(readlink -f ${configFile})" ${configFile}
-      fi
-      if [ ! -s ${configFile} ]; then
-        $DRY_RUN_CMD cp ${serversFragment} ${configFile}
-      fi
-      $DRY_RUN_CMD chmod u+w ${configFile}
-      $DRY_RUN_CMD ${pkgs.yq-go}/bin/yq -i -p json -o json \
-        '.mcpServers = load("${serversFragment}").mcpServers' \
-        ${configFile}
-    '';
-
-    home.packages = [
-      pkgs.nodejs
-    ]
-    ++ lib.optional (cfg.claudeDesktop.package != null) cfg.claudeDesktop.package;
+  config = lib.mkIf (cfg.enable && cfg.claudeDesktop.enable && cfg.claudeDesktop.package != null) {
+    home.packages = [ cfg.claudeDesktop.package ];
   };
 }
