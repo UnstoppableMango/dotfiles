@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   # The headless, identity-free configuration behind `packages.container`.
   # Same shape as `generic.nix` minus anything that needs a session or a
@@ -65,6 +70,10 @@
       MANPAGER = "cat";
       PAGER = "cat";
     };
+
+    # Home volumes from images that left settings.json unmanaged hold one
+    # Claude Code wrote.
+    file."${config.programs.claude-code.configDir}/settings.json".force = true;
   };
 
   dotfiles = {
@@ -162,6 +171,17 @@
     gh.settings.pager = "cat";
     # Its git integration sets pagers that pipe into less.
     diff-highlight.enable = lib.mkForce false;
+
+    # claude.ai connectors that sign in through a browser, which a headless
+    # session never opens; each one otherwise reports "Needs authentication".
+    claude-code.settings = {
+      theme = "dark";
+      deniedMcpServers = map (serverName: { inherit serverName; }) [
+        "claude.ai Prisma"
+        "claude.ai Stack Overflow"
+        "claude.ai Supabase"
+      ];
+    };
   };
 
   # Rootless podman with no systemd and no cgroup delegated to this user:
