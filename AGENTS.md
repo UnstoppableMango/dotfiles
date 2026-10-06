@@ -224,6 +224,9 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
   `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its defaults entirely once that file exists.
   The file route rather than `OCO_API_KEY` in the environment, since the `prepare-commit-msg` hook also fires for editor and GUI commits that never see a login shell.
+  The hook reaches repos through `init.templateDir` rather than a global `core.hooksPath`, because lefthook and similar tools install their hooks into whatever `core.hooksPath` names, which for a global value means every repo.
+  The template is a store directory of regular files, since git copies a template symlink as a symlink; its hook execs `~/.config/git/opencommit-hook`, so a copied hook holds no store path and follows the current generation.
+  Only repos created after the switch get it; `git init` inside an existing repo adds it without touching hooks already there.
   `dotfiles.git.openCommit.models` seeds `~/.opencommit-models.json` when it is absent or empty, because only `oco models --refresh` ever writes that file and the package's own MODEL_LIST lags the provider API by months.
   It is a discovery aid rather than a gate: opencommit validates `OCO_MODEL` as a string and nothing more.
   `dotfiles.git.openCommit.typeEmoji` has the hook insert an emoji after the generated Conventional Commit prefix (`feat(git): ✨ ...`), keyed by type.

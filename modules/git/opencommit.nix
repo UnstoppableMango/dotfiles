@@ -43,6 +43,11 @@ let
   # at `join(homedir(), ...)`.
   cachePath = "${config.home.homeDirectory}/.opencommit-models.json";
 
+  # A stable path for the hook each repo copies from the template, so a repo
+  # follows the current generation instead of the one it was created under.
+  hookEntry = "git/opencommit-hook";
+  hookPath = "${config.xdg.configHome}/${hookEntry}";
+
   # `{ timestamp, models }` is the shape `writeCache` produces. The timestamp
   # is stamped at activation rather than at build time so the seed reads as
   # fresh for opencommit's 7 day CACHE_TTL_MS: `fetchModelsForProvider` takes a
@@ -61,15 +66,15 @@ in
       type = lib.types.bool;
       default = false;
       description = ''
-        opencommit (`oco`) as a global `prepare-commit-msg` hook: git's
-        `core.hooksPath` points at `~/.config/git/hooks`, where the hook links
-        to opencommit's cli script, so every repo gets commit messages drafted
-        from the staged diff in Conventional Commit form. A global
-        `core.hooksPath` makes git ignore each repo's `.git/hooks`; a repo that
-        needs its own hooks sets `core.hooksPath` locally, which takes
-        precedence. Needs an OCO_API_KEY (or a local OCO_AI_PROVIDER such as
-        ollama) exported in the shell, or `apiKeySecret` set to have one
-        rendered into `~/.opencommit` by sops-nix. Disabled by default.
+        opencommit (`oco`) as a `prepare-commit-msg` hook in every repo git
+        creates: `init.templateDir` puts the hook in `.git/hooks` on `git init`
+        and `git clone`, so commit messages are drafted from the staged diff in
+        Conventional Commit form. An existing repo picks the hook up from a
+        `git init` inside it, which leaves hooks already present alone. A repo
+        whose hook manager defines its own `prepare-commit-msg`, or sets a
+        local `core.hooksPath` the way husky does, goes without it. Needs an OCO_API_KEY (or a local OCO_AI_PROVIDER such as ollama)
+        exported in the shell, or `apiKeySecret` set to have one rendered into
+        `~/.opencommit` by sops-nix. Disabled by default.
       '';
     };
 
@@ -229,22 +234,23 @@ in
         home.packages = [ pkgs.opencommit ];
 
         # oco detects "I'm running as a git hook" by checking that
-        # process.argv[1] ends with `$(git config core.hooksPath)/prepare-commit-msg`.
+        # process.argv[1] ends with `.git/hooks/prepare-commit-msg` (or
+        # `$(git config core.hooksPath)/prepare-commit-msg` when that is set).
         # nixpkgs' `bin/oco` is a bash wrapper that execs node with the store
         # path to cli.cjs as the script argument, which overwrites argv[1] and
-        # breaks that detection. cli.cjs itself is unusable as the hook, since
-        # its `#!/usr/bin/env node` shebang depends on PATH. The hook is a node
-        # script that require()s cli.cjs instead, which keeps the hook path in
-        # argv[1]. The test fails the build if nixpkgs moves cli.cjs, rather
+        # breaks that detection. The repo's hook therefore passes its own path
+        # ($0) to this script, which puts it back in argv[1] before require()ing
+        # cli.cjs. The test fails the build if nixpkgs moves cli.cjs, rather
         # than leaving a hook that cannot run.
         #
         # The exit handler applies typeEmoji once oco has written the draft.
         # It skips any commit with a source (-m, amend, merge, squash), which
         # is the same condition oco uses to skip generating.
-        xdg.configFile."git/hooks/prepare-commit-msg".source =
+        xdg.configFile.${hookEntry}.source =
           let
             cli = "${pkgs.opencommit}/lib/opencommit/cli.cjs";
-            hook = pkgs.writeText "prepare-commit-msg.js" ''
+            hook = pkgs.writeText "opencommit-hook.js" ''
+              process.argv.splice(1, 2, process.argv[2]);
               const typeEmoji = ${builtins.toJSON cfg.typeEmoji};
               const [file, source] = process.argv.slice(2);
               if (file && !source && Object.keys(typeEmoji).length > 0) {
@@ -261,17 +267,32 @@ in
               require("${cli}");
             '';
           in
-          pkgs.runCommand "opencommit-prepare-commit-msg" { } ''
+          pkgs.runCommand "opencommit-hook" { } ''
             test -f ${cli}
             { echo '#!${lib.getExe pkgs.nodejs}'; cat ${hook}; } > $out
             chmod +x $out
           '';
 
-        # A global hooksPath rather than init.templateDir, because git copies a
-        # template symlink's target, which pins a Home Manager generation that a
-        # later GC removes. oco compares argv[1] against the raw config value,
-        # so the path has to be absolute, without `~`.
-        programs.git.settings.core.hooksPath = "${config.xdg.configHome}/git/hooks";
+        # A template rather than a global core.hooksPath, which tools such as
+        # lefthook treat as the place to install their own hooks, putting one
+        # repo's hooks in every repo. Git copies a template symlink as a
+        # symlink, so the template is a store directory of regular files
+        # rather than a Home Manager-linked one. The copied hook holds no store
+        # path, so it outlives the generation that wrote it, and it exits
+        # cleanly once opencommit is disabled.
+        programs.git.settings.init.templateDir = toString (
+          pkgs.writeTextFile {
+            name = "git-template";
+            destination = "/hooks/prepare-commit-msg";
+            executable = true;
+            text = ''
+              #!/bin/sh
+              hook=${lib.escapeShellArg hookPath}
+              [ -x "$hook" ] || exit 0
+              exec "$hook" "$0" "$@"
+            '';
+          }
+        );
       }
 
       (lib.mkIf (cfg.apiKeySecret != null) {
