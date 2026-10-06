@@ -54,7 +54,6 @@
       kustomize
       opentofu
       pulumi-bin
-      regclient
       shellcheck
       sops
       yarn
