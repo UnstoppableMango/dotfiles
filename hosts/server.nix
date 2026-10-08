@@ -1,11 +1,6 @@
 { pkgs, ... }:
 {
-  # Headless: the shell and secret floor, plus the two toolchains a box that
-  # runs containers needs. The account comes from `home/account.nix` directly rather
-  # than from all of `home/`, because the rest of the personal layer carries
-  # sops secrets encrypted to erik's laptop keys that a server has no reason to
-  # hold. `account.nix` carries no identity of its own, so the username is set
-  # here rather than inherited from `home/default.nix`'s default.
+  # Not all of `home/`: its sops secrets are encrypted to laptop keys only.
   imports = [ ../home/account.nix ];
 
   home.username = "erik";

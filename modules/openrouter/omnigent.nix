@@ -12,16 +12,12 @@ let
   omnigentHome = "${config.home.homeDirectory}/.omnigent";
   configPath = "${omnigentHome}/config.yaml";
 
-  # OpenRouter implements Chat Completions but no Responses API, and the
-  # openai family's default endpoint is api.openai.com, so both fields are
-  # required rather than left to the consuming harness.
+  # OpenRouter has no Responses API, hence `wire_api = "chat"`.
   entry = {
     kind = "key";
     openai = {
       base_url = cfg.baseUrl;
       wire_api = "chat";
-      # A command rather than `api_key_ref: env:OPENROUTER_API_KEY`: the
-      # systemd user unit running the server never sees a login shell.
       auth_command = "cat ${cfg.apiKeyFile}";
     }
     // lib.optionalAttrs (omnigent.models != { }) { inherit (omnigent) models; };
@@ -70,10 +66,7 @@ in
   };
 
   config = lib.mkIf (cfg.enable && omnigent.enable && ai.enable && ai.omnigent.enable) {
-    # `~/.omnigent/config.yaml` is runtime-owned: omnigent generates
-    # `host.host_id` there, and `omnigent config set --global` rewrites the
-    # whole file. Assigning `.providers.openrouter` (not a deep merge) means
-    # nix owns that one entry while every sibling survives untouched.
+    # omnigent owns the rest of this file (`host.host_id`, `config set --global`).
     home.activation.omnigentProviders = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD mkdir -p ${lib.escapeShellArg omnigentHome}
       $DRY_RUN_CMD touch ${lib.escapeShellArg configPath}

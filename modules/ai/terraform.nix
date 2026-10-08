@@ -7,8 +7,7 @@
 let
   cfg = config.dotfiles.ai;
 
-  # OpenTofu's LSP, not HashiCorp's terraform-ls, to match the tofu_ls
-  # preference already set in modules/editors/neovim.
+  # Matches the tofu_ls choice in modules/neovim.
   tofuLs = lib.getExe pkgs.tofu-ls;
   terraformMcp = lib.getExe pkgs.terraform-mcp-server;
 

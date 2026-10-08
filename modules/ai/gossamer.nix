@@ -13,8 +13,7 @@ let
     ".gos" = "gossamer";
   };
 
-  # `gos skill-prompt` prints the same content as the upstream SKILL.md, but
-  # neither ships YAML frontmatter, so it's added here for skill discovery.
+  # `gos skill-prompt` has no YAML frontmatter, which skill discovery needs.
   gossamerSkill = pkgs.runCommand "gossamer-skill" { } ''
     mkdir -p $out
     {

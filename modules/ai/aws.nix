@@ -16,17 +16,14 @@ let
   };
   awsCoreSrc = "${awsToolkitSrc}/plugins/aws-core";
 
-  # aws-core with its MCP server removed, keeping the skills and the
-  # secret-safety hook, which also screens Bash commands.
+  # aws-core minus its MCP server, keeping the skills and the secret-safety hook.
   awsCoreNoMcp = pkgs.runCommand "aws-core-no-mcp" { } ''
     cp -r ${awsCoreSrc} $out
     chmod -R u+w $out
     rm $out/.mcp.json $out/mcp.json
   '';
 
-  # Managed AWS MCP Server (GA), fronted by mcp-proxy-for-aws, which signs
-  # requests with whatever AWS credentials are already on this machine
-  # (env vars, ~/.aws/credentials, SSO, IAM role) rather than an OAuth popup.
+  # mcp-proxy-for-aws signs requests with the local AWS credentials, not OAuth.
   mcpServer = {
     type = "stdio";
     command = "uvx";

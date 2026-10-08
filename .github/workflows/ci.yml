@@ -22,11 +22,13 @@ jobs:
           --flake ${{ github.workspace }}#erik@darter \
           --no-out-link
 
+      # `nix flake check` does not evaluate homeConfigurations.
       - run: |
           nix run home-manager -- build \
           --flake ${{ github.workspace }}#generic@x86_64-linux \
           --no-out-link
 
+  # The only build of the darwin branches in `modules/`. macos-latest is aarch64.
   darwin:
     runs-on: macos-latest
     steps:
@@ -42,7 +44,6 @@ jobs:
           --flake ${{ github.workspace }}#generic@aarch64-darwin \
           --no-out-link
 
-  # Builds `packages.container` on every run and publishes it from main only.
   image:
     runs-on: ubuntu-latest
     needs: check
