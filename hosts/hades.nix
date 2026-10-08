@@ -9,9 +9,7 @@
     ../home/vscode/hades.nix
   ];
 
-  # The admin identity for the rosequartz cluster. Clan-generated in the nixos
-  # repo, vendored here so this configuration stands on its own; see the
-  # `caFile` option's description for the same reasoning about the CA.
+  # Clan-generated in the nixos repo and re-encrypted here.
   sops.secrets = {
     "rosequartz-admin-cert" = {
       sopsFile = ../home/secrets/rosequartz.yaml;
@@ -69,14 +67,9 @@
     vscode.enable = true;
     zed.enable = true;
 
-    # Serve the omnigent web UI to the rest of the LAN, not just loopback, so
-    # the desktop and mobile clients on other devices reach this host at
-    # 10.0.69.69 / 192.168.1.69 / hades. Safe only because the machine sits
-    # behind the house firewall: the server itself authenticates nothing.
+    # The omnigent server authenticates nothing; this relies on the LAN firewall.
     ai.omnigent.listenAddress = "0.0.0.0";
 
-    # hades holds the admin identity, so it owns ~/.kube/config outright
-    # rather than merging a side file into KUBECONFIG the way darter does.
     kubernetes.rosequartz = {
       enable = true;
       currentContext = "rosequartz";

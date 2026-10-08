@@ -15,8 +15,7 @@
         pkgs.gossamer.passthru.editorSupport.emacs
       ];
 
-      # gossamer-mode registers itself with eglot's `eglot-server-programs`
-      # on load, but doesn't auto-start eglot per-buffer.
+      # gossamer-mode registers with eglot but does not start it per buffer.
       extraConfig = ''
         (require 'gossamer-mode)
         (add-hook 'gossamer-mode-hook #'eglot-ensure)

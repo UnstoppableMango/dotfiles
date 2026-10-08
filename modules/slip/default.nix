@@ -9,8 +9,7 @@ let
 
   toml = pkgs.formats.toml { };
 
-  # Guarded rather than interpolated directly: `path` is nullable, and mkIf
-  # does not stop the value it wraps from being evaluated.
+  # Guarded: `path` is nullable and mkIf does not stop evaluation of its value.
   notebookDir = lib.optionalString (
     cfg.notebook.path != null
   ) "${config.home.homeDirectory}/${cfg.notebook.path}";
@@ -91,9 +90,7 @@ in
       })
 
       (lib.mkIf (cfg.notebook.path != null) {
-        # ZK_NOTEBOOK_DIR rather than slip's own ZK_DIR, because zk honours this
-        # one too. One variable aims both halves of the passthrough at the same
-        # corpus; ZK_DIR would move slip and leave zk walking up from the cwd.
+        # Not slip's ZK_DIR, which zk ignores; both tools read ZK_NOTEBOOK_DIR.
         home.sessionVariables.ZK_NOTEBOOK_DIR = notebookDir;
 
         nix2git = lib.mkIf cfg.notebook.init {

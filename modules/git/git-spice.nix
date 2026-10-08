@@ -57,8 +57,7 @@ in
   config = lib.mkIf (config.dotfiles.git.enable && cfg.enable) {
     home.packages = [ cfg.package ];
 
-    # Guarded: an empty attrset still renders a bare `[spice]` header into the
-    # generated gitconfig.
+    # An empty attrset still renders a bare `[spice]` header.
     programs.git.settings = lib.mkIf (cfg.settings != { }) { spice = cfg.settings; };
   };
 }

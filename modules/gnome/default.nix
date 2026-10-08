@@ -22,9 +22,6 @@ in
   config = lib.mkIf config.dotfiles.gnome.enable {
     home.packages = [ pkgs.nautilus-python ] ++ extensions;
 
-    # An extension is inert until GNOME is told to load it, so the enabled list
-    # is derived from the installed set rather than written out again. Which
-    # extensions to install is the choice; keeping the two in step is mechanics.
     dconf = {
       enable = true;
       settings."org/gnome/shell" = {

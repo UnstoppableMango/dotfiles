@@ -9,9 +9,7 @@ in
 {
   imports = [ ../home ];
 
-  # darter runs standalone Home Manager on Pop!_OS (not NixOS). This patches
-  # XDG_DATA_DIRS and session variables so HM-installed man pages, shell
-  # completions, and the locale archive resolve on a non-NixOS system.
+  # Pop!_OS, not NixOS.
   targets.genericLinux.enable = true;
 
   dotfiles = {
@@ -50,8 +48,7 @@ in
     stylix.enable = true;
     zed.enable = true;
 
-    # rosequartz's admin cert is clan-generated and darter isn't a clan
-    # machine, so darter gets the OIDC context only, as a side file.
+    # OIDC context only, as a side file; the admin identity is hades'.
     kubernetes.rosequartz.enable = true;
   };
 
@@ -59,8 +56,7 @@ in
     home-manager.enable = true;
     tdl.enable = true;
 
-    # Pop!_OS ships the libsecret helper built but unlinked, under /usr/share.
-    # It backs every host the gh helper does not already cover.
+    # Pop!_OS ships this helper built but not on PATH.
     git.settings.credential.helper = "/usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret";
 
     fzf.enable = true;
@@ -72,10 +68,7 @@ in
     vim.enable = true;
   };
 
-  # The first file is the writable hand-managed one, the second is
-  # nix-managed - same shape as modules/ssh's UserKnownHostsFile. Keeping
-  # the writable file first means `kubectl config use-context` still has
-  # somewhere to write.
+  # Writable file first, so `kubectl config use-context` has somewhere to write.
   home.sessionVariables.KUBECONFIG = lib.concatStringsSep ":" [
     "${homeDirectory}/.kube/config"
     "${homeDirectory}/${config.dotfiles.kubernetes.rosequartz.target}"

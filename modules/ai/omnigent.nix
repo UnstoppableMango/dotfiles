@@ -9,33 +9,19 @@ let
 
   omnigentBin = "${config.home.homeDirectory}/.local/bin/omnigent";
 
-  # omnigent's own default, and what every client assumes when no URL is
-  # configured, so it stays a constant rather than an option.
+  # omnigent's default, which every client assumes when no URL is configured.
   port = 6767;
   serverUrl = "http://127.0.0.1:${toString port}";
 
-  # omnigent runs out of a uv-managed venv, so its TLS trust comes either from
-  # certifi (httpx, requests) or from OpenSSL's compiled-in defaults
-  # (websockets, and anything else on stdlib `ssl`). Neither reaches the
-  # system store on NixOS: `/etc/ssl/cert.pem` does not exist and
-  # `/etc/ssl/certs` carries no hashed symlinks, so `create_default_context()`
-  # loads zero CAs and every wss:// handshake the host daemon opens fails
-  # CERTIFICATE_VERIFY_FAILED. certifi's own bundle covers the public roots
-  # but never `security.pki.certificates` additions, so a host behind a
-  # private CA still fails on the paths that do work.
-  #
-  # One bundle carries both, so both env vars point at it. SSL_CERT_FILE
-  # redirects stdlib ssl and httpx; requests consults REQUESTS_CA_BUNDLE
-  # alone and ignores the former.
+  # The uv venv's stdlib `ssl` loads zero CAs on NixOS (no /etc/ssl/cert.pem),
+  # so wss:// fails CERTIFICATE_VERIFY_FAILED. requests ignores SSL_CERT_FILE.
   certEnv = {
     SSL_CERT_FILE = cfg.omnigent.caBundle;
     REQUESTS_CA_BUNDLE = cfg.omnigent.caBundle;
   };
   certEnvList = lib.mapAttrsToList (n: v: "${n}=${v}") certEnv;
 
-  # No nixpkgs package or Homebrew cask exists for the desktop client, so the
-  # .dmg is fetched and unpacked directly. Bump version + sha256 together when
-  # updating: https://omnigent.ai/download/mac redirects to the versioned URL.
+  # https://omnigent.ai/download/mac redirects to the current versioned URL.
   omnigent-desktop = pkgs.stdenvNoCC.mkDerivation {
     pname = "omnigent-desktop";
     version = "0.10.0";
@@ -52,7 +38,6 @@ let
   };
 in
 {
-  # The OpenRouter provider entry lives in modules/openrouter/omnigent.nix.
   imports =
     map
       (
@@ -157,19 +142,13 @@ in
       })
 
       (lib.mkIf (cfg.omnigent.autostart && pkgs.stdenv.hostPlatform.isLinux) {
-        # Two units rather than one `omnigent host`: left to itself the host
-        # daemon spawns the server as a child pinned to 127.0.0.1, an argv
-        # literal in omnigent's host/local_server.py that no flag, config key,
-        # or environment variable reaches. Running `omnigent server` as its own
-        # unit is what makes the bind address selectable; the daemon then
-        # attaches to it over loopback instead of spawning its own.
+        # A separate server unit, because the server `omnigent host` spawns is
+        # pinned to 127.0.0.1 (a literal in omnigent's host/local_server.py).
         systemd.user.services = {
           omnigent-server = {
             Unit.Description = "Omnigent server";
             Service = {
-              # The server the host daemon spawns is marked as this user's
-              # single-user local runtime. Without the same mark here the
-              # daemon's tunnel registration is refused with a 403.
+              # Without this the host daemon's tunnel registration gets a 403.
               Environment = [ "OMNIGENT_LOCAL_SINGLE_USER=1" ] ++ certEnvList;
               ExecStart = "%h/.local/bin/omnigent server --host ${cfg.omnigent.listenAddress} --port ${toString port}";
               Restart = "on-failure";
@@ -184,13 +163,10 @@ in
               BindsTo = [ "omnigent-server.service" ];
             };
             Service = {
-              # Loopback whatever the server binds, since both units are the
-              # same machine. `--non-interactive` keeps a daemon with no
-              # terminal from stalling on the browser sign-in flow.
+              # `--non-interactive` stops it stalling on the browser sign-in flow.
               Environment = certEnvList;
               ExecStart = "%h/.local/bin/omnigent host --server ${serverUrl} --non-interactive";
-              # `After` orders the start but does not wait for the socket, so
-              # the first attempt can beat the server to it.
+              # `After` does not wait for the server's socket.
               Restart = "on-failure";
               RestartSec = 5;
             };
@@ -200,9 +176,7 @@ in
       })
 
       (lib.mkIf (cfg.omnigent.desktopApp && pkgs.stdenv.hostPlatform.isDarwin) {
-        # Symlinked straight from the nix store, so the bundle carries no
-        # quarantine/notarization ticket - first launch needs a right-click >
-        # Open to get past Gatekeeper.
+        # No notarization ticket: first launch needs right-click > Open.
         home.file."Applications/Omnigent.app".source = "${omnigent-desktop}/Applications/Omnigent.app";
       })
     ]

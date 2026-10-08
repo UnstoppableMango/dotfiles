@@ -11,7 +11,7 @@ on:
 
 jobs:
   copilot-setup-steps:
-    # It broke atm
+    # dotfiles-runners is broken.
     # runs-on: dotfiles-runners
     runs-on: ubuntu-latest
     permissions:

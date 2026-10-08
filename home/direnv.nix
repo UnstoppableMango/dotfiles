@@ -6,7 +6,6 @@
       # enableZshIntegration = true;
       nix-direnv.enable = true;
 
-      # Tempted... we'll see if it keeps annoying me
       silent = false;
 
       # Pulumi repos use mise
