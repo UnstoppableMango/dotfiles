@@ -59,6 +59,7 @@
     ghostty.enable = true;
     gnome.enable = true;
     helix.enable = true;
+    i3.enable = true;
     kitty.enable = true;
     neovim.enable = true;
     obsidian.enable = true;

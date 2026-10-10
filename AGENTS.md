@@ -12,7 +12,7 @@ Three top-level directories, in dependency order:
   Declares `dotfiles.*` options; sets no personal values.
 - `home/` - erik's identity: the account itself, git email, GNOME dconf, and secrets.
   Consumes `dotfiles.*`; declares none.
-- `hosts/` - one file per home configuration (`darter`, `hades`, `server`, `generic`), plus `common.nix`, which every configuration is built on.
+- `hosts/` - one file per home configuration (`darter`, `hades`, `server`, `generic`, `generic-linux`), plus `common.nix`, which every configuration is built on.
   The only entrypoints.
   Each lists the modules it turns on plus whatever is true of that machine alone.
 
@@ -126,7 +126,7 @@ Each host file lists every toggle it wants, even where hosts overlap, so reading
 OpenRouter has no toggle of its own to set: `dotfiles.openrouter` turns on when `dotfiles.openrouter.apiKeySecret` names a secret, which only `home/` does, and every integration under `modules/openrouter/` follows it.
 
 `hosts/darter.nix` is the shell and secret floor, the dev toolchains and agent CLIs, and fonts, stylix, obsidian, signal, and zed (a display without the desktop session), plus `targets.genericLinux`, its signing key, and the rosequartz KUBECONFIG.
-`hosts/hades.nix` is the same floor and toolchains plus the full desktop session, ocaml, dotnet and emacs, its signing key, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
+`hosts/hades.nix` is the same floor and toolchains plus the full desktop session (GNOME, with i3 beside it at the login screen), ocaml, dotnet and emacs, its signing key, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
 `hosts/server.nix` is `home/account.nix` plus the floor, containers, and kubernetes.
 It deliberately does not import the rest of `home/`: the personal layer declares sops secrets encrypted to erik's laptop keys, which a server has no reason to hold.
 Server does get oh-my-zsh and Powerlevel10k, because it sets `dotfiles.zsh.enable` and `dotfiles.zsh.ohMyZsh.enable`, and the prompt follows `dotfiles.zsh.enable`.
@@ -201,7 +201,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   The split exists because a list option keeps only the definitions at the winning override priority, so a host naming its key in `identityFiles` would discard those handles instead of preceding them.
   Both feed one `IdentityFile`, unset when they are empty, because an explicit `IdentityFile` stops ssh from trying its built-in defaults.
   `primaryIdentityFile = null` says the machine's key is somewhere other than the default path without saying where, leaving that to a block in `~/.ssh/config.d/`; darter is the one host that does this.
-- `stylix/` - Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
+- `stylix/` - Stylix theming, scoped to terminals (kitty, ghostty) via `dotfiles.stylix.enable`; `i3/` adds its own targets (i3, rofi, dunst, the i3status-rust palette)
 - `kitty/`, `ghostty/` - terminals
 - `signal/` - Signal, both halves: the desktop app (`dotfiles.signal.desktop`) and `signal-cli` (`dotfiles.signal.cli`), each on by default under `dotfiles.signal.enable`.
   A headless host that wants the CLI alone sets `dotfiles.signal.desktop = false`.
@@ -242,6 +242,14 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `dotfiles.containers.podmanSocket` and `.userRegistryConfig` default to `targets.genericLinux.enable`: non-NixOS hosts get the rootless `podman.socket`/`podman.service` user units and `~/.config/containers/{policy.json,registries.conf}`, which the podman package carries no defaults for, while NixOS hosts keep the system layer's units and `/etc/containers` authoritative.
 - `gnome/` - the GNOME option, the extension packages, and the derived `enabled-extensions` list.
   The dconf preferences that go with it are taste and live in `home/gnome.nix`.
+- `i3/` - an i3 X session that sits beside GNOME on the same machine, picked at the login screen: i3status-rust, rofi, dunst, picom, polkit-gnome, flameshot, and xss-lock with i3lock-color.
+  GNOME reaches `graphical-session.target` too, so every unit belonging to the i3 session is rebound to `hm-graphical-session.target`, which only `~/.hm-xsession` starts; a unit left on the stock target would run inside GNOME as well (picom against mutter, a second locker).
+  The session script and profile live at `~/.hm-xsession` and `~/.hm-xprofile` rather than the default names, because the NixOS X session wrapper sources `~/.xprofile` for every X login.
+  `dotfiles.i3.gnome.enable` follows `dotfiles.gnome.enable` and reuses GNOME's pieces: xsettingsd serves the `org/gnome/desktop/interface` values from `dconf.settings`, so GTK apps match without a second theme definition, plus Super+I for GNOME Settings, Super+E for Files, and a gtk-portal `i3-portals.conf`.
+  It uses xsettingsd because gsd-xsettings serves only mutter's Xwayland and exits under any other window manager.
+  `familiarKeys`, `applets`, `autostart`, and `lock.enable` are the GNOME/KDE habits (Alt+Tab, Super+A, Print, Ctrl+Alt+Delete, the tray, `~/.config/autostart`, idle lock), each on by default; Super+/ lists the bindings from the same attrset that defines them.
+  A machine varies the session through `dotfiles.i3.terminal` and `.wallpaper` and the plain Home Manager options, which merge (`xsession.windowManager.i3.config.workspaceOutputAssign`, `programs.i3status-rust.bars.default.blocks`).
+  The login-screen entry is system-side; `docs/i3.md` covers it.
 - `yubikey/` - ykman, yubico-piv-tool, libfido2, and yubikey-personalization, with Yubico Authenticator behind `dotfiles.yubikey.gui` (Linux only), and age-plugin-yubikey when sops is on.
   `dotfiles.yubikey.keys.<name>.sshKey` records each key's resident FIDO2 SSH credential (values in `home/ssh.nix`), and ssh offers that key's `handle`.
   The two are separate options because they answer to different things: `application` identifies the credential on the authenticator and is fixed when it is created, while `handle` is only a path, which ssh reads by content and never checks against the credential.
@@ -255,7 +263,9 @@ Seven home configurations are built: `erik@darter`, `erik@hades`, `erik@server`,
 `tz@hades` builds `hosts/tz-hades.nix`, a second account on hades that imports nothing from `home/`; the nixos repo creates the account and installs the `home-manager` CLI for it.
 No machine is actually named `server`; that entry exists so `hosts/server.nix` is covered by `nix flake check` rather than only breaking whenever someone next touches it.
 
-`generic@x86_64-linux` and `generic@aarch64-darwin` are the same idea one layer out: both build `hosts/generic.nix`, which turns most modules on (brave and gnome on Linux only), imports nothing from `home/`, and sets a throwaway account whose home directory follows the platform, so `homeModules.dotfiles` is built here rather than only breaking in somebody else's flake.
+`generic@x86_64-linux` and `generic@aarch64-darwin` are the same idea one layer out: both build `hosts/generic.nix`, which turns most modules on, imports nothing from `home/`, and sets a throwaway account whose home directory follows the platform, so `homeModules.dotfiles` is built here rather than only breaking in somebody else's flake.
+`generic@x86_64-linux` builds `hosts/generic-linux.nix`, which imports `generic.nix` and adds the Linux-only desktop modules (brave, gnome, i3) as literal toggles.
+A toggle there cannot read the platform from `pkgs`: `pkgs` depends on `nixpkgs.overlays`, stylix's overlay reads `config.lib`, and merging `config.lib` forces every module's conditional `lib` definition, including Home Manager's rofi under `dotfiles.i3.enable`, so `i3.enable = isLinux` is an infinite recursion.
 `generic@aarch64-darwin` is also the only consumer of the darwin branches in `modules/` (ghostty's null package, the 1Password agent socket, the containers defaults, omnigent's launchd unit, `launch-services/`).
 `nix flake check` does not evaluate `homeConfigurations`, so CI builds them explicitly.
 That takes two jobs: `check` on `ubuntu-latest` for the linux configurations, and `darwin` on `macos-latest` (Apple Silicon, so aarch64-darwin) for the darwin one, which gets a real build rather than an evaluation.
