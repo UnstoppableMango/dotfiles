@@ -112,7 +112,6 @@
       url = "github:unstoppablemango/ux";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
-      inputs.gomod2nix.follows = "gomod2nix";
       inputs.systems.follows = "systems";
       inputs.treefmt-nix.follows = "treefmt-nix";
     };
