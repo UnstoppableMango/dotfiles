@@ -1,7 +1,6 @@
 {
   lib,
   config,
-  pkgs,
   ...
 }:
 {
@@ -12,7 +11,9 @@
     stylix.autoEnable = false;
 
     # Placeholder, chosen for pink accents near GNOME's accent-color.
-    stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+    # Vendored from pkgs.base16-schemes: stylix reads the scheme at eval time,
+    # so a store path here would be import from derivation.
+    stylix.base16Scheme = ./catppuccin-mocha.yaml;
 
     # No gtk/gnome targets: they would clash with the dconf theming in home/gnome.nix.
     stylix.targets.kitty.enable = true;
