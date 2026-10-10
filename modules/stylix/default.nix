@@ -1,18 +1,17 @@
 {
   lib,
   config,
-  pkgs,
   ...
 }:
 {
-  options.dotfiles.stylix.enable = lib.mkEnableOption "Stylix theming (scoped to terminals only: kitty, ghostty)";
+  options.dotfiles.stylix.enable = lib.mkEnableOption "Stylix theming (scoped to terminals and the i3 session)";
 
   config = lib.mkIf config.dotfiles.stylix.enable {
     stylix.enable = true;
     stylix.autoEnable = false;
 
-    # Placeholder, chosen for pink accents near GNOME's accent-color.
-    stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+    # base0D, the accent most targets use for focus, is the hot pink.
+    stylix.base16Scheme = lib.mkDefault ./hot-pink.yaml;
 
     # No gtk/gnome targets: they would clash with the dconf theming in home/gnome.nix.
     stylix.targets.kitty.enable = true;

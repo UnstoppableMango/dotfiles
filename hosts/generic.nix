@@ -1,6 +1,6 @@
 { pkgs, lib, ... }:
 let
-  inherit (pkgs.stdenv.hostPlatform) isDarwin isLinux;
+  inherit (pkgs.stdenv.hostPlatform) isDarwin;
 in
 {
   # Identity-free build coverage for `homeModules.dotfiles`; not a real machine.
@@ -49,9 +49,6 @@ in
     vscode.enable = true;
     vscodium.enable = true;
     zed.enable = true;
-
-    brave.enable = isLinux;
-    gnome.enable = isLinux;
   };
 
   # Both editors ship `lib/vscode/LICENSES.chromium.html`; VSCodium does not
