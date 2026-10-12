@@ -25,8 +25,7 @@
           allow_hyperlinks = true;
         }
         // {
-          # mkForce: stylix's kitty target also sets these color keys.
-          background = lib.mkForce "#171A1B";
+          # mkForce: stylix's kitty target also sets this key.
           background_opacity = lib.mkForce 0.95;
         };
     };
