@@ -51,6 +51,7 @@
       enable = true;
       claudeDesktop.enable = true;
       cursor.editor.enable = true;
+      remoteControl.enable = true;
     };
 
     brave.enable = true;
