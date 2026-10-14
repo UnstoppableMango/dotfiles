@@ -434,9 +434,17 @@ in
       (lib.mkIf stylix {
         stylix.targets = {
           i3.enable = true;
-          rofi.enable = true;
+          rofi = {
+            enable = true;
+            # Stylix writes the font to the renamed `programs.rofi.font` (nix-community/stylix#2501).
+            fonts.enable = false;
+          };
           dunst.enable = true;
         };
+
+        programs.rofi.settings.font =
+          with config.stylix.fonts;
+          "${monospace.name} ${toString sizes.popups}";
       })
     ]
   );
