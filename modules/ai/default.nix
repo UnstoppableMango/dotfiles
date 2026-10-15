@@ -42,6 +42,7 @@ in
     ./gossamer.nix
     ./haskell.nix
     ./kubernetes.nix
+    ./mattpocock.nix
     ./moer.nix
     ./nix.nix
     ./notion.nix
