@@ -5,6 +5,11 @@
 }:
 {
   config = {
+    programs.tdl.vscode.profiles = [
+      "default"
+      "Hades"
+    ];
+
     programs.vscode.profiles.Hades = {
       # https://github.com/microsoft/vscode-dotnettools/issues/2266#issuecomment-3571804122
       # hades.settings.json turns GPU acceleration off for the reason in ./default.nix.
