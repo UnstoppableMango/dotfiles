@@ -22,4 +22,5 @@
   nix.extraOptions = "!include ${config.xdg.configHome}/nix/nix.conf.local";
 
   dotfiles.ssh.hosts = inputs.hosts.lib.addresses;
+  dotfiles.ai.mattpocock.src = inputs.mattpocock-skills;
 }

@@ -146,6 +146,8 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `coderabbit.nix` installs the CodeRabbit CLI from the `mangopkgs` overlay (packaged at `pkgs/coderabbit/` in https://github.com/unmango/pkgs) and turns its self-update off, since `coderabbit update` rewrites the binary in place and a nix-installed one lives in the read-only store.
   Authentication is a rendered `~/.coderabbit/auth.json` (`{"type":"api_key",...}`) rather than an environment variable, because the CLI reads no `CODERABBIT_API_KEY`; its api_key auth branch returns that file verbatim instead of consulting the OS credential store the OAuth branch uses, so the file alone is a complete authenticated state.
   The key comes from `dotfiles.ai.coderabbit.apiKeySecret` naming a `sops.secrets` entry, and the CLI rejects a user API key, so it has to be an agentic one.
+  `mattpocock.nix` installs https://github.com/mattpocock/skills from `dotfiles.ai.mattpocock.src`, which `hosts/common.nix` sets from the `mattpocock-skills` flake input so lock maintenance moves it.
+  Copilot CLI's skill list is read from that checkout's `.claude-plugin/plugin.json`, the same list the Claude Code plugin loads.
 - `openrouter/` - OpenRouter as the one provider for every paid model outside Claude Code.
   Claude Code stays on the Claude subscription, since Remote Control refuses an `ANTHROPIC_BASE_URL` other than api.anthropic.com.
   `default.nix` holds the key (`apiKeySecret`, a `sops.secrets` name) and two model tiers (`models.default`, `models.fast`), and exposes read-only `baseUrl`, `apiKeyFile`, and `apiKeyPlaceholder` for integrations to consume.
