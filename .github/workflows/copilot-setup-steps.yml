@@ -11,9 +11,7 @@ on:
 
 jobs:
   copilot-setup-steps:
-    # dotfiles-runners is broken.
-    # runs-on: dotfiles-runners
-    runs-on: ubuntu-latest
+    runs-on: thecluster
     permissions:
       contents: read
     steps:
@@ -22,6 +20,5 @@ jobs:
       - uses: unmango/actions/setup-nix@e8bbcbd12a2c521c5cb36957c00a7a8f4fe2e766 # v2.0.0
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-          cachix_auth_token: ${{ secrets.CACHIX_AUTH_TOKEN }}
           extra_nix_config: |
             allowUnfree = true
