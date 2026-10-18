@@ -68,6 +68,12 @@ in
       description = "GitHub Copilot CLI.";
     };
 
+    crush.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Crush, Charm's terminal coding agent.";
+    };
+
     cursor.cli.enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
@@ -93,6 +99,7 @@ in
       context = ./global-context.md;
     };
 
-    home.packages = lib.optional cfg.cursor.cli.enable pkgs.cursor-cli;
+    home.packages =
+      lib.optional cfg.crush.enable pkgs.crush ++ lib.optional cfg.cursor.cli.enable pkgs.cursor-cli;
   };
 }
