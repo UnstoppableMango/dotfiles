@@ -134,7 +134,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
 
 `modules/` itself stays generic, holding enable toggles and the mechanics needed for a feature to function, with no personal values:
 
-- `ai/` - claude-code, github-copilot-cli, cursor-cli.
+- `ai/` - claude-code, github-copilot-cli, cursor-cli, crush.
   Each MCP integration and third-party service (aws, azure, cloudflare, figma, slack, gossamer, per-language servers, etc.) gets its own `.nix` toggle file; `moer/`, `nix-skill/`, and `tdd-orchestrator/` are skill submodules (a SKILL.md plus agents), following the same one-file-per-concern pattern as the rest of `modules/`.
   Every configured MCP server starts with each Claude Code and Copilot CLI session, so modules that run a local stdio server split `enable` (packages, LSP servers, skills) from `mcp.enable` (the server registration, default `false`).
   A project that wants one of those servers declares it in a repo-local `.mcp.json`.
@@ -288,7 +288,7 @@ So it sets `dotfiles.zsh.p10kConfig = null` and leaves off oh-my-zsh, fzf, htop,
 Git's `core.editor` is `true`, so a merge or rebase keeps its default message instead of waiting on nvim, which the image does not install.
 Git's `maintenance.auto` and `gc.auto` are off: a commit otherwise detaches `git maintenance run --auto` into a session of its own, which leaves an orphan behind every commit.
 The profile carries tini, which the-cluster runs as the claude container's PID 1 in front of `claude remote-control`, since remote-control reaps none of the orphans its sessions leave.
-It also leaves off neovim, whose curated LSP set bundles every language server, and every agent CLI other than Claude Code (`ai.copilot`, `ai.cursor.cli`, `ai.coderabbit`, `ai.omnigent`, `ai.opencode`).
+It also leaves off neovim, whose curated LSP set bundles every language server, and every agent CLI other than Claude Code (`ai.copilot`, `ai.crush`, `ai.cursor.cli`, `ai.coderabbit`, `ai.omnigent`, `ai.opencode`).
 The `ai.*` integrations that default on but need a display or a toolchain the image lacks (azure, chromeDevtools, playwright, csharp, fsharp, haskell, ocaml) are off too.
 For size it also drops helix, the `home-manager` CLI (the image is never activated or switched), `programs.vim` (Home Manager builds it from `vim-full`), the gitMcp and gossamer `ai.*` integrations, and every glibc locale except `en_US.UTF-8`.
 The cloudflare, gitlab, and pulumi `ai.*` integrations are off because they sign in through a browser.
