@@ -126,7 +126,7 @@ Each host file lists every toggle it wants, even where hosts overlap, so reading
 OpenRouter has no toggle of its own to set: `dotfiles.openrouter` turns on when `dotfiles.openrouter.apiKeySecret` names a secret, which only `home/` does, and every integration under `modules/openrouter/` follows it.
 
 `hosts/darter.nix` is the shell and secret floor, the dev toolchains and agent CLIs, and fonts, stylix, obsidian, signal, and zed (a display without the desktop session), plus `targets.genericLinux`, its signing key, and the rosequartz KUBECONFIG.
-`hosts/hades.nix` is the same floor and toolchains plus the full desktop session (GNOME, with i3 and Hyprland beside it at the login screen), ocaml, dotnet and emacs, its signing key, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
+`hosts/hades.nix` is the same floor and toolchains plus the full desktop session (GNOME, with i3 and Hyprland beside it at the login screen), ocaml, dotnet and emacs, BizHawk, its signing key, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
 `hosts/server.nix` is `home/account.nix` plus the floor, containers, and kubernetes.
 It deliberately does not import the rest of `home/`: the personal layer declares sops secrets encrypted to erik's laptop keys, which a server has no reason to hold.
 Server does get oh-my-zsh and Powerlevel10k, because it sets `dotfiles.zsh.enable` and `dotfiles.zsh.ohMyZsh.enable`, and the prompt follows `dotfiles.zsh.enable`.
@@ -161,6 +161,8 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
 - `home-manager/` - the `homeup` command, a `home-manager switch` from a local checkout that works from any directory.
   `dotfiles.homeManager.flakePath` names the checkout and is baked into the script, so it needs neither a cwd nor an environment; `configuration` overrides the `$USER@$HOSTNAME` name home-manager infers, and `backupExtension` the `-b hm-backup` it passes.
 - `flake-update/` - flake-update automation, switching the same checkout `home-manager/` names (`dotfiles.automation.flakeUpdate.flakePath` defaults to `dotfiles.homeManager.flakePath`)
+- `bizhawk/` - BizHawk, launched as `emuhawk`, from the `mangopkgs` overlay (packaged at `pkgs/bizhawk/` in https://github.com/unmango/pkgs), since nixpkgs has no package and upstream's Nix expression is no flake.
+  Upstream publishes an x86_64-linux build only.
 - `brave/` - Brave
 - `github/` - a GitHub personal access token held in sops, for the GitHub MCP server.
   `dotfiles.github.token.secret` names a `sops.secrets` entry and turns the module on, the same shape as `dotfiles.openrouter.apiKeySecret`; `home/default.nix` sets it to `github-pat` from `home/secrets/github.yaml`.
@@ -271,7 +273,7 @@ Seven home configurations are built: `erik@darter`, `erik@hades`, `erik@server`,
 No machine is actually named `server`; that entry exists so `hosts/server.nix` is covered by `nix flake check` rather than only breaking whenever someone next touches it.
 
 `generic@x86_64-linux` and `generic@aarch64-darwin` are the same idea one layer out: both build `hosts/generic.nix`, which turns most modules on, imports nothing from `home/`, and sets a throwaway account whose home directory follows the platform, so `homeModules.dotfiles` is built here rather than only breaking in somebody else's flake.
-`generic@x86_64-linux` builds `hosts/generic-linux.nix`, which imports `generic.nix` and adds the Linux-only desktop modules (brave, gnome, hyprland, i3) as literal toggles.
+`generic@x86_64-linux` builds `hosts/generic-linux.nix`, which imports `generic.nix` and adds the Linux-only desktop modules (bizhawk, brave, gnome, hyprland, i3) as literal toggles.
 A toggle there cannot read the platform from `pkgs`: `pkgs` depends on `nixpkgs.overlays`, stylix's overlay reads `config.lib`, and merging `config.lib` forces every module's conditional `lib` definition, including Home Manager's rofi under `dotfiles.i3.enable`, so `i3.enable = isLinux` is an infinite recursion.
 `generic@aarch64-darwin` is also the only consumer of the darwin branches in `modules/` (ghostty's null package, the 1Password agent socket, the containers defaults, omnigent's launchd unit, `launch-services/`).
 `nix flake check` does not evaluate `homeConfigurations`, so CI builds them explicitly.

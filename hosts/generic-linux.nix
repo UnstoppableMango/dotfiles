@@ -3,6 +3,7 @@
   imports = [ ./generic.nix ];
 
   dotfiles = {
+    bizhawk.enable = true;
     brave.enable = true;
     gnome.enable = true;
     hyprland.enable = true;
