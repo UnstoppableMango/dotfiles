@@ -405,9 +405,15 @@ in
         # inside GNOME. picom then holds :0's compositor selection, so mutter
         # gives up managing Xwayland and no X11 window is shown. Under i3
         # its unit starts picom, so the entry is hidden everywhere.
+        # gnome-session skips an entry it cannot parse as an application and
+        # falls back to the packaged one, so Type, Name and Exec are required.
         xdg.configFile."autostart/picom.desktop".text = ''
           [Desktop Entry]
+          Type=Application
+          Name=picom
+          Exec=picom
           Hidden=true
+          X-GNOME-Autostart-enabled=false
         '';
 
         systemd.user.services = lib.genAttrs sessionUnits (_: {
