@@ -248,6 +248,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   The dconf preferences that go with it are taste and live in `home/gnome.nix`.
 - `i3/` - an i3 X session that sits beside GNOME on the same machine, picked at the login screen: i3status-rust, rofi, dunst, picom, polkit-gnome, flameshot, and xss-lock with i3lock-color.
   GNOME reaches `graphical-session.target` too, so every unit belonging to the i3 session is rebound to `hm-graphical-session.target`, which only `~/.hm-xsession` starts; a unit left on the stock target would run inside GNOME as well (picom against mutter, a second locker).
+  picom's package also ships an XDG autostart entry, which gnome-session runs from the profile, so `~/.config/autostart/picom.desktop` hides it; a picom running inside GNOME holds Xwayland's compositor selection, and mutter then shows no X11 window at all.
   The session script and profile live at `~/.hm-xsession` and `~/.hm-xprofile` rather than the default names, because the NixOS X session wrapper sources `~/.xprofile` for every X login.
   `dotfiles.i3.gnome.enable` follows `dotfiles.gnome.enable` and reuses GNOME's pieces: xsettingsd serves the `org/gnome/desktop/interface` values from `dconf.settings`, so GTK apps match without a second theme definition, plus Super+I for GNOME Settings, Super+E for Files, and a gtk-portal `i3-portals.conf`.
   It uses xsettingsd because gsd-xsettings serves only mutter's Xwayland and exits under any other window manager.

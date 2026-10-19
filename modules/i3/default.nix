@@ -400,6 +400,16 @@ in
 
         home.packages = [ pkgs.flameshot ];
 
+        # picom's package ships an XDG autostart entry, and services.picom puts
+        # it in the profile, where gnome-session finds it and starts picom
+        # inside GNOME. picom then holds :0's compositor selection, so mutter
+        # gives up managing Xwayland and no X11 window is shown. Under i3
+        # its unit starts picom, so the entry is hidden everywhere.
+        xdg.configFile."autostart/picom.desktop".text = ''
+          [Desktop Entry]
+          Hidden=true
+        '';
+
         systemd.user.services = lib.genAttrs sessionUnits (_: {
           Unit.PartOf = lib.mkForce [ sessionTarget ];
           Install.WantedBy = lib.mkForce [ sessionTarget ];
