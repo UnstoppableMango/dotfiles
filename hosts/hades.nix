@@ -54,6 +54,7 @@
       remoteControl.enable = true;
     };
 
+    bizhawk.enable = true;
     brave.enable = true;
     emacs.enable = true;
     fonts.enable = true;
