@@ -283,6 +283,7 @@
               gnumake
               home-manager
               inputs'.clan-core.packages.clan-cli
+              (inputs'.mangopkgs.packages.graphify.withGrammars (ps: [ ps.tree-sitter-grammars.tree-sitter-nix ]))
               ldns
               nil
               nix
@@ -301,7 +302,13 @@
 
             # sops rewrites these files in its own YAML layout on every edit,
             # so prettier re-indenting them turns each edit into two diffs.
-            settings.global.excludes = [ "home/secrets/*" ];
+            # graphify rewrites its output and its installed skill whole for the
+            # same reason.
+            settings.global.excludes = [
+              "home/secrets/*"
+              "graphify-out/*"
+              ".claude/skills/graphify/*"
+            ];
           };
         };
     };
