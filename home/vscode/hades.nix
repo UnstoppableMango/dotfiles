@@ -32,6 +32,7 @@
         foxundermoon.shell-format
         github.vscode-github-actions
         golang.go
+        graphify-labs.graphify-mcp
         graphql.vscode-graphql
         graphql.vscode-graphql-syntax
         hashicorp.terraform
