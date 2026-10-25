@@ -12,7 +12,7 @@ Three top-level directories, in dependency order:
   Declares `dotfiles.*` options; sets no personal values.
 - `home/` - erik's identity: the account itself, git email, GNOME dconf, and secrets.
   Consumes `dotfiles.*`; declares none.
-- `hosts/` - one file per home configuration (`darter`, `hades`, `server`, `generic`), plus `common.nix`, which every configuration is built on.
+- `hosts/` - one file per home configuration (`darter`, `hades`, `server`, `generic`, `generic-linux`), plus `common.nix`, which every configuration is built on.
   The only entrypoints.
   Each lists the modules it turns on plus whatever is true of that machine alone.
 
@@ -126,7 +126,7 @@ Each host file lists every toggle it wants, even where hosts overlap, so reading
 OpenRouter has no toggle of its own to set: `dotfiles.openrouter` turns on when `dotfiles.openrouter.apiKeySecret` names a secret, which only `home/` does, and every integration under `modules/openrouter/` follows it.
 
 `hosts/darter.nix` is the shell and secret floor, the dev toolchains and agent CLIs, and fonts, stylix, obsidian, signal, and zed (a display without the desktop session), plus `targets.genericLinux`, its signing key, and the rosequartz KUBECONFIG.
-`hosts/hades.nix` is the same floor and toolchains plus the full desktop session, ocaml, dotnet and emacs, its signing key, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
+`hosts/hades.nix` is the same floor and toolchains plus the full desktop session (GNOME, with i3 and Hyprland beside it at the login screen), ocaml, dotnet and emacs, BizHawk, its signing key, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
 `hosts/server.nix` is `home/account.nix` plus the floor, containers, and kubernetes.
 It deliberately does not import the rest of `home/`: the personal layer declares sops secrets encrypted to erik's laptop keys, which a server has no reason to hold.
 Server does get oh-my-zsh and Powerlevel10k, because it sets `dotfiles.zsh.enable` and `dotfiles.zsh.ohMyZsh.enable`, and the prompt follows `dotfiles.zsh.enable`.
@@ -134,7 +134,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
 
 `modules/` itself stays generic, holding enable toggles and the mechanics needed for a feature to function, with no personal values:
 
-- `ai/` - claude-code, github-copilot-cli, cursor-cli.
+- `ai/` - claude-code, github-copilot-cli, cursor-cli, crush.
   Each MCP integration and third-party service (aws, azure, cloudflare, figma, slack, gossamer, per-language servers, etc.) gets its own `.nix` toggle file; `moer/`, `nix-skill/`, and `tdd-orchestrator/` are skill submodules (a SKILL.md plus agents), following the same one-file-per-concern pattern as the rest of `modules/`.
   Every configured MCP server starts with each Claude Code and Copilot CLI session, so modules that run a local stdio server split `enable` (packages, LSP servers, skills) from `mcp.enable` (the server registration, default `false`).
   A project that wants one of those servers declares it in a repo-local `.mcp.json`.
@@ -146,6 +146,8 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `coderabbit.nix` installs the CodeRabbit CLI from the `mangopkgs` overlay (packaged at `pkgs/coderabbit/` in https://github.com/unmango/pkgs) and turns its self-update off, since `coderabbit update` rewrites the binary in place and a nix-installed one lives in the read-only store.
   Authentication is a rendered `~/.coderabbit/auth.json` (`{"type":"api_key",...}`) rather than an environment variable, because the CLI reads no `CODERABBIT_API_KEY`; its api_key auth branch returns that file verbatim instead of consulting the OS credential store the OAuth branch uses, so the file alone is a complete authenticated state.
   The key comes from `dotfiles.ai.coderabbit.apiKeySecret` naming a `sops.secrets` entry, and the CLI rejects a user API key, so it has to be an agentic one.
+  `mattpocock.nix` installs https://github.com/mattpocock/skills from `dotfiles.ai.mattpocock.src`, which `hosts/common.nix` sets from the `mattpocock-skills` flake input so lock maintenance moves it.
+  Copilot CLI's skill list is read from that checkout's `.claude-plugin/plugin.json`, the same list the Claude Code plugin loads.
 - `openrouter/` - OpenRouter as the one provider for every paid model outside Claude Code.
   Claude Code stays on the Claude subscription, since Remote Control refuses an `ANTHROPIC_BASE_URL` other than api.anthropic.com.
   `default.nix` holds the key (`apiKeySecret`, a `sops.secrets` name) and two model tiers (`models.default`, `models.fast`), and exposes read-only `baseUrl`, `apiKeyFile`, and `apiKeyPlaceholder` for integrations to consume.
@@ -159,6 +161,8 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
 - `home-manager/` - the `homeup` command, a `home-manager switch` from a local checkout that works from any directory.
   `dotfiles.homeManager.flakePath` names the checkout and is baked into the script, so it needs neither a cwd nor an environment; `configuration` overrides the `$USER@$HOSTNAME` name home-manager infers, and `backupExtension` the `-b hm-backup` it passes.
 - `flake-update/` - flake-update automation, switching the same checkout `home-manager/` names (`dotfiles.automation.flakeUpdate.flakePath` defaults to `dotfiles.homeManager.flakePath`)
+- `bizhawk/` - BizHawk, launched as `emuhawk`, from the `mangopkgs` overlay (packaged at `pkgs/bizhawk/` in https://github.com/unmango/pkgs), since nixpkgs has no package and upstream's Nix expression is no flake.
+  Upstream publishes an x86_64-linux build only.
 - `brave/` - Brave
 - `github/` - a GitHub personal access token held in sops, for the GitHub MCP server.
   `dotfiles.github.token.secret` names a `sops.secrets` entry and turns the module on, the same shape as `dotfiles.openrouter.apiKeySecret`; `home/default.nix` sets it to `github-pat` from `home/secrets/github.yaml`.
@@ -201,7 +205,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   The split exists because a list option keeps only the definitions at the winning override priority, so a host naming its key in `identityFiles` would discard those handles instead of preceding them.
   Both feed one `IdentityFile`, unset when they are empty, because an explicit `IdentityFile` stops ssh from trying its built-in defaults.
   `primaryIdentityFile = null` says the machine's key is somewhere other than the default path without saying where, leaving that to a block in `~/.ssh/config.d/`; darter is the one host that does this.
-- `stylix/` - Stylix theming, scoped to terminals only (kitty, ghostty) via `dotfiles.stylix.enable`
+- `stylix/` - Stylix theming, scoped to terminals (kitty, ghostty) via `dotfiles.stylix.enable`; `i3/` adds its own targets (i3, rofi, dunst, the i3status-rust palette)
 - `kitty/`, `ghostty/` - terminals
 - `signal/` - Signal, both halves: the desktop app (`dotfiles.signal.desktop`) and `signal-cli` (`dotfiles.signal.cli`), each on by default under `dotfiles.signal.enable`.
   A headless host that wants the CLI alone sets `dotfiles.signal.desktop = false`.
@@ -242,6 +246,20 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `dotfiles.containers.podmanSocket` and `.userRegistryConfig` default to `targets.genericLinux.enable`: non-NixOS hosts get the rootless `podman.socket`/`podman.service` user units and `~/.config/containers/{policy.json,registries.conf}`, which the podman package carries no defaults for, while NixOS hosts keep the system layer's units and `/etc/containers` authoritative.
 - `gnome/` - the GNOME option, the extension packages, and the derived `enabled-extensions` list.
   The dconf preferences that go with it are taste and live in `home/gnome.nix`.
+- `i3/` - an i3 X session that sits beside GNOME on the same machine, picked at the login screen: i3status-rust, rofi, dunst, picom, polkit-gnome, flameshot, and xss-lock with i3lock-color.
+  GNOME reaches `graphical-session.target` too, so every unit belonging to the i3 session is rebound to `hm-graphical-session.target`, which only `~/.hm-xsession` starts; a unit left on the stock target would run inside GNOME as well (picom against mutter, a second locker).
+  picom's package also ships an XDG autostart entry, which gnome-session runs from the profile, so `~/.config/autostart/picom.desktop` hides it; a picom running inside GNOME holds Xwayland's compositor selection, and mutter then shows no X11 window at all.
+  The session script and profile live at `~/.hm-xsession` and `~/.hm-xprofile` rather than the default names, because the NixOS X session wrapper sources `~/.xprofile` for every X login.
+  `dotfiles.i3.gnome.enable` follows `dotfiles.gnome.enable` and reuses GNOME's pieces: xsettingsd serves the `org/gnome/desktop/interface` values from `dconf.settings`, so GTK apps match without a second theme definition, plus Super+I for GNOME Settings, Super+E for Files, and a gtk-portal `i3-portals.conf`.
+  It uses xsettingsd because gsd-xsettings serves only mutter's Xwayland and exits under any other window manager.
+  `familiarKeys`, `applets`, `autostart`, and `lock.enable` are the GNOME/KDE habits (Alt+Tab, Super+A, Print, Ctrl+Alt+Delete, the tray, `~/.config/autostart`, idle lock), each on by default; Super+/ lists the bindings from the same attrset that defines them.
+  A machine varies the session through `dotfiles.i3.terminal` and `.wallpaper` and the plain Home Manager options, which merge (`xsession.windowManager.i3.config.workspaceOutputAssign`, `programs.i3status-rust.bars.default.blocks`).
+  The login-screen entry is system-side; `docs/i3.md` covers it.
+- `hyprland/` - a Hyprland session beside GNOME and i3, picked at the login screen: waybar, hyprlauncher, dunst, hyprshot, hyprpolkitagent, and hyprlock with hypridle (`lock.nix`), plus hyprpaper when `dotfiles.hyprland.wallpaper` is set.
+  The config is Hyprland's own `example/hyprland.lua`, rendered through Home Manager's Lua generator (`configType = "lua"`, set explicitly because erik's stateVersion predates it as the default), with nothing carried over from `i3/`: its bindings, its look, and its `terminal`/`fileManager`/`menu` as options (kitty, nautilus, hyprlauncher).
+  waybar's settings are `waybar.json`, waybar's shipped config with its sway modules swapped for the hyprland ones; hyprlock and hypridle follow their upstream examples, less what needs hardware hades lacks.
+  `package` and `portalPackage` are null, because the nixos repo's `programs.hyprland` owns both and the session entry; `docs/hyprland.md` covers the system side.
+  `wayland.systemd.target` is `hyprland-session.target`, since GNOME also reaches `graphical-session.target` and every Wayland unit would otherwise start inside it.
 - `yubikey/` - ykman, yubico-piv-tool, libfido2, and yubikey-personalization, with Yubico Authenticator behind `dotfiles.yubikey.gui` (Linux only), and age-plugin-yubikey when sops is on.
   `dotfiles.yubikey.keys.<name>.sshKey` records each key's resident FIDO2 SSH credential (values in `home/ssh.nix`), and ssh offers that key's `handle`.
   The two are separate options because they answer to different things: `application` identifies the credential on the authenticator and is fixed when it is created, while `handle` is only a path, which ssh reads by content and never checks against the credential.
@@ -255,7 +273,9 @@ Seven home configurations are built: `erik@darter`, `erik@hades`, `erik@server`,
 `tz@hades` builds `hosts/tz-hades.nix`, a second account on hades that imports nothing from `home/`; the nixos repo creates the account and installs the `home-manager` CLI for it.
 No machine is actually named `server`; that entry exists so `hosts/server.nix` is covered by `nix flake check` rather than only breaking whenever someone next touches it.
 
-`generic@x86_64-linux` and `generic@aarch64-darwin` are the same idea one layer out: both build `hosts/generic.nix`, which turns most modules on (brave and gnome on Linux only), imports nothing from `home/`, and sets a throwaway account whose home directory follows the platform, so `homeModules.dotfiles` is built here rather than only breaking in somebody else's flake.
+`generic@x86_64-linux` and `generic@aarch64-darwin` are the same idea one layer out: both build `hosts/generic.nix`, which turns most modules on, imports nothing from `home/`, and sets a throwaway account whose home directory follows the platform, so `homeModules.dotfiles` is built here rather than only breaking in somebody else's flake.
+`generic@x86_64-linux` builds `hosts/generic-linux.nix`, which imports `generic.nix` and adds the Linux-only desktop modules (bizhawk, brave, gnome, hyprland, i3) as literal toggles.
+A toggle there cannot read the platform from `pkgs`: `pkgs` depends on `nixpkgs.overlays`, stylix's overlay reads `config.lib`, and merging `config.lib` forces every module's conditional `lib` definition, including Home Manager's rofi under `dotfiles.i3.enable`, so `i3.enable = isLinux` is an infinite recursion.
 `generic@aarch64-darwin` is also the only consumer of the darwin branches in `modules/` (ghostty's null package, the 1Password agent socket, the containers defaults, omnigent's launchd unit, `launch-services/`).
 `nix flake check` does not evaluate `homeConfigurations`, so CI builds them explicitly.
 That takes two jobs: `check` on `ubuntu-latest` for the linux configurations, and `darwin` on `macos-latest` (Apple Silicon, so aarch64-darwin) for the darwin one, which gets a real build rather than an evaluation.
@@ -271,7 +291,7 @@ So it sets `dotfiles.zsh.p10kConfig = null` and leaves off oh-my-zsh, fzf, htop,
 Git's `core.editor` is `true`, so a merge or rebase keeps its default message instead of waiting on nvim, which the image does not install.
 Git's `maintenance.auto` and `gc.auto` are off: a commit otherwise detaches `git maintenance run --auto` into a session of its own, which leaves an orphan behind every commit.
 The profile carries tini, which the-cluster runs as the claude container's PID 1 in front of `claude remote-control`, since remote-control reaps none of the orphans its sessions leave.
-It also leaves off neovim, whose curated LSP set bundles every language server, and every agent CLI other than Claude Code (`ai.copilot`, `ai.cursor.cli`, `ai.coderabbit`, `ai.omnigent`, `ai.opencode`).
+It also leaves off neovim, whose curated LSP set bundles every language server, and every agent CLI other than Claude Code (`ai.copilot`, `ai.crush`, `ai.cursor.cli`, `ai.coderabbit`, `ai.omnigent`, `ai.opencode`).
 The `ai.*` integrations that default on but need a display or a toolchain the image lacks (azure, chromeDevtools, playwright, csharp, fsharp, haskell, ocaml) are off too.
 For size it also drops helix, the `home-manager` CLI (the image is never activated or switched), `programs.vim` (Home Manager builds it from `vim-full`), the gitMcp and gossamer `ai.*` integrations, and every glibc locale except `en_US.UTF-8`.
 The cloudflare, gitlab, and pulumi `ai.*` integrations are off because they sign in through a browser.

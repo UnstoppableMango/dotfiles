@@ -112,7 +112,6 @@
       url = "github:unstoppablemango/ux";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
-      inputs.gomod2nix.follows = "gomod2nix";
       inputs.systems.follows = "systems";
       inputs.treefmt-nix.follows = "treefmt-nix";
     };
@@ -179,6 +178,11 @@
       url = "github:nlewo/nix2container";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    mattpocock-skills = {
+      url = "github:mattpocock/skills";
+      flake = false;
+    };
   };
 
   outputs =
@@ -236,7 +240,7 @@
             "erik@hades" = homeFor "x86_64-linux" ./hosts/hades.nix;
             "erik@server" = homeFor "x86_64-linux" ./hosts/server.nix;
             "tz@hades" = homeFor "x86_64-linux" ./hosts/tz-hades.nix;
-            "generic@x86_64-linux" = homeFor "x86_64-linux" ./hosts/generic.nix;
+            "generic@x86_64-linux" = homeFor "x86_64-linux" ./hosts/generic-linux.nix;
             "generic@aarch64-darwin" = homeFor "aarch64-darwin" ./hosts/generic.nix;
             "generic@container" = homeFor "x86_64-linux" ./hosts/container.nix;
           };

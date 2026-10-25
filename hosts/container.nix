@@ -113,6 +113,7 @@
       github.ghAuth = true;
 
       copilot.enable = false;
+      crush.enable = false;
       cursor.cli.enable = false;
       coderabbit.enable = false;
       omnigent.enable = false;

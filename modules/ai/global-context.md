@@ -17,6 +17,7 @@ Ask questions often, and make each one specific.
 
 ## English style
 
+- When you explain a concept, prefer ASD-STE100 Simplified Technical English: short sentences, one idea per sentence, active voice, and one meaning per word. Technical names (commands, APIs, file paths) are exempt from the vocabulary rules.
 - Avoid flourish. State things plainly rather than reaching for a dramatic or literary phrasing.
 - Avoid cliche and idiom (e.g. "game-changer," "at the end of the day," "circle back"). Say the literal thing instead.
 - Avoid intensifiers ("very," "really," "incredibly," "significantly") unless a number or comparison backs them up.

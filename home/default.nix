@@ -15,6 +15,7 @@
   home.packages = with pkgs; [
     buf
     clan-cli
+    desmume
     devctl
     dix
     glow

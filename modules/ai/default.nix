@@ -42,6 +42,7 @@ in
     ./gossamer.nix
     ./haskell.nix
     ./kubernetes.nix
+    ./mattpocock.nix
     ./moer.nix
     ./nix.nix
     ./notion.nix
@@ -65,6 +66,12 @@ in
       type = lib.types.bool;
       default = true;
       description = "GitHub Copilot CLI.";
+    };
+
+    crush.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Crush, Charm's terminal coding agent.";
     };
 
     cursor.cli.enable = lib.mkOption {
@@ -92,6 +99,7 @@ in
       context = ./global-context.md;
     };
 
-    home.packages = lib.optional cfg.cursor.cli.enable pkgs.cursor-cli;
+    home.packages =
+      lib.optional cfg.crush.enable pkgs.crush ++ lib.optional cfg.cursor.cli.enable pkgs.cursor-cli;
   };
 }

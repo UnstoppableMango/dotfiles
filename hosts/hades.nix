@@ -51,14 +51,18 @@
       enable = true;
       claudeDesktop.enable = true;
       cursor.editor.enable = true;
+      remoteControl.enable = true;
     };
 
+    bizhawk.enable = true;
     brave.enable = true;
     emacs.enable = true;
     fonts.enable = true;
     ghostty.enable = true;
     gnome.enable = true;
     helix.enable = true;
+    hyprland.enable = true;
+    i3.enable = true;
     kitty.enable = true;
     neovim.enable = true;
     obsidian.enable = true;
