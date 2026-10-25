@@ -14,6 +14,8 @@ Home Manager renders it to two places (`modules/ai/default.nix:63` and `modules/
 - `~/.claude/CLAUDE.md`
 - `~/.copilot/copilot-instructions.md`
 
+Crush reads the same store file through an `option global-context-path` line in `~/.config/crush/crushrc` (`modules/ai/crush.nix`).
+
 Both are symlinks into `/nix/store` and are read-only.
 Writing to either fails, and an edit that appeared to succeed was written to the store path rather than the source.
 

@@ -17,6 +17,7 @@ let
 in
 {
   imports = [
+    ./crush.nix
     ./omnigent.nix
     ./opencode.nix
     ./opencommit.nix
