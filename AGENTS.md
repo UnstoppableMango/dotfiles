@@ -278,7 +278,7 @@ No machine is actually named `server`; that entry exists so `hosts/server.nix` i
 A toggle there cannot read the platform from `pkgs`: `pkgs` depends on `nixpkgs.overlays`, stylix's overlay reads `config.lib`, and merging `config.lib` forces every module's conditional `lib` definition, including Home Manager's rofi under `dotfiles.i3.enable`, so `i3.enable = isLinux` is an infinite recursion.
 `generic@aarch64-darwin` is also the only consumer of the darwin branches in `modules/` (ghostty's null package, the 1Password agent socket, the containers defaults, omnigent's launchd unit, `launch-services/`).
 `nix flake check` does not evaluate `homeConfigurations`, so CI builds them explicitly.
-That takes two jobs: `check` on `ubuntu-latest` for the linux configurations, and `darwin` on `macos-latest` (Apple Silicon, so aarch64-darwin) for the darwin one, which gets a real build rather than an evaluation.
+That takes two jobs: `check` on the self-hosted `thecluster` runner for the linux configurations, and `darwin` on `macos-latest` (Apple Silicon, so aarch64-darwin) for the darwin one, which gets a real build rather than an evaluation.
 
 `generic@container` builds `hosts/container.nix`, the headless, identity-free configuration behind `packages.container` (x86_64-linux only, built by `container.nix`).
 It leaves off every GUI module plus 1Password (its agent socket belongs to the desktop app), sops (an image holds no age key), and gnupg (pinentry needs a session).
