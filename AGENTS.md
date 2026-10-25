@@ -139,7 +139,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   Every configured MCP server starts with each Claude Code and Copilot CLI session, so modules that run a local stdio server split `enable` (packages, LSP servers, skills) from `mcp.enable` (the server registration, default `false`).
   A project that wants one of those servers declares it in a repo-local `.mcp.json`.
   HTTP servers start no local process and register under `enable` alone.
-  `global-context.md` is the user-level agent instructions, rendered to both `~/.claude/CLAUDE.md` and `~/.copilot/copilot-instructions.md`; `.claude/skills/agent-context/` covers how to change it.
+  `global-context.md` is the user-level agent instructions, rendered to both `~/.claude/CLAUDE.md` and `~/.copilot/copilot-instructions.md` and loaded by Crush as a global context path; `.claude/skills/agent-context/` covers how to change it.
   `checkout-root.nix` renders `modules/ai/checkout-root.md` to `~/src/AGENTS.md` with a `CLAUDE.md` include beside it, matching the pairing the repos underneath use, so conventions spanning the whole checkout root are stated once instead of per repo.
   The document is an option, `dotfiles.ai.checkoutRoot.context`, defaulting to the bundled file; a consumer supplies their own or sets it to null to write nothing.
   `omnigent.nix` installs omnigent and runs its server and host daemon; its model provider comes from `openrouter/omnigent.nix`.
@@ -148,6 +148,11 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   The key comes from `dotfiles.ai.coderabbit.apiKeySecret` naming a `sops.secrets` entry, and the CLI rejects a user API key, so it has to be an agentic one.
   `mattpocock.nix` installs https://github.com/mattpocock/skills from `dotfiles.ai.mattpocock.src`, which `hosts/common.nix` sets from the `mattpocock-skills` flake input so lock maintenance moves it.
   Copilot CLI's skill list is read from that checkout's `.claude-plugin/plugin.json`, the same list the Claude Code plugin loads.
+  `crush.nix` writes `~/.config/crush/crushrc`, the Bash config Crush prefers over its deprecated `crush.json`, from `dotfiles.ai.crush.crushrc` (`lines`), which other modules append to.
+  It carries over what the other agents already get rather than declaring a third set: an `lsp add` per `programs.claude-code.lspServers` entry, an `mcp add` per `programs.mcp.servers` entry, and `global-context.md`.
+  MCP values are written in double quotes, because the `${VAR}` references in `programs.mcp.servers` are left for the reading client to expand and in a crushrc that client is a shell; `github.nix` sets `GITHUB_PERSONAL_ACCESS_TOKEN` at the top of the file the way its wrappers export it.
+  Crush starts a browser sign-in only for a server marked `--oauth`, and a marked server will not connect until it has a token, so `dotfiles.ai.crush.oauthServers` names the ones that need it rather than marking every HTTP server.
+  Skills need little: Crush reads `~/.claude/skills` by default, and `mattpocock.nix` and `adhd.nix` add their plugin-only skills with `option skill-path`.
 - `openrouter/` - OpenRouter as the one provider for every paid model outside Claude Code.
   Claude Code stays on the Claude subscription, since Remote Control refuses an `ANTHROPIC_BASE_URL` other than api.anthropic.com.
   `default.nix` holds the key (`apiKeySecret`, a `sops.secrets` name) and two model tiers (`models.default`, `models.fast`), and exposes read-only `baseUrl`, `apiKeyFile`, and `apiKeyPlaceholder` for integrations to consume.
@@ -155,6 +160,7 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   Adding a tool means adding a file and listing it in `default.nix`'s `imports`.
   `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
   Its `auth_command` reads the key file rather than `OPENROUTER_API_KEY`, since the systemd user unit running the server never sees a login shell.
+  `crush.nix` adds a `provider add openrouter --api-key "$(cat ...)"` line to the crushrc, which is all Crush's built-in OpenRouter provider needs, and fills its large and small model slots from the two tiers.
   `opencode.nix` passes the key as `{file:...}`, which opencode resolves when it loads its config.
   `opencommit.nix` sets `dotfiles.git.openCommit`'s key, provider, and model at `mkDefault`, reusing that module's `~/.opencommit` template.
   `zed.nix` wraps `zeditor` to export `OPENROUTER_API_KEY` from the key file at launch, because Zed has no file route for the key; on macOS, launching Zed.app from Finder bypasses the wrapper.

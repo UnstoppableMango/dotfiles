@@ -67,6 +67,20 @@ in
         programs.github-copilot-cli.mcpServers.github = server;
       }
 
+      # The server's header names the variable the claude and copilot
+      # wrappers export; crushrc is a shell, so it sets the variable itself
+      # ahead of the `mcp add` that reads it.
+      (lib.mkIf (cfg.github.ghAuth || token.secret != null) {
+        dotfiles.ai.crush.crushrc = lib.mkBefore ''
+          GITHUB_PERSONAL_ACCESS_TOKEN="$(${
+            if cfg.github.ghAuth then
+              "${lib.getExe config.programs.gh.package} auth token"
+            else
+              "cat ${lib.escapeShellArg token.file}"
+          })"
+        '';
+      })
+
       (lib.mkIf cfg.github.ghAuth {
         programs.claude-code.mcpServers.github = {
           type = "http";

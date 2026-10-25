@@ -57,5 +57,7 @@ in
     programs.claude-code.plugins.mattpocock-skills = plugin;
 
     programs.github-copilot-cli.skills = lib.genAttrs skillNames (name: "${plugin}/skills/${name}");
+
+    dotfiles.ai.crush.crushrc = "option skill-path ${plugin}/skills";
   };
 }

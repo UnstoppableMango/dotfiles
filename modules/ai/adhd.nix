@@ -28,6 +28,7 @@ in
     programs.claude-code.plugins."i-have-adhd" = iHaveAdhdSrc;
 
     programs.github-copilot-cli.skills."i-have-adhd" = "${iHaveAdhdSrc}/skills/i-have-adhd";
+    dotfiles.ai.crush.crushrc = "option skill-path ${iHaveAdhdSrc}/skills";
 
     # hooks/always-on.mjs only checks that this file exists.
     home.file."${lib.removePrefix "${config.home.homeDirectory}/" config.programs.claude-code.configDir}/.i-have-adhd-always".text =
