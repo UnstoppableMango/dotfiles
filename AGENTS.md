@@ -342,6 +342,7 @@ This repository has a knowledge graph at `graphify-out/`, built from the code al
   Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts; option nodes are labelled by their full path, such as `dotfiles.ai.enable`.
 - Read `graphify-out/GRAPH_REPORT.md` only for broad architecture review or when query, path, and explain do not surface enough context.
 - After changing `.nix` files, run `make graph` to keep the graph current; it parses the code again and costs nothing.
+  Build the graph that way rather than through the skill's `/graphify` pipeline, whose setup step prefers a PyPI `graphifyy` from `uv` over the dev shell's `graphify` and would write a graph without the `.nix` files, since only the dev shell's build reads them.
 - `graph.json` and `GRAPH_REPORT.md` are committed and the rest of `graphify-out/` is ignored.
   A committed `graph.json` is rewritten whole on every build, so a large diff to it in a pull request is expected; do not flag it as churn.
 - The skill at `.claude/skills/graphify/` is graphify's own, installed by `graphify install --project`; reinstall it rather than editing it.
