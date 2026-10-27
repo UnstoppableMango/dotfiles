@@ -250,6 +250,9 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   podman-tui follows `dotfiles.containers.tui`, on by default.
   `REGISTRY_AUTH_FILE` points podman, skopeo, and buildah at `~/.docker/config.json`, so one `docker login` serves both (`dotfiles.containers.sharedAuth`).
   `dotfiles.containers.podmanSocket` and `.userRegistryConfig` default to `targets.genericLinux.enable`: non-NixOS hosts get the rootless `podman.socket`/`podman.service` user units and `~/.config/containers/{policy.json,registries.conf}`, which the podman package carries no defaults for, while NixOS hosts keep the system layer's units and `/etc/containers` authoritative.
+  `dotfiles.containers.registryCAs` writes a CA per registry host to `~/.config/containers/certs.d/<host>/ca.crt` for the rootless stack.
+  `home/containers/` points it at the-cluster's Nixery with copies of the nixos repo's `modules/pki` CAs.
+  A system dockerd reads only `/etc/docker/certs.d`.
 - `gnome/` - the GNOME option, the extension packages, and the derived `enabled-extensions` list.
   The dconf preferences that go with it are taste and live in `home/gnome.nix`.
 - `i3/` - an i3 X session that sits beside GNOME on the same machine, picked at the login screen: i3status-rust, rofi, dunst, picom, polkit-gnome, flameshot, and xss-lock with i3lock-color.
