@@ -2,6 +2,7 @@
 {
   imports = [
     ./account.nix
+    ./containers
     ./direnv.nix
     ./git.nix
     ./gnome.nix

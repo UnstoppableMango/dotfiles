@@ -42,6 +42,18 @@ in
       '';
     };
 
+    registryCAs = lib.mkOption {
+      type = lib.types.attrsOf lib.types.path;
+      default = { };
+      example = lib.literalExpression ''{ "registry.example.lan" = ./ca.crt; }'';
+      description = ''
+        CA bundles to trust per registry host, written to
+        `~/.config/containers/certs.d/<host>/ca.crt`, which rootless podman,
+        skopeo, and buildah read. A system dockerd reads only
+        `/etc/docker/certs.d`, which Home Manager cannot write.
+      '';
+    };
+
     userRegistryConfig = lib.mkOption {
       type = lib.types.bool;
       default = pkgs.stdenv.hostPlatform.isLinux && config.targets.genericLinux.enable;
@@ -82,15 +94,20 @@ in
       REGISTRY_AUTH_FILE = "${homeDirectory}/.docker/config.json";
     };
 
-    xdg.configFile = lib.mkIf cfg.userRegistryConfig {
-      "containers/policy.json".text = builtins.toJSON {
-        default = [ { type = "insecureAcceptAnything"; } ];
-      };
+    xdg.configFile = lib.mkMerge [
+      (lib.mkIf cfg.userRegistryConfig {
+        "containers/policy.json".text = builtins.toJSON {
+          default = [ { type = "insecureAcceptAnything"; } ];
+        };
 
-      "containers/registries.conf".text = ''
-        unqualified-search-registries = ["docker.io", "ghcr.io", "quay.io"]
-      '';
-    };
+        "containers/registries.conf".text = ''
+          unqualified-search-registries = ["docker.io", "ghcr.io", "quay.io"]
+        '';
+      })
+      (lib.mapAttrs' (
+        host: ca: lib.nameValuePair "containers/certs.d/${host}/ca.crt" { source = ca; }
+      ) cfg.registryCAs)
+    ];
 
     systemd.user = lib.mkIf cfg.podmanSocket {
       sockets.podman = {
