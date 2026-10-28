@@ -52,16 +52,14 @@ in
         skills.nix = ./nix-skill;
       };
 
-      home.packages = [
-        pkgs.nixd
-        pkgs.mcp-nixos
-      ];
+      home.packages = [ pkgs.nixd ];
     })
 
     (lib.mkIf (cfg.enable && cfg.nix.enable && cfg.nix.mcp.enable) {
       programs.claude-code.mcpServers.nix = mcpServer;
       programs.mcp.servers.nix = mcpServer;
       programs.github-copilot-cli.mcpServers.nix = mcpServer;
+      home.packages = [ pkgs.mcp-nixos ];
     })
   ];
 }
