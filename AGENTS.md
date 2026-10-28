@@ -187,7 +187,8 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `vscodium/` mirrors `vscode/` over Home Manager's separate `programs.vscodium` (its own `~/.vscode-oss` and `~/.config/VSCodium`), so a host can enable both; only `hosts/generic.nix` does, so the module is built rather than installed anywhere real.
   `neovim/nixvim-config.nix` is the curated LSP and plugin set, imported when `dotfiles.neovim.defaultConfig` is on and exported as `nixvimModules.default` so `packages.nixvim` builds the same configuration standalone.
   `zed/` carries the extension list as the `dotfiles.zed.extensions` default.
-- `fonts/` - Nerd Fonts (MesloLGS NF, FiraCode), opt-in via `dotfiles.fonts.enable`
+- `fonts/` - Nerd Fonts (MesloLGS NF, FiraCode) and Noto Color Emoji, opt-in via `dotfiles.fonts.enable`.
+  The emoji font comes from the profile even on a distro that ships one, because an app in a `buildFHSEnv` sandbox (Claude Desktop) sees the host's `/etc/fonts` but the sandbox's own `/usr`, so the distro's `/usr/share/fonts` is gone and only the fonts Home Manager registers with fontconfig remain.
 - `gnupg/` - gpg + gpg-agent for signing and encryption only; gpg-agent never serves SSH (see `ssh/`).
   `dotfiles.gnupg.pinentry` picks the passphrase prompt: `pinentry-gnome3` on Linux, `pinentry_mac` on macOS, and `hosts/server.nix` sets `pinentry-curses`.
 - `onepassword/` - the 1Password CLI, plus the agent socket when a host sets `dotfiles.ssh.agent = "1password"`, and in that case git signs through the app's `op-ssh-sign`, since 1Password keys never reach `ssh-keygen`.
