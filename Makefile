@@ -36,6 +36,9 @@ system:
 format fmt:
 	nix fmt
 
+graph:
+	graphify update .
+
 .PHONY: flake.lock
 flake.lock: ${SRC}
 	nix flake update
@@ -46,4 +49,4 @@ flake.nix:
 p10k: # Does not work under make; run the command by hand.
 	POWERLEVEL9K_CONFIG_FILE=${CURDIR}/modules/zsh/.p10k.zsh p10k configure
 
-.PHONY: build check watch update home system format fmt p10k
+.PHONY: build check watch update home system format fmt graph p10k

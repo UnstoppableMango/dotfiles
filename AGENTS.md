@@ -77,6 +77,7 @@ make watch          # run checks on file changes (uses watchexec)
 make home           # switch home-manager from this checkout
 make system         # update flake and rebuild NixOS at /etc/nixos (requires sudo)
 make update         # update flake inputs only
+make graph          # rebuild the knowledge graph in graphify-out/ (graphify update .)
 ```
 
 Both `make build` and `make home` act on the local flake (`${CURDIR}`), so a switch applies the working tree and the active home matches the checkout.
@@ -329,7 +330,24 @@ Refresh it by downloading the manifest for the wanted version; the derivation ta
 Software with no nixpkgs package and no upstream flake is packaged in https://github.com/unmango/pkgs and reaches this flake through the `mangopkgs` overlay, so a module can take it as a `package` option default the same as any nixpkgs attribute.
 There is no `pkgs/` directory here.
 
-The dev shell (entered via `direnv allow` / `nix develop`) includes: age, bashInteractive, clan-cli, direnv, git, gnumake, home-manager, ldns, nil, nix, nixd, nixfmt, shellcheck, sops, ssh-to-age, watchexec.
+The dev shell (entered via `direnv allow` / `nix develop`) includes: age, bashInteractive, clan-cli, direnv, git, gnumake, graphify, home-manager, ldns, nil, nix, nixd, nixfmt, shellcheck, sops, ssh-to-age, watchexec.
+graphify is `inputs'.mangopkgs.packages.graphify.withGrammars` with nixpkgs' `tree-sitter-nix`: graphify reads `.nix` files only through a patch in https://github.com/unmango/pkgs, and only when that grammar is installed.
+
+## graphify
+
+This repository has a knowledge graph at `graphify-out/`, built from the code alone: every `.nix` file's imports, functions, and `dotfiles.*` options (which module `defines` each, which hosts `configure` it, and which modules `reference` it), plus the Markdown headings.
+
+- When `graphify-out/graph.json` exists, run `graphify query "<question>"` before your first grep, search, or source-file read for a question about this repository, and put this rule in every subagent prompt that explores code.
+  Read raw files only for lines the graph or an earlier read already located.
+  Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts; option nodes are labelled by their full path, such as `dotfiles.ai.enable`.
+- Read `graphify-out/GRAPH_REPORT.md` only for broad architecture review or when query, path, and explain do not surface enough context.
+- After changing `.nix` files, run `make graph` to keep the graph current; it parses the code again and costs nothing.
+  Build the graph that way rather than through the skill's `/graphify` pipeline, whose setup step prefers a PyPI `graphifyy` from `uv` over the dev shell's `graphify` and would write a graph without the `.nix` files, since only the dev shell's build reads them.
+- `graph.json` and `GRAPH_REPORT.md` are committed and the rest of `graphify-out/` is ignored.
+  A committed `graph.json` is rewritten whole on every build, so a large diff to it in a pull request is expected; do not flag it as churn.
+- The skill at `.claude/skills/graphify/` is graphify's own, installed by `graphify install --project`; reinstall it rather than editing it.
+  That command also adds PreToolUse hooks to `.claude/settings.json` and a section to `CLAUDE.md`; drop both, since this section replaces them.
+  Nothing installs graphify's git hooks either, so the graph changes only when someone runs `make graph`.
 
 ## Formatting
 
