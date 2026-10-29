@@ -1,4 +1,28 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>UnstoppableMango/renovate-config", "schedule:daily"]
+  "extends": ["github>UnstoppableMango/renovate-config", "schedule:daily"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "The Claude Code release the overlay builds. Remote Control refuses hosts below a minimum version, so this has to keep moving.",
+      "managerFilePatterns": ["/^overlays/claude-code-manifest\\.zst\\.json$/"],
+      "matchStrings": ["\"version\": \"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""],
+      "depNameTemplate": "@anthropic-ai/claude-code",
+      "datasourceTemplate": "npm"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Follow the stable channel, and fetch the release's checksums once the version moves. The command must match allowedCommands in the-cluster's apps/renovate/helm-release-unstoppablemango.yml.",
+      "matchDepNames": ["@anthropic-ai/claude-code"],
+      "followTag": "stable",
+      "postUpgradeTasks": {
+        "commands": [
+          "node overlays/update-claude-code-manifest.mjs {{{newVersion}}}"
+        ],
+        "fileFilters": ["overlays/claude-code-manifest.zst.json"],
+        "executionMode": "update"
+      }
+    }
+  ]
 }
