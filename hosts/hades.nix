@@ -113,6 +113,7 @@
     slack
     claude-monitor
     xmage
+    poptracker
 
     (wineWow64Packages.full.override {
       wineRelease = "staging";
