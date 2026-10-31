@@ -26,8 +26,9 @@ Order matters only at the top: 1Password first, since SSH and git signing go thr
 2. **Chrome**: sign in to the work Google account, then install the 1Password extension and confirm it unlocks with the app.
    If the extension says the browser is not supported, add `chrome` to `/etc/1password/custom_allowed_browsers` in the nixos repo.
 3. **Tailscale**: `tailscale up` and finish in the browser.
-   If it asks for sudo, run `sudo tailscale set --operator=tz` once.
-   `tailscale down` disconnects; it stays down across reboots.
+   `tailscale down` disconnects and stays down across reboots; prefer it to `tailscale logout`.
+   Logging out clears the operator and shields-up prefs, so after one run `sudo systemctl restart tailscaled` before the next `tailscale up`.
+   Shields up means nothing on the tailnet can connect in to hades.
 4. **GitHub**: `gh auth login` (choose SSH, and skip uploading a key if the 1Password one is already on the account).
    Claude Code's GitHub server reads its token from `gh`.
 5. **AWS**: `aws sso login --profile <profile>` for each profile erasmussen-tz/dotfiles declares.
