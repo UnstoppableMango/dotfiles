@@ -55,7 +55,8 @@ in
         Shell command printing the OpenRouter API key, for an identity that
         holds it in a password manager rather than sops. Only integrations
         that run a shell when their tool starts can use it, which today is
-        Crush alone; the rest need `apiKeySecret`. `apiKeySecret` wins when
+        Crush alone; the rest need `apiKeySecret` and default off without it.
+        `apiKeySecret` wins when
         both are set.
       '';
     };

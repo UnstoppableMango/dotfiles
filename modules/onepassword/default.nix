@@ -35,6 +35,9 @@ in
         # Quoted because the macOS group container path contains spaces.
         ''"${agentSocket}"'';
 
+    # IdentityAgent covers ssh itself; ssh-add and other clients read this.
+    home.sessionVariables.SSH_AUTH_SOCK = lib.mkIf usesAgent agentSocket;
+
     # 1Password keys never reach ssh-keygen.
     programs.git.settings.gpg.ssh.program = lib.mkIf (
       usesAgent && config.dotfiles.git.signing.key != null && config.dotfiles.git.signing.format == "ssh"
