@@ -26,7 +26,7 @@
     };
 
     clan-core = {
-      url = "https://git.clan.lol/clan/clan-core/archive/26.05.tar.gz";
+      url = "https://git.clan.lol/clan/clan-core/archive/main.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems";
       inputs.flake-parts.follows = "flake-parts";
