@@ -1,17 +1,17 @@
-# Graph Report - dotfiles  (2026-10-27)
+# Graph Report - dotfiles  (2026-11-06)
 
 ## Corpus Check
-- 155 files · ~46,194 words
+- 157 files · ~46,639 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 6 file(s) not represented in the graph (top: (none) 4, .lock 1, .zsh 1)
 
 ## Summary
-- 628 nodes · 851 edges · 76 communities (47 shown, 29 thin omitted)
+- 634 nodes · 858 edges · 79 communities (48 shown, 31 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a297e87d`
+- Built from commit: `47c8db1c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -19,15 +19,15 @@
 - openrouter/default.nix
 - hades.settings.json
 - i3/default.nix
-- dotfiles.ai.enable
+- ai/default.nix
 - dotfiles.git.enable
 - flake.nix
 - hosts/hades.nix
-- hosts/container.nix
+- dotfiles.ai.enable
 - generic.nix
 - Payload contracts
 - github/default.nix
-- ai/omnigent.nix
+- home/default.nix
 - How to Review
 - json.schemaDownload.trustedDomains
 - AGENTS.md
@@ -51,7 +51,7 @@
 - UnstoppableMango's dotfiles
 - YubiKey onboarding
 - coderabbit.nix
-- dotfiles.kubernetes.enable
+- hosts/container.nix
 - GitHub MCP token
 - Hyprland session
 - i3 session
@@ -72,13 +72,13 @@
 - go.nix
 - gossamer.nix
 - haskell.nix
-- kubernetes.nix
+- ai/omnigent.nix
 - playwright.nix
 - rust.nix
 - terraform.nix
 - typescript.nix
 - signal/default.nix
-- dotfiles.zed.enable
+- fsharp.nix
 - [csharp]
 - [github-actions-workflow]
 - gopls
@@ -89,6 +89,8 @@
 - moer/README.md
 - nix-skill/SKILL.md
 - tdd-orchestrator/README.md
+- nix.nix
+- slack.nix
 
 ## God Nodes (most connected - your core abstractions)
 1. `dotfiles.ai.enable` - 48 edges
@@ -99,8 +101,8 @@
 6. `dotfiles.stylix.enable` - 8 edges
 7. `Agent context` - 8 edges
 8. `MoE Review (with Verification)` - 8 edges
-9. `dotfiles.kubernetes.enable` - 7 edges
-10. `dotfiles.zsh.ohMyZsh.enable` - 7 edges
+9. `dotfiles.containers.enable` - 7 edges
+10. `dotfiles.kubernetes.enable` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `withToken` --references--> `dotfiles.github.token.file`  [EXTRACTED]
@@ -109,11 +111,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (76 total, 29 thin omitted)
+## Communities (79 total, 31 thin omitted)
 
 ### Community 0 - "openrouter/default.nix"
-Cohesion: 0.07
-Nodes (25): dotfiles.ai.opencode.desktop.enable, dotfiles.ai.opencode.enable, dotfiles.openrouter.apiKeyFile, dotfiles.openrouter.apiKeyPlaceholder, dotfiles.openrouter.apiKeySecret, dotfiles.openrouter.baseUrl, dotfiles.openrouter.crush.enable, dotfiles.openrouter.crush.model (+17 more)
+Cohesion: 0.06
+Nodes (35): renderValue, signerLine, dotfiles.ai.opencode.desktop.enable, dotfiles.ai.opencode.enable, dotfiles.git.localConfig, dotfiles.git.openCommit.apiKeySecret, dotfiles.git.openCommit.enable, dotfiles.git.openCommit.mode (+27 more)
 
 ### Community 1 - "hades.settings.json"
 Cohesion: 0.05
@@ -123,29 +125,29 @@ Nodes (38): chat.fontSize, chat.mcp.gallery.enabled, docker.lsp.telemetry, dotne
 Cohesion: 0.07
 Nodes (23): bind, exec, dpms, exec, line, dotfiles.bizhawk.enable, dotfiles.bizhawk.package, dotfiles.brave.enable (+15 more)
 
-### Community 3 - "dotfiles.ai.enable"
+### Community 3 - "ai/default.nix"
 Cohesion: 0.11
-Nodes (14): dotfiles.ai.braveSearch.enable, dotfiles.ai.caveman.enable, dotfiles.ai.claudeDesktop.package, dotfiles.ai.context7.enable, dotfiles.ai.deepwiki.enable, dotfiles.ai.enable, dotfiles.ai.figma.enable, dotfiles.ai.ghStack.enable (+6 more)
+Nodes (10): dotfiles.ai.caveman.enable, dotfiles.ai.claudeDesktop.package, dotfiles.ai.context7.enable, dotfiles.ai.copilot.enable, dotfiles.ai.cursor.cli.enable, dotfiles.ai.deepwiki.enable, dotfiles.ai.ghStack.enable, dotfiles.ai.gitlab.enable (+2 more)
 
 ### Community 4 - "dotfiles.git.enable"
-Cohesion: 0.12
-Nodes (17): renderValue, signerLine, dotfiles.git.enable, dotfiles.git.gitkraken.package, dotfiles.git.localConfig, dotfiles.git.openCommit.apiKeySecret, dotfiles.git.openCommit.enable, dotfiles.git.openCommit.mode (+9 more)
+Cohesion: 0.50
+Nodes (3): dotfiles.git.enable, dotfiles.git.gitkraken.enable, dotfiles.git.gitkraken.package
 
 ### Community 5 - "flake.nix"
-Cohesion: 0.09
-Nodes (10): outputs, isModule, dotfiles.ai.mattpocock.src, dotfiles.neovim.defaultConfig, dotfiles.onePassword.enable, dotfiles.ssh.certAuthorities, dotfiles.ssh.hostKeyAliasDomain, dotfiles.ssh.hosts (+2 more)
+Cohesion: 0.08
+Nodes (11): outputs, isModule, dotfiles.ai.mattpocock.src, dotfiles.git.signing.format, dotfiles.neovim.defaultConfig, dotfiles.onePassword.enable, dotfiles.ssh.certAuthorities, dotfiles.ssh.hostKeyAliasDomain (+3 more)
 
 ### Community 6 - "hosts/hades.nix"
 Cohesion: 0.11
 Nodes (16): dotfiles.emacs.enable, dotfiles.helix.enable, dotfiles.kubernetes.rosequartz.admin.certFile, dotfiles.kubernetes.rosequartz.admin.keyFile, dotfiles.kubernetes.rosequartz.caFile, dotfiles.kubernetes.rosequartz.clusterName, dotfiles.kubernetes.rosequartz.currentContext, dotfiles.kubernetes.rosequartz.enable (+8 more)
 
-### Community 7 - "hosts/container.nix"
-Cohesion: 0.10
-Nodes (12): dotfiles.ai.cloudflare.enable, dotfiles.ai.copilot.enable, dotfiles.ai.csharp.enable, dotfiles.ai.cursor.cli.enable, dotfiles.ai.fsharp.enable, dotfiles.ai.fsharp.mcp.enable, dotfiles.ai.gitlab.enable, dotfiles.ai.ocaml.enable (+4 more)
+### Community 7 - "dotfiles.ai.enable"
+Cohesion: 0.11
+Nodes (10): dotfiles.ai.braveSearch.enable, dotfiles.ai.cloudflare.enable, dotfiles.ai.csharp.enable, dotfiles.ai.enable, dotfiles.ai.figma.enable, dotfiles.ai.kubernetes.enable, dotfiles.ai.kubernetes.mcp.enable, dotfiles.ai.moer.enable (+2 more)
 
 ### Community 8 - "generic.nix"
 Cohesion: 0.14
-Nodes (13): dotfiles.ai.claudeDesktop.enable, dotfiles.c.enable, dotfiles.fonts.enable, dotfiles.git.gitkraken.enable, dotfiles.go.enable, dotfiles.homeManager.enable, dotfiles.neovim.enable, dotfiles.obsidian.enable (+5 more)
+Nodes (13): dotfiles.ai.claudeDesktop.enable, dotfiles.c.enable, dotfiles.fonts.enable, dotfiles.git.signing.key, dotfiles.homeManager.enable, dotfiles.javascript.enable, dotfiles.neovim.enable, dotfiles.obsidian.enable (+5 more)
 
 ### Community 9 - "Payload contracts"
 Cohesion: 0.12
@@ -155,9 +157,9 @@ Nodes (15): Dispatch mechanism, Green — input, Green — output, Loop, Payload
 Cohesion: 0.12
 Nodes (13): dotfiles.automation.flakeUpdate.enable, dotfiles.automation.flakeUpdate.flakePath, dotfiles.automation.flakeUpdate.onCalendar, dotfiles.github.token.flakePath, dotfiles.github.token.onCalendar, dotfiles.github.token.secret, dotfiles.github.token.sopsFile, dotfiles.github.token.sopsKey (+5 more)
 
-### Community 11 - "ai/omnigent.nix"
-Cohesion: 0.15
-Nodes (10): dotfiles.ai.omnigent.autostart, dotfiles.ai.omnigent.caBundle, dotfiles.ai.omnigent.desktopApp, dotfiles.ai.omnigent.enable, dotfiles.ai.omnigent.listenAddress, dotfiles.containers.podmanAutostart, dotfiles.containers.podmanSocket, dotfiles.containers.sharedAuth (+2 more)
+### Community 11 - "home/default.nix"
+Cohesion: 0.11
+Nodes (9): dotfiles.containers.podmanAutostart, dotfiles.containers.podmanSocket, dotfiles.containers.registryCAs, dotfiles.containers.sharedAuth, dotfiles.containers.tui, dotfiles.containers.userRegistryConfig, dotfiles.vscode.enable, dotfiles.vscodium.enable (+1 more)
 
 ### Community 12 - "How to Review"
 Cohesion: 0.18
@@ -224,12 +226,12 @@ Cohesion: 0.22
 Nodes (8): Anti-Patterns (DO NOT), Inputs, MoE Review (with Verification), Principles, Step 1: Dispatch the Specialist MoE, Step 2: Verify Each Claim, Step 3: Present Results, Step 4: Wait for Human Decision
 
 ### Community 28 - "dotfiles.zsh.enable"
-Cohesion: 0.33
-Nodes (5): dotfiles.javascript.enable, dotfiles.zsh.enable, dotfiles.zsh.ohMyZsh.enable, dotfiles.zsh.p10kConfig, dotfiles.zsh.prezto.enable
+Cohesion: 0.26
+Nodes (6): dotfiles.k9s.enable, dotfiles.kubernetes.enable, dotfiles.openshift.enable, dotfiles.zsh.enable, dotfiles.zsh.ohMyZsh.enable, dotfiles.zsh.prezto.enable
 
 ### Community 29 - "server.nix"
-Cohesion: 0.29
-Nodes (5): dotfiles.containers.enable, dotfiles.gnupg.enable, dotfiles.gnupg.pinentry, dotfiles.nix.enable, dotfiles.ssh.enable
+Cohesion: 0.33
+Nodes (4): dotfiles.gnupg.enable, dotfiles.gnupg.pinentry, dotfiles.nix.enable, dotfiles.ssh.enable
 
 ### Community 30 - "ai/crush.nix"
 Cohesion: 0.36
@@ -251,9 +253,9 @@ Nodes (6): New key, New machine, Prerequisites, Recovery, Troubleshooting, YubiK
 Cohesion: 0.33
 Nodes (5): dotfiles.ai.coderabbit.apiKeySecret, dotfiles.ai.coderabbit.autoUpdate, dotfiles.ai.coderabbit.enable, dotfiles.ai.coderabbit.package, dotfiles.ai.coderabbit.region
 
-### Community 35 - "dotfiles.kubernetes.enable"
-Cohesion: 0.40
-Nodes (3): dotfiles.k9s.enable, dotfiles.kubernetes.enable, dotfiles.openshift.enable
+### Community 35 - "hosts/container.nix"
+Cohesion: 0.15
+Nodes (9): dotfiles.ai.omnigent.enable, dotfiles.containers.enable, dotfiles.dotnet.enable, dotfiles.dotnet.sdks, dotfiles.go.enable, dotfiles.python.enable, dotfiles.rust.enable, dotfiles.ssh.agent (+1 more)
 
 ### Community 36 - "GitHub MCP token"
 Cohesion: 0.40
@@ -268,8 +270,8 @@ Cohesion: 0.40
 Nodes (4): i3 session, NixOS (hades), Other distributions (darter), Switching
 
 ### Community 39 - "extends"
-Cohesion: 0.40
-Nodes (4): extends, $schema, github>UnstoppableMango/renovate-config, schedule:daily
+Cohesion: 0.29
+Nodes (6): customManagers, extends, packageRules, $schema, github>UnstoppableMango/renovate-config, schedule:daily
 
 ### Community 40 - "[dockercompose]"
 Cohesion: 0.40
@@ -299,22 +301,26 @@ Nodes (3): Hard rules, Return format, What you do
 Cohesion: 0.50
 Nodes (3): Hard rules, Return format, What you do
 
+### Community 56 - "ai/omnigent.nix"
+Cohesion: 0.40
+Nodes (4): dotfiles.ai.omnigent.autostart, dotfiles.ai.omnigent.caBundle, dotfiles.ai.omnigent.desktopApp, dotfiles.ai.omnigent.listenAddress
+
 ## Knowledge Gaps
 - **121 isolated node(s):** `github>UnstoppableMango/renovate-config`, `schedule:daily`, `dotfiles.ai.adhd.enable`, `dotfiles.ai.aws.mcp.enable`, `dotfiles.ai.azure.mcp.enable` (+116 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 373 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **29 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 377 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **31 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `dotfiles.ai.enable` connect `dotfiles.ai.enable` to `openrouter/default.nix`, `hosts/hades.nix`, `hosts/container.nix`, `generic.nix`, `ai/omnigent.nix`, `github.nix`, `remote-control.nix`, `ai/crush.nix`, `coderabbit.nix`, `aws.nix`, `azure.nix`, `chrome-devtools.nix`, `containers.nix`, `cursor.nix`, `git-mcp.nix`, `go.nix`, `gossamer.nix`, `haskell.nix`, `kubernetes.nix`, `playwright.nix`, `rust.nix`, `terraform.nix`, `typescript.nix`?**
-  _High betweenness centrality (0.142) - this node is a cross-community bridge._
+- **Why does `dotfiles.ai.enable` connect `dotfiles.ai.enable` to `openrouter/default.nix`, `ai/default.nix`, `hosts/hades.nix`, `generic.nix`, `github.nix`, `remote-control.nix`, `ai/crush.nix`, `coderabbit.nix`, `hosts/container.nix`, `aws.nix`, `azure.nix`, `chrome-devtools.nix`, `containers.nix`, `cursor.nix`, `git-mcp.nix`, `go.nix`, `gossamer.nix`, `haskell.nix`, `ai/omnigent.nix`, `playwright.nix`, `rust.nix`, `terraform.nix`, `typescript.nix`, `fsharp.nix`, `nix.nix`, `slack.nix`?**
+  _High betweenness centrality (0.140) - this node is a cross-community bridge._
 - **What connects `github>UnstoppableMango/renovate-config`, `schedule:daily`, `dotfiles.ai.adhd.enable` to the rest of the system?**
   _121 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `openrouter/default.nix` be split into smaller, more focused modules?**
-  _Cohesion score 0.07435897435897436 - nodes in this community are weakly interconnected._
-- **Why does `dotfiles.git.enable` connect `dotfiles.git.enable` to `openrouter/default.nix`, `hosts/hades.nix`, `hosts/container.nix`, `generic.nix`, `server.nix`?**
-  _High betweenness centrality (0.034) - this node is a cross-community bridge._
+  _Cohesion score 0.06475485661424607 - nodes in this community are weakly interconnected._
+- **Why does `dotfiles.git.enable` connect `dotfiles.git.enable` to `openrouter/default.nix`, `hosts/container.nix`, `hosts/hades.nix`, `generic.nix`, `server.nix`?**
+  _High betweenness centrality (0.033) - this node is a cross-community bridge._
 - **Should `hades.settings.json` be split into smaller, more focused modules?**
   _Cohesion score 0.05128205128205128 - nodes in this community are weakly interconnected._
 - **Why does `dotfiles.stylix.enable` connect `generic.nix` to `i3/default.nix`, `hosts/hades.nix`?**
