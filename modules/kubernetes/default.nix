@@ -19,6 +19,7 @@
       krew
       kubernetes-helm
       kubectl
+      kubectl-cnpg
       kubectl-get-all
       kubectl-get-resources
       kubectl-rook-ceph
