@@ -12,7 +12,9 @@ in
   options.dotfiles.openrouter.opencommit = {
     enable = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      # It reads the key from a file, which `apiKeyCommand` alone does not give.
+      default = cfg.apiKeySecret != null;
+      defaultText = lib.literalExpression "config.dotfiles.openrouter.apiKeySecret != null";
       description = "OpenRouter as opencommit's provider, with its key rendered into `~/.opencommit`.";
     };
 
