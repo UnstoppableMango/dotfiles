@@ -29,7 +29,9 @@ in
   options.dotfiles.openrouter.zed = {
     enable = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      # It reads the key from a file, which `apiKeyCommand` alone does not give.
+      default = cfg.apiKeySecret != null;
+      defaultText = lib.literalExpression "config.dotfiles.openrouter.apiKeySecret != null";
       description = ''
         OpenRouter as the Zed agent's model provider. The key reaches Zed
         through a wrapper around `zeditor`; on macOS, launching Zed.app from

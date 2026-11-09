@@ -125,6 +125,7 @@ Every `dotfiles.*` module is off by default, so importing `homeModules.dotfiles`
 Each host file lists every toggle it wants, even where hosts overlap, so reading one file tells you the whole configuration.
 
 OpenRouter has no toggle of its own to set: `dotfiles.openrouter` turns on when `dotfiles.openrouter.apiKeySecret` names a secret, which only `home/` does, and every integration under `modules/openrouter/` follows it.
+An identity without sops sets `dotfiles.openrouter.apiKeyCommand` instead (an `op read`, say), which only Crush can use, since every other integration reads the key from a file.
 
 `hosts/darter.nix` is the shell and secret floor, the dev toolchains and agent CLIs, and fonts, stylix, obsidian, signal, and zed (a display without the desktop session), plus `targets.genericLinux`, its signing key, and the rosequartz KUBECONFIG.
 `hosts/hades.nix` is the same floor and toolchains plus the full desktop session (GNOME, with i3 and Hyprland beside it at the login screen), ocaml, dotnet and emacs, BizHawk, its signing key, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
@@ -281,7 +282,10 @@ A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = n
   `pcscd` and the udev rules are system services outside Home Manager's reach: the nixos repo supplies them on hades, and darter needs the distribution packages.
 
 Seven home configurations are built: `erik@darter`, `erik@hades`, `erik@server`, `tz@hades`, and `generic@container` on x86_64-linux, plus `generic@x86_64-linux` and `generic@aarch64-darwin`.
-`tz@hades` builds `hosts/tz-hades.nix`, a second account on hades that imports nothing from `home/`; the nixos repo creates the account and installs the `home-manager` CLI for it.
+`tz@hades` builds `hosts/tz-hades.nix`, erik's work account on hades, which imports nothing from `home/`; the nixos repo creates the account, makes zsh its shell, and installs the `home-manager` CLI, the 1Password app, and Tailscale for it.
+It carries the work toolchain (TypeScript with corepack for yarn, Python, VS Code, Claude Code and Crush, Chrome, Slack, Zoom, the AWS CLI) and 1Password as its SSH agent and signer, and nothing identifying: https://github.com/erasmussen-tz/dotfiles extends it with the git identity and signing key, AWS profiles, and `dotfiles.openrouter.apiKeyCommand`.
+tz has no sops; its secrets stay in 1Password.
+`docs/tz.md` is the first-login runbook: the deploy, the switch, and the sign-ins no configuration can do.
 No machine is actually named `server`; that entry exists so `hosts/server.nix` is covered by `nix flake check` rather than only breaking whenever someone next touches it.
 
 `generic@x86_64-linux` and `generic@aarch64-darwin` are the same idea one layer out: both build `hosts/generic.nix`, which turns most modules on, imports nothing from `home/`, and sets a throwaway account whose home directory follows the platform, so `homeModules.dotfiles` is built here rather than only breaking in somebody else's flake.

@@ -7,6 +7,9 @@ let
   cfg = config.dotfiles.openrouter;
   inherit (cfg) crush;
   inherit (config.dotfiles) ai;
+
+  apiKey =
+    if cfg.apiKeySecret != null then "cat ${lib.escapeShellArg cfg.apiKeyFile}" else cfg.apiKeyCommand;
 in
 {
   options.dotfiles.openrouter.crush = {
@@ -33,9 +36,9 @@ in
 
   config = lib.mkIf (cfg.enable && crush.enable && ai.enable && ai.crush.enable) {
     # OpenRouter is in Crush's built-in provider catalog, so the key is the
-    # only setting it needs. crushrc reads the file each time Crush starts.
+    # only setting it needs. crushrc reads it each time Crush starts.
     dotfiles.ai.crush.crushrc = ''
-      provider add openrouter --api-key "$(cat ${lib.escapeShellArg cfg.apiKeyFile})"
+      provider add openrouter --api-key "$(${apiKey})"
       model large ${lib.escapeShellArg "openrouter/${crush.model}"}
       model small ${lib.escapeShellArg "openrouter/${crush.smallModel}"}
     '';

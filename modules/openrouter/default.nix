@@ -9,7 +9,7 @@ let
   # Replaces an attribute-missing error from inside sops.secrets.
   secret =
     if cfg.apiKeySecret == null then
-      throw "dotfiles.openrouter.enable needs apiKeySecret set: every integration authenticates with it."
+      throw "dotfiles.openrouter: this integration reads the key from a file, so it needs apiKeySecret set; apiKeyCommand covers only Crush."
     else if !(config.sops.secrets ? ${cfg.apiKeySecret}) then
       throw ''dotfiles.openrouter.apiKeySecret names "${cfg.apiKeySecret}", which is not declared in sops.secrets.''
     else
@@ -27,13 +27,13 @@ in
   options.dotfiles.openrouter = {
     enable = lib.mkOption {
       type = lib.types.bool;
-      default = cfg.apiKeySecret != null;
-      defaultText = lib.literalExpression "config.dotfiles.openrouter.apiKeySecret != null";
+      default = cfg.apiKeySecret != null || cfg.apiKeyCommand != null;
+      defaultText = lib.literalExpression "config.dotfiles.openrouter.apiKeySecret != null || config.dotfiles.openrouter.apiKeyCommand != null";
       description = ''
         OpenRouter as the model provider for every tool with an integration
         under `modules/openrouter/`. Each integration applies when both this
         and its tool are enabled, and has its own `enable` to opt one tool
-        out. On whenever `apiKeySecret` is set.
+        out. On whenever `apiKeySecret` or `apiKeyCommand` is set.
       '';
     };
 
@@ -44,6 +44,20 @@ in
         Name of a `sops.secrets` entry holding the OpenRouter API key. The
         declaration itself is identity-scoped, so it lives under `home/`;
         this module only names it.
+      '';
+    };
+
+    apiKeyCommand = lib.mkOption {
+      type = with lib.types; nullOr str;
+      default = null;
+      example = "op read op://Work/OpenRouter/credential";
+      description = ''
+        Shell command printing the OpenRouter API key, for an identity that
+        holds it in a password manager rather than sops. Only integrations
+        that run a shell when their tool starts can use it, which today is
+        Crush alone; the rest need `apiKeySecret` and default off without it.
+        `apiKeySecret` wins when
+        both are set.
       '';
     };
 

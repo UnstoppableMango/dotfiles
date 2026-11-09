@@ -32,7 +32,9 @@ in
   options.dotfiles.openrouter.omnigent = {
     enable = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      # It reads the key from a file, which `apiKeyCommand` alone does not give.
+      default = cfg.apiKeySecret != null;
+      defaultText = lib.literalExpression "config.dotfiles.openrouter.apiKeySecret != null";
       description = ''
         Register OpenRouter under `providers.openrouter` in
         `~/.omnigent/config.yaml`. It serves the `openai` family, which the
