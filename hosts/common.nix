@@ -22,5 +22,7 @@
   nix.extraOptions = "!include ${config.xdg.configHome}/nix/nix.conf.local";
 
   dotfiles.ssh.hosts = inputs.hosts.lib.addresses;
+  # Public DNS points at Cloudflare's proxy, which does not carry port 22.
+  programs.ssh.settings."gitea.thecluster.io".HostName = "gitea.thecluster.lan";
   dotfiles.ai.mattpocock.src = inputs.mattpocock-skills;
 }
