@@ -1,372 +1,48 @@
 # AGENTS.md
 
-This file provides guidance to AI agents when working with code in this repository.
+A Nix flake (flake-parts plus Home Manager) that manages one user's home environment, `erik`, across several Linux hosts.
+The NixOS system configs live in https://github.com/UnstoppableMango/nixos; nothing here configures a system.
 
-## Overview
+## Commands
 
-This is a Nix-based dotfiles repository using Home Manager and flake-parts.
-It manages the home configuration for one user, `erik`, across several Linux hosts.
-Three top-level directories, in dependency order:
-
-- `modules/` - generic, reusable, option-driven software configuration, with no identity baked in.
-  Declares `dotfiles.*` options; sets no personal values.
-- `home/` - erik's identity: the account itself, git email, GNOME dconf, and secrets.
-  Consumes `dotfiles.*`; declares none.
-- `hosts/` - one file per home configuration (`darter`, `hades`, `server`, `generic`, `generic-linux`), plus `common.nix`, which every configuration is built on.
-  The only entrypoints.
-  Each lists the modules it turns on plus whatever is true of that machine alone.
-
-See "Class vs Instance Modules" below for the full rule and a checklist to apply before adding or moving a file.
-The actual NixOS system configs live at https://github.com/UnstoppableMango/nixos.
-
-## Class vs Instance Modules
-
-Every file in this repo falls into one of two buckets, and keeping that split clean is the main defense against structural drift.
-`modules/` is the class bucket: it describes how a piece of software is configured, mechanically, with no identity baked in.
-Personalization enters a class module only as a `dotfiles.<x>.<y>` option (data), never as a literal value.
-`home/` is the instance bucket: it holds this person's actual values, and every file in it is gated on the `dotfiles.*` option its module declares, so importing it costs nothing on a host that has the feature switched off.
-`hosts/` holds no personal values, only composition: a host says which modules it turns on plus what is true of it alone (a signing key, a kubeconfig path, a package it alone installs).
-The account is identity rather than a class of machine, so it sits in `home/account.nix`; `hosts/server.nix` imports that one file directly because it takes the account without the rest of the personal layer.
-`account.nix` itself carries no identity: `homeDirectory` derives from whatever `home.username` ends up being (`lib.mkDefault "/home/${config.home.username}"`), and it sets no username at all.
-`home/default.nix` supplies the "erik" default as `home.username = lib.mkDefault "erik";`, so `home/default.nix` (which imports `account.nix`) can still be composed with a different username without a conflicting-definitions error, and `hosts/server.nix` sets its own username explicitly since it skips `home/default.nix`.
-
-An opinionated value is not automatically identity.
-A curated set that any consumer of this flake would plausibly want (the nixvim LSP and plugin list, the Powerlevel10k prompt config, the Zed extension list) belongs in `modules/` as an **option default** rather than as a literal in `home/`.
-So do erik's curated _taste_ values: kitty's font and colors (`modules/kitty`), the k9s pink skin (`modules/kubernetes/k9s`), Zed's Copilot/telemetry settings (`modules/zed`), and the `~/src` checkout-root context doc (`modules/ai/checkout-root.nix`).
-Each applies at `mkDefault` priority whenever its tool is enabled, so a consumer overrides a value with a plain assignment; there is no separate taste toggle.
-`home/` keeps only what has no natural home as a module option default: the git email, the GNOME dconf tree, and the secrets.
-The test is whether the next person would have to change the value, and whether no toggle already exists for saying so.
-"Did someone choose this?" is the wrong question.
-
-Before adding or moving a file, run this checklist:
-
-1. Would a different person using this flake want a different value here?
-   If yes, it is an instance and belongs under `home/`.
-   If everyone would want the same mechanism, it is a class and belongs under `modules/`.
-2. Does the file hardcode a literal (an email, a color hex, a hostname, an API key path, "this person's" editor choice)?
-   That literal belongs in `home/`, or the class module needs to grow an option that `home/` supplies.
-3. Is it an `enable` toggle rather than a value?
-   Set it in each host file that wants it.
-   Every host lists its toggles in full; there is no grouping layer between `modules/` and `hosts/`.
-4. Is a module accreting config specific to one sub-tool (more than one or two files for it)?
-   Split it into its own submodule directory with a `default.nix`, aggregated by the parent, rather than letting the parent module grow multiple unrelated concerns.
-5. Would the value differ between machines?
-   It goes in `hosts/<machine>.nix`, never as a per-host branch inside a class module.
-
-Signals that a change is about to cause drift: hardcoding a literal inside `modules/`; declaring a `dotfiles.*` option outside `modules/`; a host file that sets a value that is not true of that machine alone; or a shared file of toggles that several hosts import.
-
-There is deliberately no "shared across identities" layer.
-This repo configures one identity, so such a layer would be an abstraction over a set of size one; its contents live in `home/`.
-
-A second identity lives in its own flake and consumes `homeModules.dotfiles`, supplying its own toggles, account, secrets, and (on macOS) nix-darwin system layer.
-That is why the reusable half of a shared layer belongs in `modules/` behind options rather than in a shared directory: an export is the sharing mechanism, so the layer is unnecessary.
-`home/` therefore stays flat rather than becoming `home/<name>/`.
-
-Precedent: the sops key path and the rosequartz kubeconfig describe erik's user environment rather than a clan machine, so they live in `modules/sops/` and `modules/kubernetes/rosequartz/` rather than in the nixos repo's `machines/hades/configuration.nix`, with the clan-generated CA and admin cert/key vendored in (`modules/kubernetes/rosequartz/ca.crt` and `home/secrets/rosequartz.yaml`) rather than reached for across repos.
-The `kubernetes/` module carries `k9s/`, `openshift/`, and `rosequartz/` submodules, each tool's config being more than a single file, aggregated through `default.nix`.
-
-## Common Commands
-
-All development tasks go through `make`:
+All tasks go through `make`:
 
 ```sh
-make check          # nix flake check (validate syntax/config)
-make build          # build home-manager from local flake (validates changes)
-make fmt            # format code (nix fmt)
-make watch          # run checks on file changes (uses watchexec)
-make home           # switch home-manager from this checkout
-make system         # update flake and rebuild NixOS at /etc/nixos (requires sudo)
-make update         # update flake inputs only
-make graph          # rebuild the knowledge graph in graphify-out/ (graphify update .)
+make check   # nix flake check
+make build   # build the home configuration from the local flake
+make fmt     # nix fmt (treefmt)
+make home    # switch home-manager from this checkout
+make graph   # rebuild graphify-out/ after changing .nix files
 ```
 
-Both `make build` and `make home` act on the local flake (`${CURDIR}`), so a switch applies the working tree and the active home matches the checkout.
-Input updates stay deliberate: `make update` bumps `flake.lock`, and that lands as a commit.
-
-`homeup` is the same switch from any directory, installed by `modules/home-manager/` for hosts that set `dotfiles.homeManager.enable`.
-It switches from `dotfiles.homeManager.flakePath` (`~/src/github.com/UnstoppableMango/dotfiles` by default), lets home-manager resolve `$USER@$HOSTNAME` unless `dotfiles.homeManager.configuration` names one, and passes any unrecognized argument through to `home-manager switch`.
-`homeup -u` runs `nix flake update` first, which rewrites `flake.lock` in the checkout.
-
-Darter and hades both run standalone Home Manager, so `make home` and `make system` mean the same thing on either.
-On hades `make system` rebuilds NixOS from the [nixos](https://github.com/UnstoppableMango/nixos) repo, which configures the machine and erik's system account and nothing about his home environment; that repo consumes this flake only for `overlays.default` and the dev shell.
-Darter is not a NixOS machine, so only `make home` applies there.
-
-Who may set `nixpkgs.*` follows from that.
-Whoever creates the nixpkgs instance owns `nixpkgs.overlays` and `nixpkgs.config`, and for a standalone home configuration that is the configuration itself.
-`hosts/common.nix` supplies both, once, so nothing under `modules/`, `home/`, or the per-configuration host files sets them.
-That also keeps the tree composable into someone else's Home Manager NixOS module, where `useGlobalPkgs = true` hands ownership to the system and Home Manager warns that any `nixpkgs.*` set inside the home configuration is ignored.
-`nix.package` follows the same rule for the same reason: Home Manager needs a non-null one to render a nix.conf at all, a package is not a mergeable value, so naming it in two modules is a conflict rather than a merge, and its own null default occupies the rung below `mkOptionDefault`.
-`hosts/common.nix` names it once and modules that write `nix.settings` (`modules/zed/`, and the Cachix substituter below) leave it alone; a consumer taking `homeModules.dotfiles` without that file sets it themselves.
-
-`make build` builds a configuration picked from `hostname -s`: darter and hades build their own (on hades, `$USER@hades`), macOS builds `generic@aarch64-darwin`, and any other Linux box falls back to `erik@server`.
-Set `HOME_CONFIG` to build a different one, e.g. `make build HOME_CONFIG=erik@hades`.
-
-Environment variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC`, `HOME_CONFIG` (all have defaults).
-
-CI runs `nix flake check --all-systems` then builds the `erik@darter` home configuration.
+`make check` does not evaluate `homeConfigurations`, so validate a module change with `make build`.
+`make build` picks the configuration from `hostname -s` (darter and hades build their own, macOS builds `generic@aarch64-darwin`, any other Linux box builds `erik@server`).
+Set `HOME_CONFIG` to build another, for example `make build HOME_CONFIG=erik@hades`.
 
 ## Architecture
 
-The flake uses `flake-parts`.
-`modules/` is flat: one directory per piece of software, each with a `default.nix`.
-There is no category layer, because deciding whether git is a `toolchain/` or a top-level concern, or whether kitty is `terminals/` or part of the shell setup, is a question with no correct answer and a different answer each time.
-`modules/default.nix` imports every subdirectory that has a `default.nix`, read from disk rather than listed, so adding a module is creating the directory and nothing else.
-Dropping a directory in there enables its options repo-wide, which is the tradeoff for not maintaining a list.
-`hosts/common.nix` imports `homeModules.dotfiles` (`./modules` plus `nix2git.homeModules.nix2git` and `tdl.homeModules.tdl`) and the stylix, nixvim, and sops-nix modules once; `flake.nix` pairs it with each host file, so every configuration gets the whole option set.
-Those two are folded in for opposite reasons: tdl declares the `programs.tdl.*` options this repo deliberately does not re-declare, while nix2git declares `nix2git.repositories`, which `modules/slip/` writes to, so the option has to exist wherever `./modules` does rather than only where `hosts/common.nix` is.
-Everything is `mkIf`-gated, so importing a module a host does not use costs nothing.
+Three top-level directories, in dependency order.
+Each has an `AGENTS.md` with the rules for files in it; read it before adding or moving a file there.
 
-`home/default.nix` collects erik's personal config: git identity/aliases, vscode's default-profile settings, GNOME dconf taste, the direnv/nix-direnv setup, the sops secrets (and `dotfiles.openrouter.apiKeySecret` naming the OpenRouter key), and the `home.username` default.
-`home/default.nix` and `home/account.nix` are reached by relative import (`hosts/darter.nix`, `hosts/hades.nix`, `hosts/server.nix`) rather than exported, since nothing outside this repo imports either by name.
-The nixvim configuration, the p10k setup, the Zed extension list, and the kitty/k9s/zed/checkout-root taste all follow the same shape: the curated value is an option default in `modules/` (`dotfiles.neovim.defaultConfig`, `dotfiles.zsh.p10kConfig`, `dotfiles.zed.extensions`, `dotfiles.ai.checkoutRoot.context`, or an `mkDefault` on the tool's settings), reachable to anyone consuming the flake, and `home/` only overrides it rather than holding a literal value.
-`home/vscode/hades.nix` is the one file `home/default.nix` does not import, because that VS Code profile exists on hades alone; `hosts/hades.nix` imports it directly.
+- [`modules/`](modules/AGENTS.md): generic, option-driven software configuration with no identity baked in.
+  Declares `dotfiles.*` options; sets no personal values.
+- [`home/`](home/AGENTS.md): erik's identity (the account, git email, GNOME dconf, secrets).
+  Consumes `dotfiles.*`; declares none.
+- [`hosts/`](hosts/AGENTS.md): one file per home configuration, plus `common.nix`, which every configuration is built on.
+  The only entrypoints.
 
-Every `dotfiles.*` module is off by default, so importing `homeModules.dotfiles` turns nothing on.
-Each host file lists every toggle it wants, even where hosts overlap, so reading one file tells you the whole configuration.
-
-OpenRouter has no toggle of its own to set: `dotfiles.openrouter` turns on when `dotfiles.openrouter.apiKeySecret` names a secret, which only `home/` does, and every integration under `modules/openrouter/` follows it.
-
-`hosts/darter.nix` is the shell and secret floor, the dev toolchains and agent CLIs, and fonts, stylix, obsidian, signal, and zed (a display without the desktop session), plus `targets.genericLinux`, its signing key, and the rosequartz KUBECONFIG.
-`hosts/hades.nix` is the same floor and toolchains plus the full desktop session (GNOME, with i3 and Hyprland beside it at the login screen), ocaml, dotnet and emacs, BizHawk, its signing key, the LAN-facing omnigent and remote-control toggles, the rosequartz admin identity that makes it own `~/.kube/config` outright, and its desktop package list.
-`hosts/server.nix` is `home/account.nix` plus the floor, containers, and kubernetes.
-It deliberately does not import the rest of `home/`: the personal layer declares sops secrets encrypted to erik's laptop keys, which a server has no reason to hold.
-Server does get oh-my-zsh and Powerlevel10k, because it sets `dotfiles.zsh.enable` and `dotfiles.zsh.ohMyZsh.enable`, and the prompt follows `dotfiles.zsh.enable`.
-A headless host that genuinely wants no prompt sets `dotfiles.zsh.p10kConfig = null`.
-
-`modules/` itself stays generic, holding enable toggles and the mechanics needed for a feature to function, with no personal values:
-
-- `ai/` - claude-code, github-copilot-cli, cursor-cli, crush.
-  Each MCP integration and third-party service (aws, azure, cloudflare, figma, slack, gossamer, per-language servers, etc.) gets its own `.nix` toggle file; `moer/`, `nix-skill/`, and `tdd-orchestrator/` are skill submodules (a SKILL.md plus agents), following the same one-file-per-concern pattern as the rest of `modules/`.
-  Every configured MCP server starts with each Claude Code and Copilot CLI session, so modules that run a local stdio server split `enable` (packages, LSP servers, skills) from `mcp.enable` (the server registration, default `false`).
-  A project that wants one of those servers declares it in a repo-local `.mcp.json`.
-  HTTP servers start no local process and register under `enable` alone.
-  `global-context.md` is the user-level agent instructions, rendered to both `~/.claude/CLAUDE.md` and `~/.copilot/copilot-instructions.md` and loaded by Crush as a global context path; `.claude/skills/agent-context/` covers how to change it.
-  `checkout-root.nix` renders `modules/ai/checkout-root.md` to `~/src/AGENTS.md` with a `CLAUDE.md` include beside it, matching the pairing the repos underneath use, so conventions spanning the whole checkout root are stated once instead of per repo.
-  The document is an option, `dotfiles.ai.checkoutRoot.context`, defaulting to the bundled file; a consumer supplies their own or sets it to null to write nothing.
-  `omnigent.nix` installs omnigent and runs its server and host daemon; its model provider comes from `openrouter/omnigent.nix`.
-  `coderabbit.nix` installs the CodeRabbit CLI from the `mangopkgs` overlay (packaged at `pkgs/coderabbit/` in https://github.com/unmango/pkgs) and turns its self-update off, since `coderabbit update` rewrites the binary in place and a nix-installed one lives in the read-only store.
-  Authentication is a rendered `~/.coderabbit/auth.json` (`{"type":"api_key",...}`) rather than an environment variable, because the CLI reads no `CODERABBIT_API_KEY`; its api_key auth branch returns that file verbatim instead of consulting the OS credential store the OAuth branch uses, so the file alone is a complete authenticated state.
-  The key comes from `dotfiles.ai.coderabbit.apiKeySecret` naming a `sops.secrets` entry, and the CLI rejects a user API key, so it has to be an agentic one.
-  `mattpocock.nix` installs https://github.com/mattpocock/skills from `dotfiles.ai.mattpocock.src`, which `hosts/common.nix` sets from the `mattpocock-skills` flake input so lock maintenance moves it.
-  Copilot CLI's skill list is read from that checkout's `.claude-plugin/plugin.json`, the same list the Claude Code plugin loads.
-  `crush.nix` writes `~/.config/crush/crushrc`, the Bash config Crush prefers over its deprecated `crush.json`, from `dotfiles.ai.crush.crushrc` (`lines`), which other modules append to.
-  It carries over what the other agents already get rather than declaring a third set: an `lsp add` per `programs.claude-code.lspServers` entry, an `mcp add` per `programs.mcp.servers` entry, and `global-context.md`.
-  MCP values are written in double quotes, because the `${VAR}` references in `programs.mcp.servers` are left for the reading client to expand and in a crushrc that client is a shell; `github.nix` sets `GITHUB_PERSONAL_ACCESS_TOKEN` at the top of the file the way its wrappers export it.
-  Crush starts a browser sign-in only for a server marked `--oauth`, and a marked server will not connect until it has a token, so `dotfiles.ai.crush.oauthServers` names the ones that need it rather than marking every HTTP server.
-  Skills need little: Crush reads `~/.claude/skills` by default, and `mattpocock.nix` and `adhd.nix` add their plugin-only skills with `option skill-path`.
-- `openrouter/` - OpenRouter as the one provider for every paid model outside Claude Code.
-  Claude Code stays on the Claude subscription, since Remote Control refuses an `ANTHROPIC_BASE_URL` other than api.anthropic.com.
-  `default.nix` holds the key (`apiKeySecret`, a `sops.secrets` name) and two model tiers (`models.default`, `models.fast`), and exposes read-only `baseUrl`, `apiKeyFile`, and `apiKeyPlaceholder` for integrations to consume.
-  Each tool gets one file here declaring `dotfiles.openrouter.<tool>.enable` (on by default) plus a model option defaulting to a tier, active only when both OpenRouter and the tool are enabled.
-  Adding a tool means adding a file and listing it in `default.nix`'s `imports`.
-  `omnigent.nix` treats `~/.omnigent/config.yaml` as runtime-owned (omnigent generates `host.host_id` there, and `omnigent config set --global` rewrites the whole file), so an activation script yq-assigns only the nix-declared `providers.openrouter` entry into it and leaves every sibling key alone.
-  Its `auth_command` reads the key file rather than `OPENROUTER_API_KEY`, since the systemd user unit running the server never sees a login shell.
-  `crush.nix` adds a `provider add openrouter --api-key "$(cat ...)"` line to the crushrc, which is all Crush's built-in OpenRouter provider needs, and fills its large and small model slots from the two tiers.
-  `opencode.nix` passes the key as `{file:...}`, which opencode resolves when it loads its config.
-  `opencommit.nix` sets `dotfiles.git.openCommit`'s key, provider, and model at `mkDefault`, reusing that module's `~/.opencommit` template.
-  `zed.nix` wraps `zeditor` to export `OPENROUTER_API_KEY` from the key file at launch, because Zed has no file route for the key; on macOS, launching Zed.app from Finder bypasses the wrapper.
-- `home-manager/` - the `homeup` command, a `home-manager switch` from a local checkout that works from any directory.
-  `dotfiles.homeManager.flakePath` names the checkout and is baked into the script, so it needs neither a cwd nor an environment; `configuration` overrides the `$USER@$HOSTNAME` name home-manager infers, and `backupExtension` the `-b hm-backup` it passes.
-- `flake-update/` - flake-update automation, switching the same checkout `home-manager/` names (`dotfiles.automation.flakeUpdate.flakePath` defaults to `dotfiles.homeManager.flakePath`)
-- `bizhawk/` - BizHawk, launched as `emuhawk`, from the `mangopkgs` overlay (packaged at `pkgs/bizhawk/` in https://github.com/unmango/pkgs), since nixpkgs has no package and upstream's Nix expression is no flake.
-  Upstream publishes an x86_64-linux build only.
-- `brave/` - Brave
-- `github/` - a GitHub personal access token held in sops, for the GitHub MCP server.
-  `dotfiles.github.token.secret` names a `sops.secrets` entry and turns the module on, the same shape as `dotfiles.openrouter.apiKeySecret`; `home/default.nix` sets it to `github-pat` from `home/secrets/github.yaml`.
-  GitHub has no API for creating a PAT, so rotation keeps one manual step, and the module automates the rest.
-  A daily `github-token-expiry` user timer reads the `github-authentication-token-expiration` header GitHub returns on any authenticated request, and sends a desktop notification (`notify-send`, a no-op without a session bus) inside `warnDays` of expiry or on a 401.
-  `github-token-rotate` reads a new token from stdin, checks it against the API, and writes it into the sops file in `dotfiles.homeManager.flakePath` with `sops set`.
-  `modules/ai/github.nix` wraps `claude` and `copilot` to export `GITHUB_PERSONAL_ACCESS_TOKEN` from the decrypted file at launch, since both the Claude `github` plugin and Copilot CLI expand that variable in the server's `Authorization` header; the remote-control unit runs the wrapped `claude` through `finalPackage`.
-  `docs/github-token.md` is the rotation runbook.
-- `launch-services/`: macOS-only, and unreached, since no darwin configuration is defined.
-  `launch-services.nix` registers the app bundles under `~/Applications/Home Manager Apps` with Launch Services (`lsregister`, which backs `open -a`, the Dock, and Launchpad) and the Spotlight metadata index (`mdimport`, which backs Cmd+Space) on every activation.
-  Home Manager copies the bundles there but tells neither, and rsync writes them with normalized timestamps, so the fsevents that would trigger an automatic reindex do not reliably fire and an app can sit fully installed yet unreachable from every launcher.
-  Both commands only refresh an index, so the activation entry warns instead of failing.
-  Defaults to on for darwin and evaluates to nothing elsewhere.
-- `vscode/`, `vscodium/`, `neovim/` (via nixvim), `zed/`, `helix/`, `emacs/`, `obsidian/` - editors.
-  `vscodium/` mirrors `vscode/` over Home Manager's separate `programs.vscodium` (its own `~/.vscode-oss` and `~/.config/VSCodium`), so a host can enable both; only `hosts/generic.nix` does, so the module is built rather than installed anywhere real.
-  `neovim/nixvim-config.nix` is the curated LSP and plugin set, imported when `dotfiles.neovim.defaultConfig` is on and exported as `nixvimModules.default` so `packages.nixvim` builds the same configuration standalone.
-  `zed/` carries the extension list as the `dotfiles.zed.extensions` default.
-- `fonts/` - Nerd Fonts (MesloLGS NF, FiraCode) and Noto Color Emoji, opt-in via `dotfiles.fonts.enable`.
-  The emoji font comes from the profile even on a distro that ships one, because an app in a `buildFHSEnv` sandbox (Claude Desktop) sees the host's `/etc/fonts` but the sandbox's own `/usr`, so the distro's `/usr/share/fonts` is gone and only the fonts Home Manager registers with fontconfig remain.
-- `gnupg/` - gpg + gpg-agent for signing and encryption only; gpg-agent never serves SSH (see `ssh/`).
-  `dotfiles.gnupg.pinentry` picks the passphrase prompt: `pinentry-gnome3` on Linux, `pinentry_mac` on macOS, and `hosts/server.nix` sets `pinentry-curses`.
-- `onepassword/` - the 1Password CLI, plus the agent socket when a host sets `dotfiles.ssh.agent = "1password"`, and in that case git signs through the app's `op-ssh-sign`, since 1Password keys never reach `ssh-keygen`.
-  The desktop app owns the socket and is not installable from nixpkgs on macOS, so the module points at an app installed by hand rather than installing anything but the CLI.
-  No real host enables it; `hosts/generic.nix` does, so both platforms' socket paths are built.
-- `zsh/` - zsh, Powerlevel10k, and a framework: oh-my-zsh (`dotfiles.zsh.ohMyZsh.enable`) or prezto (`dotfiles.zsh.prezto.enable`), mutually exclusive by assertion.
-  `dotfiles.zsh.enable` is the base shell (aliases, history, completion) plus the prompt; the bundled `.p10k.zsh` sits beside it, and `dotfiles.zsh.p10kConfig` points at it and a consumer can replace or set null.
-  `oh-my-zsh/` and `prezto/` are submodules holding each framework's config, each active only alongside `dotfiles.zsh.enable`.
-  Every host uses oh-my-zsh; the prezto config is kept, switched off.
-- `sops/` - sops-nix age key location (`~/.config/sops/age/keys.txt`).
-  Secrets live under `home/secrets/`, encrypted in `.sops.yaml` to erik's darter and hades keys so one file decrypts on both, and to each YubiKey's PIV slot (age-plugin-yubikey) as a backup that needs the key and its PIN.
-  `dotfiles.sops.keyFile` holds only the software identities, since sops-nix reads it unattended; YubiKey identities live in `~/.config/sops/age/yubikey.txt` (see `docs/yubikey.md`).
-  `rosequartz.yaml` is the exception in origin rather than in handling: the admin cert and key are clan-generated in the nixos repo and re-encrypted here, so a rotation there has to be copied over the same way `modules/kubernetes/rosequartz/ca.crt` does.
-- `ssh/` - SSH client config.
-  Host aliases come from the `hosts` flake input (https://github.com/UnstoppableMango/hosts).
-  The module takes the table as data (`dotfiles.ssh.hosts`, empty by default); `hosts/common.nix` feeds it `inputs.hosts.lib.addresses`, so no module closes over `inputs` for it.
-  `HostKeyAlias` plus the `@cert-authority` entry in `~/.ssh/known_hosts_nix` mean cluster machines validate against the clan SSH CA instead of prompting on first connect.
-  `dotfiles.ssh.agent` names the one SSH agent a machine uses (`openssh`, `gnome`, `1password`, or null), since every agent claims `SSH_AUTH_SOCK` and all but one would be ignored.
-  `gnome` means the system's `gcr-ssh-agent`, which exports nothing, so the module sets `SSH_AUTH_SOCK` through Home Manager's `sshAuthSock`, which covers shells, systemd, and D-Bus.
-  hades uses `gnome` so the passphrase-protected key unlocks with the login keyring; darter and server use `openssh`; macOS defaults to null because launchd already runs an agent.
-  `dotfiles.ssh.primaryIdentityFile` is the machine's own key, `~/.ssh/id_ed25519` by default and offered first, and `dotfiles.ssh.identityFiles` is the additive list after it, which `modules/yubikey/` fills with each key's FIDO2 credential handle.
-  The split exists because a list option keeps only the definitions at the winning override priority, so a host naming its key in `identityFiles` would discard those handles instead of preceding them.
-  Both feed one `IdentityFile`, unset when they are empty, because an explicit `IdentityFile` stops ssh from trying its built-in defaults.
-  `primaryIdentityFile = null` says the machine's key is somewhere other than the default path without saying where, leaving that to a block in `~/.ssh/config.d/`; darter is the one host that does this.
-- `stylix/` - Stylix theming, scoped to terminals (kitty, ghostty) via `dotfiles.stylix.enable`; `i3/` adds its own targets (i3, rofi, dunst, the i3status-rust palette)
-- `kitty/`, `ghostty/` - terminals
-- `signal/` - Signal, both halves: the desktop app (`dotfiles.signal.desktop`) and `signal-cli` (`dotfiles.signal.cli`), each on by default under `dotfiles.signal.enable`.
-  A headless host that wants the CLI alone sets `dotfiles.signal.desktop = false`.
-- `slip/` - slip, the zettelkasten capture tool from https://github.com/unmango/slip, which hands any command it does not implement to zk.
-  slip has no config file of its own, so the whole surface is one directory: `dotfiles.slip.notebook.path` (`notes`, relative to the home directory) is exported as `ZK_NOTEBOOK_DIR` rather than slip's own `ZK_DIR`, because zk honours that variable too and one value has to aim both halves of the passthrough at the same corpus.
-  The path is relative because `dotfiles.slip.notebook.init` declares it as a `nix2git.repositories` entry, and nix2git resolves a repository path against the home directory.
-  nix2git runs `git init` for a declared path that does not exist yet and never clones, rewrites, or deletes, so this is safe alongside a corpus cloned by hand.
-  `dotfiles.slip.zk.settings` renders zk's global `~/.config/zk/config.toml`, which a notebook's own `.zk/config.toml` inherits from.
-  Its default is the one stanza `slip init` would append to a notebook (`creation-date-key = "create_time"`), which is what makes zk read a note's creation time from slip's frontmatter rather than the file's mtime; declaring it globally covers every notebook at once and keeps the setting out of a notes repository's history.
-- `c/`, `containers/`, `dotnet/`, `git/`, `go/`, `javascript/`, `kubernetes/`, `nix/`, `ocaml/`, `python/`, `rust/` - per-language dev tooling.
-  There is no `tdl/` module: the tdl flake exports its own `homeModules.tdl` declaring `programs.tdl.*` (the CLI plus the VS Code extension), so `homeModules.dotfiles` folds that module in alongside `./modules` and a host sets `programs.tdl.enable`, rather than this repo re-declaring a `dotfiles.tdl` toggle over `pkgs.tdl`.
-  `git/signing.nix` signs commits (not tags) with `dotfiles.git.signing.key`, an SSH public key by default, which each host sets for itself; the private half is whatever the host's `dotfiles.ssh.agent` holds.
-  `dotfiles.git.signing.allowedSigners` comes from `home/git.nix`, every machine's key, and becomes `gpg.ssh.allowedSignersFile` so a commit signed on one machine verifies on the others.
-  A bare key verifies as `user.email`; an `{ email, key }` entry is for a key that signs under another email.
-  An entry also takes `validAfter` and `validBefore`, rendered as ssh-keygen's `valid-after`/`valid-before` options, which bound the window a key's signatures verify in.
-  Git checks a signature against the time it was created rather than the time it is verified, so retiring a key means moving it out of a host's `signing.key` and into this list with a `validBefore`, which keeps every commit it already signed verifying.
-  Dropping a key outright unverifies its whole history.
-  `dotfiles.git.localConfig` (`~/.config/git/config.local` by default) is git's equivalent of `modules/ssh`'s `config.d`: an `include` Home Manager renders after every generated section, so a later directive there overrides anything above it.
-  That is where a work account's conditional include, a client's credential helper, and anything else whose existence is not public lives, and git ignores the include when the file is absent, so nothing creates it.
-  `kubernetes/` keeps k9s, openshift, and rosequartz submodules.
-  `git/opencommit.nix` renders the whole of `~/.opencommit` through `sops.templates` when `dotfiles.git.openCommit.apiKeySecret` names a `sops.secrets` entry, because opencommit skips its defaults entirely once that file exists.
-  The file route rather than `OCO_API_KEY` in the environment, since the `prepare-commit-msg` hook also fires for editor and GUI commits that never see a login shell.
-  The hook reaches repos through `init.templateDir` rather than a global `core.hooksPath`, because lefthook and similar tools install their hooks into whatever `core.hooksPath` names, which for a global value means every repo.
-  The template is a store directory of regular files, since git copies a template symlink as a symlink; its hook execs `~/.config/git/opencommit-hook`, so a copied hook holds no store path and follows the current generation.
-  Only repos created after the switch get it; `git init` inside an existing repo adds it without touching hooks already there.
-  `dotfiles.git.openCommit.models` seeds `~/.opencommit-models.json` when it is absent or empty, because only `oco models --refresh` ever writes that file and the package's own MODEL_LIST lags the provider API by months.
-  It is a discovery aid rather than a gate: opencommit validates `OCO_MODEL` as a string and nothing more.
-  `dotfiles.git.openCommit.typeEmoji` has the hook insert an emoji after the generated Conventional Commit prefix (`feat(git): ✨ ...`), keyed by type.
-  The hook does this rather than `OCO_EMOJI`, which replaces the conventional-commit prompt with a GitMoji one that drops the type, so an assertion rejects the two together.
-  With OpenRouter on, `openrouter/opencommit.nix` supplies the key, provider, and model, and raises `OCO_TOKENS_MAX_INPUT` to 128000.
-  Below that limit oco drafts one message for the whole diff; above it, it drafts one per file chunk and joins them, which puts several title lines in one commit.
-  `kubernetes/rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block); a host supplies the admin cert and key paths, and omitting them yields the OIDC context alone (which is what darter takes).
-  It also installs `kubelogin-oidc`, the `kubectl oidc-login` plugin that context calls, so a host without the context goes without it.
-  `containers/` installs both stacks side by side: podman (with buildah, skopeo, podman-compose) and `docker-client`, the CLI without the daemon, since a system dockerd is outside Home Manager's reach.
-  `docker compose` and `docker buildx` are linked into `~/.docker/cli-plugins` because the CLI resolves subcommands there rather than from PATH.
-  podman-tui follows `dotfiles.containers.tui`, on by default.
-  `REGISTRY_AUTH_FILE` points podman, skopeo, and buildah at `~/.docker/config.json`, so one `docker login` serves both (`dotfiles.containers.sharedAuth`).
-  `dotfiles.containers.podmanSocket` and `.userRegistryConfig` default to `targets.genericLinux.enable`: non-NixOS hosts get the rootless `podman.socket`/`podman.service` user units and `~/.config/containers/{policy.json,registries.conf}`, which the podman package carries no defaults for, while NixOS hosts keep the system layer's units and `/etc/containers` authoritative.
-  `dotfiles.containers.registryCAs` writes a CA per registry host to `~/.config/containers/certs.d/<host>/ca.crt` for the rootless stack.
-  `home/containers/` points it at the-cluster's Nixery with copies of the nixos repo's `modules/pki` CAs.
-  A system dockerd reads only `/etc/docker/certs.d`.
-- `gnome/` - the GNOME option, the extension packages, and the derived `enabled-extensions` list.
-  The dconf preferences that go with it are taste and live in `home/gnome.nix`.
-- `i3/` - an i3 X session that sits beside GNOME on the same machine, picked at the login screen: i3status-rust, rofi, dunst, picom, polkit-gnome, flameshot, and xss-lock with i3lock-color.
-  GNOME reaches `graphical-session.target` too, so every unit belonging to the i3 session is rebound to `hm-graphical-session.target`, which only `~/.hm-xsession` starts; a unit left on the stock target would run inside GNOME as well (picom against mutter, a second locker).
-  picom's package also ships an XDG autostart entry, which gnome-session runs from the profile, so `~/.config/autostart/picom.desktop` hides it; a picom running inside GNOME holds Xwayland's compositor selection, and mutter then shows no X11 window at all.
-  The session script and profile live at `~/.hm-xsession` and `~/.hm-xprofile` rather than the default names, because the NixOS X session wrapper sources `~/.xprofile` for every X login.
-  `dotfiles.i3.gnome.enable` follows `dotfiles.gnome.enable` and reuses GNOME's pieces: xsettingsd serves the `org/gnome/desktop/interface` values from `dconf.settings`, so GTK apps match without a second theme definition, plus Super+I for GNOME Settings, Super+E for Files, and a gtk-portal `i3-portals.conf`.
-  It uses xsettingsd because gsd-xsettings serves only mutter's Xwayland and exits under any other window manager.
-  `familiarKeys`, `applets`, `autostart`, and `lock.enable` are the GNOME/KDE habits (Alt+Tab, Super+A, Print, Ctrl+Alt+Delete, the tray, `~/.config/autostart`, idle lock), each on by default; Super+/ lists the bindings from the same attrset that defines them.
-  A machine varies the session through `dotfiles.i3.terminal` and `.wallpaper` and the plain Home Manager options, which merge (`xsession.windowManager.i3.config.workspaceOutputAssign`, `programs.i3status-rust.bars.default.blocks`).
-  The login-screen entry is system-side; `docs/i3.md` covers it.
-- `hyprland/` - a Hyprland session beside GNOME and i3, picked at the login screen: waybar, hyprlauncher, dunst, hyprshot, hyprpolkitagent, and hyprlock with hypridle (`lock.nix`), plus hyprpaper when `dotfiles.hyprland.wallpaper` is set.
-  The config is Hyprland's own `example/hyprland.lua`, rendered through Home Manager's Lua generator (`configType = "lua"`, set explicitly because erik's stateVersion predates it as the default), with nothing carried over from `i3/`: its bindings, its look, and its `terminal`/`fileManager`/`menu` as options (kitty, nautilus, hyprlauncher).
-  waybar's settings are `waybar.json`, waybar's shipped config with its sway modules swapped for the hyprland ones; hyprlock and hypridle follow their upstream examples, less what needs hardware hades lacks.
-  `package` and `portalPackage` are null, because the nixos repo's `programs.hyprland` owns both and the session entry; `docs/hyprland.md` covers the system side.
-  `wayland.systemd.target` is `hyprland-session.target`, since GNOME also reaches `graphical-session.target` and every Wayland unit would otherwise start inside it.
-- `yubikey/` - ykman, yubico-piv-tool, libfido2, and yubikey-personalization, with Yubico Authenticator behind `dotfiles.yubikey.gui` (Linux only), and age-plugin-yubikey when sops is on.
-  `dotfiles.yubikey.keys.<name>.sshKey` records each key's resident FIDO2 SSH credential (values in `home/ssh.nix`), and ssh offers that key's `handle`.
-  The two are separate options because they answer to different things: `application` identifies the credential on the authenticator and is fixed when it is created, while `handle` is only a path, which ssh reads by content and never checks against the credential.
-  `handle` therefore defaults to the name `ssh-keygen -K` derives from `application` (`ssh:<name>` by default, so `~/.ssh/id_ed25519_sk_rk_<name>`, and a bare `ssh:` giving the unsuffixed `~/.ssh/id_ed25519_sk_rk`), and setting it to anything else means renaming the downloaded file into place by hand.
-  An assertion catches two of a host's available keys offering one handle, since ssh skips a missing handle silently and would otherwise leave the clash to be found at connection time.
-  `docs/yubikey.md` is the onboarding runbook.
-  When gpg is on, scdaemon is set to `disable-ccid` and `pcsc-shared`, so it reaches the key through pcscd without holding it exclusively and ykman keeps working alongside gpg-agent.
-  `pcscd` and the udev rules are system services outside Home Manager's reach: the nixos repo supplies them on hades, and darter needs the distribution packages.
-
-Seven home configurations are built: `erik@darter`, `erik@hades`, `erik@server`, `tz@hades`, and `generic@container` on x86_64-linux, plus `generic@x86_64-linux` and `generic@aarch64-darwin`.
-`tz@hades` builds `hosts/tz-hades.nix`, a second account on hades that imports nothing from `home/`; the nixos repo creates the account and installs the `home-manager` CLI for it.
-No machine is actually named `server`; that entry exists so `hosts/server.nix` is covered by `nix flake check` rather than only breaking whenever someone next touches it.
-
-`generic@x86_64-linux` and `generic@aarch64-darwin` are the same idea one layer out: both build `hosts/generic.nix`, which turns most modules on, imports nothing from `home/`, and sets a throwaway account whose home directory follows the platform, so `homeModules.dotfiles` is built here rather than only breaking in somebody else's flake.
-`generic@x86_64-linux` builds `hosts/generic-linux.nix`, which imports `generic.nix` and adds the Linux-only desktop modules (bizhawk, brave, gnome, hyprland, i3) as literal toggles.
-A toggle there cannot read the platform from `pkgs`: `pkgs` depends on `nixpkgs.overlays`, stylix's overlay reads `config.lib`, and merging `config.lib` forces every module's conditional `lib` definition, including Home Manager's rofi under `dotfiles.i3.enable`, so `i3.enable = isLinux` is an infinite recursion.
-`generic@aarch64-darwin` is also the only consumer of the darwin branches in `modules/` (ghostty's null package, the 1Password agent socket, the containers defaults, omnigent's launchd unit, `launch-services/`).
-`nix flake check` does not evaluate `homeConfigurations`, so CI builds them explicitly.
-That takes two jobs: `check` on the self-hosted `thecluster` runner for the linux configurations, and `darwin` on `macos-latest` (Apple Silicon, so aarch64-darwin) for the darwin one, which gets a real build rather than an evaluation.
-
-`generic@container` builds `hosts/container.nix`, the headless, identity-free configuration behind `packages.container` (x86_64-linux only, built by `container.nix`).
-It leaves off every GUI module plus 1Password (its agent socket belongs to the desktop app), sops (an image holds no age key), and gnupg (pinentry needs a session).
-It sets `dotfiles.ssh.agent = null`, since the image runs no systemd user manager to host an agent.
-Coreutils come from uutils (`uutils-coreutils-noprefix`), in both the image's base layer and the profile, and the base layer adds `/usr/bin/env` for env-shebang scripts.
-The profile carries the rest of the userland scripts expect (sed, awk, diffutils, findutils, make, tar and the compressors, curl, ssh, procps, which, file, patch, rsync), since nothing else in it does.
-Nothing in it is interactive: its output goes to an agent, not a terminal.
-So it sets `dotfiles.zsh.p10kConfig = null` and leaves off oh-my-zsh, fzf, htop, and less.
-`PAGER`, `GH_PAGER`, `MANPAGER`, git's `core.pager`, and gh's `pager` are `cat`, and git's diff-highlight integration is off, since it pipes into less.
-Git's `core.editor` is `true`, so a merge or rebase keeps its default message instead of waiting on nvim, which the image does not install.
-Git's `maintenance.auto` and `gc.auto` are off: a commit otherwise detaches `git maintenance run --auto` into a session of its own, which leaves an orphan behind every commit.
-The profile carries tini, which the-cluster runs as the claude container's PID 1 in front of `claude remote-control`, since remote-control reaps none of the orphans its sessions leave.
-It also leaves off neovim, whose curated LSP set bundles every language server, and every agent CLI other than Claude Code (`ai.copilot`, `ai.crush`, `ai.cursor.cli`, `ai.coderabbit`, `ai.omnigent`, `ai.opencode`).
-The `ai.*` integrations that default on but need a display or a toolchain the image lacks (azure, chromeDevtools, playwright, csharp, fsharp, haskell, ocaml) are off too.
-For size it also drops helix, the `home-manager` CLI (the image is never activated or switched), `programs.vim` (Home Manager builds it from `vim-full`), the gitMcp and gossamer `ai.*` integrations, and every glibc locale except `en_US.UTF-8`.
-The cloudflare, gitlab, and pulumi `ai.*` integrations are off because they sign in through a browser.
-The aws integration is off because nothing in the container uses it, and every session would start its own `uvx` proxy at about 160MiB.
-Its Claude Code `settings.json` denies the claude.ai connectors that sign in through a browser (Prisma, Stack Overflow, Supabase), and is forced over the copy Claude Code wrote on home volumes from images that left it unmanaged.
-It carries the toolchains the owner's repositories need: c, go, python, rust, nix, and dotnet with SDKs 8 and 10 (`dotfiles.dotnet.sdks`).
-Node comes from `pkgs.nodejs`, which several `ai.*` modules install, rather than the javascript module's fnm, plus bun and yarn.
-Its `home.packages` also lists the CLIs those repositories use outside a devShell (buf, dprint, golangci-lint, goreleaser, kind, kustomize, kubeseal, opentofu, pulumi, sops, and similar); a repository with a devShell gets the rest from `nix develop`.
-It runs as the Claude agent in the-cluster's `apps/claude` pod, which supplies a dockerd sidecar, a nix-daemon, a ServiceAccount token, and the user namespace rootless podman runs in.
-So `dotfiles.containers` is on with the clients only (`tui = false`, `userRegistryConfig = true`), and `containers.conf` sets the cgroupfs manager, `cgroups = "disabled"`, and a file event logger, since the pod has no systemd and delegates no cgroup to the user.
-`dotfiles.kubernetes` is on with k9s off, and kubectl finds the in-cluster token without a kubeconfig.
-The image is built with nix2container.
-Nothing in `/home/generic` is baked in, so `$HOME` can be a volume that keeps state across restarts (the-cluster mounts a PVC there for Claude Code's remote-control).
-The entrypoint places home files at every start with putter, Home Manager's alternative file activator, which is the whole of `linkGeneration` in that mode and needs no nix; the full `activate` script cannot run, since it calls `nix-build` and `nix-env`.
-Putter reads the manifest Home Manager generates (`home.internal.filePutterConfig`) and keeps its state in `~/.local/state/home-manager/putter-state.json`, so a file a later image drops is removed and every other file in `$HOME` is left alone.
-A regular file at a managed path fails the start, as `home-manager switch` does without `-b`.
-Kubernetes callers pass their command as `args`, because `command` replaces the entrypoint.
-`home.path/bin` is on `PATH`.
-A third CI job, `image`, builds it on every run and pushes `ghcr.io/unstoppablemango/dotfiles` as `:latest` and `:<short-sha>` from `main` only.
-
-Overlays from multiple inputs (devctl, mangopkgs, nil, nix-direnv, nix-vscode-extensions, tdl) are composed in `flake.nix` and applied to nixpkgs, alongside the local ones from `overlays/`.
-`zed.overlays.default` is commented out: nixpkgs' livekit-libwebrtc is out of sync with zed 0.217.3's expected webrtc API (`no type named 'AudioDeviceSink' in namespace 'webrtc'`).
-
-`tdl.overlays.default` composes gomod2nix's overlay in (tdl is built with its `buildGoApplication`), so `buildGoApplication` and `mkGoEnv` land in `pkgs` alongside `tdl` and `vscode-tdl`.
-`overlays/` holds the ones no input provides: `clan.nix` and `slip.nix` lift a package out of an input that exports no overlay of its own (`clan-core` and `slip`).
-`claude-code.nix` overrides nixpkgs' claude-code with a newer release by pointing its `manifest` argument at `overlays/claude-code-manifest.zst.json`, a copy of `https://downloads.claude.ai/claude-code-releases/<version>/manifest.zst.json`.
-nixpkgs tracks the CLI a few releases behind, and the model list is baked into the binary, so a model newer than the packaged release is unreachable until the manifest moves.
-Refresh it by downloading the manifest for the wanted version; the derivation takes both the version and the per-platform checksums from that file.
-Software with no nixpkgs package and no upstream flake is packaged in https://github.com/unmango/pkgs and reaches this flake through the `mangopkgs` overlay, so a module can take it as a `package` option default the same as any nixpkgs attribute.
-There is no `pkgs/` directory here.
-
-The dev shell (entered via `direnv allow` / `nix develop`) includes: age, bashInteractive, clan-cli, direnv, git, gnumake, graphify, home-manager, ldns, nil, nix, nixd, nixfmt, shellcheck, sops, ssh-to-age, watchexec.
-graphify is `inputs'.mangopkgs.packages.graphify.withGrammars` with nixpkgs' `tree-sitter-nix`: graphify reads `.nix` files only through a patch in https://github.com/unmango/pkgs, and only when that grammar is installed.
+The reasoning behind the split is in [docs/agents/architecture.md](docs/agents/architecture.md).
 
 ## graphify
 
-This repository has a knowledge graph at `graphify-out/`, built from the code alone: every `.nix` file's imports, functions, and `dotfiles.*` options (which module `defines` each, which hosts `configure` it, and which modules `reference` it), plus the Markdown headings.
+When `graphify-out/graph.json` exists, run `graphify query "<question>"` before your first grep, search, or source-file read about this repository, and put this rule in every subagent prompt that explores code.
+See [docs/agents/graphify.md](docs/agents/graphify.md) for the other commands and how the graph is built.
 
-- When `graphify-out/graph.json` exists, run `graphify query "<question>"` before your first grep, search, or source-file read for a question about this repository, and put this rule in every subagent prompt that explores code.
-  Read raw files only for lines the graph or an earlier read already located.
-  Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts; option nodes are labelled by their full path, such as `dotfiles.ai.enable`.
-- Read `graphify-out/GRAPH_REPORT.md` only for broad architecture review or when query, path, and explain do not surface enough context.
-- After changing `.nix` files, run `make graph` to keep the graph current; it parses the code again and costs nothing.
-  Build the graph that way rather than through the skill's `/graphify` pipeline, whose setup step prefers a PyPI `graphifyy` from `uv` over the dev shell's `graphify` and would write a graph without the `.nix` files, since only the dev shell's build reads them.
-- `graph.json` and `GRAPH_REPORT.md` are committed and the rest of `graphify-out/` is ignored.
-  A committed `graph.json` is rewritten whole on every build, so a large diff to it in a pull request is expected; do not flag it as churn.
-- The skill at `.claude/skills/graphify/` is graphify's own, installed by `graphify install --project`; reinstall it rather than editing it.
-  That command also adds PreToolUse hooks to `.claude/settings.json` and a section to `CLAUDE.md`; drop both, since this section replaces them.
-  Nothing installs graphify's git hooks either, so the graph changes only when someone runs `make graph`.
+## Topic docs
 
-## Formatting
-
-- Nix files: `nixfmt` (via treefmt)
-- JSON/Markdown/YAML/markup: `prettier` (via treefmt)
-- Indentation: tabs everywhere except JSON/YAML/Nix which use 2 spaces (`.editorconfig`)
-
-All formatters run through `treefmt-nix` (`nix fmt` / `make fmt`).
-
-## Cachix
-
-The CI uses the `unstoppablemango` Cachix cache.
-`hosts/common.nix` adds it as a substituter for every configuration, so building locally after CI has run fetches rather than compiles.
-That matters most for the packages that reach this flake through the `mangopkgs` overlay: cache.nixos.org carries nothing outside nixpkgs, so without this cache each version bump of one is a from-source build on every machine.
-A user's nix.conf reaches a substituter only with the system's permission, and silently substitutes nothing without it, so a host that compiles anyway is missing one of two things in its system nix.conf.
-Either suffices: the cache URL in `trusted-substituters` plus its signing key in `trusted-public-keys`, which authorizes that one cache; or the user in `trusted-users`, which authorizes any cache they name.
-Prefer the former, since Nix's manual warns that adding a user to `trusted-users` "is essentially equivalent to giving that user root access to the system".
-darter currently takes the second route, having `trusted-users = root erik`.
+- [Architecture: class vs instance, nixpkgs ownership, flake layout](docs/agents/architecture.md)
+- [Overlays and packaging](docs/agents/overlays.md)
+- [CI and Cachix](docs/agents/ci.md)
+- [The container image (`generic@container`)](docs/agents/container.md)
+- Module notes: [ai and openrouter](docs/agents/modules/ai.md), [git](docs/agents/modules/git.md), [ssh, gpg, sops, yubikey, github token](docs/agents/modules/security.md), [desktop](docs/agents/modules/desktop.md), [toolchains](docs/agents/modules/toolchains.md), [shell, editors, and apps](docs/agents/modules/apps.md)
+- Runbooks: [github-token](docs/github-token.md), [yubikey](docs/yubikey.md), [i3](docs/i3.md), [hyprland](docs/hyprland.md)
