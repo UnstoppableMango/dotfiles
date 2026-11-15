@@ -4,7 +4,7 @@
 
 claude-code, github-copilot-cli, cursor-cli, and crush.
 Each MCP integration and third-party service (aws, azure, cloudflare, figma, slack, gossamer, per-language servers) gets its own `.nix` toggle file.
-`moer/`, `nix-skill/`, and `tdd-orchestrator/` are skill submodules (a SKILL.md plus agents).
+`comment-cleanup/`, `moer/`, `nix-skill/`, and `tdd-orchestrator/` are skill submodules (a SKILL.md, plus agents for some).
 
 - `global-context.md` is the user-level agent instructions, rendered to `~/.claude/CLAUDE.md` and `~/.copilot/copilot-instructions.md` and loaded by Crush as a global context path.
   `.claude/skills/agent-context/` covers how to change it.
