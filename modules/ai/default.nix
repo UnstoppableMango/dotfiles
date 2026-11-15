@@ -27,6 +27,7 @@ in
     ./claude-desktop.nix
     ./cloudflare.nix
     ./coderabbit.nix
+    ./comment-cleanup.nix
     ./crush.nix
     ./containers.nix
     ./context7.nix
