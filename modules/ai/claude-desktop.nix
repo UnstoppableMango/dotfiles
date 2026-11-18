@@ -38,6 +38,34 @@ let
           }
         );
     };
+
+  # The FHS sandbox swaps in its own /usr, so on a distro whose /etc/fonts/conf.d
+  # links into /usr (50-user.conf among them) the user fontconfig never loads.
+  fontsConf = pkgs.writeText "claude-desktop-fonts.conf" ''
+    <?xml version="1.0"?>
+    <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+    <fontconfig>
+      <include ignore_missing="yes">/etc/fonts/fonts.conf</include>
+      <include ignore_missing="yes" prefix="xdg">fontconfig/conf.d</include>
+      <include ignore_missing="yes" prefix="xdg">fontconfig/fonts.conf</include>
+    </fontconfig>
+  '';
+
+  package = pkgs.symlinkJoin {
+    name = "claude-desktop-wrapped";
+    paths = [
+      (
+        if cfg.claudeDesktop.portalOpener then
+          withPortalOpener cfg.claudeDesktop.package
+        else
+          cfg.claudeDesktop.package
+      )
+    ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/claude-desktop --set-default FONTCONFIG_FILE ${fontsConf}
+    '';
+  };
 in
 {
   options.dotfiles.ai.claudeDesktop = {
@@ -76,13 +104,6 @@ in
   };
 
   config = lib.mkIf (cfg.enable && cfg.claudeDesktop.enable && cfg.claudeDesktop.package != null) {
-    home.packages = [
-      (
-        if cfg.claudeDesktop.portalOpener then
-          withPortalOpener cfg.claudeDesktop.package
-        else
-          cfg.claudeDesktop.package
-      )
-    ];
+    home.packages = [ package ];
   };
 }

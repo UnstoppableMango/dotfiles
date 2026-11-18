@@ -34,6 +34,7 @@ A Hyprland session beside GNOME and i3: waybar, hyprlauncher, dunst, hyprshot, h
 - `stylix/` scopes Stylix to terminals (kitty, ghostty) via `dotfiles.stylix.enable`; `i3/` adds its own targets.
 - `fonts/` installs Nerd Fonts (MesloLGS NF, FiraCode) and Noto Color Emoji under `dotfiles.fonts.enable`.
   The emoji font comes from the profile even where the distro ships one, because an app in a `buildFHSEnv` sandbox (Claude Desktop) sees the host's `/etc/fonts` but the sandbox's `/usr`, so only fonts Home Manager registers remain.
+  The sandbox also breaks distro `/etc/fonts/conf.d` links into `/usr`, including `50-user.conf`, so `ai/claude-desktop.nix` points `FONTCONFIG_FILE` at a config that includes the user fontconfig directly.
 - `kitty/` and `ghostty/` are the terminals.
 
 ## launch-services/
