@@ -25,7 +25,7 @@ lines), but the code itself must be byte-identical.
 Code already shows **how**. A comment earns its place only by carrying **why**
 — context the code cannot: a non-obvious constraint, a deliberate deviation, a
 gotcha, a workaround, the reason a tempting simpler version is wrong. When in
-doubt about a *why* comment, keep it; when in doubt about a *how* comment,
+doubt about a _why_ comment, keep it; when in doubt about a _how_ comment,
 delete it. Wrongly deleting a warning that does real work costs far more than leaving
 one mediocre comment behind.
 
@@ -53,7 +53,7 @@ ephemeral:
   Confluence pages, RFCs and standards, permalinked sources, issue-tracker
   links — and a **maintained repo doc/README at a stable path** (e.g.
   `cdk/PREVIEW_INFRA.md`), which lives and updates alongside the code. These
-  have stable addresses. A README is *not* a rotting spec — don't lump the two.
+  have stable addresses. A README is _not_ a rotting spec — don't lump the two.
 - **Ephemeral (rewrite or delete):** "the spec", "the requirements", a design
   doc (a point-in-time artifact that gets superseded), and **any section number
   of any document** — "spec §7", "section 4.2" — the canonical ephemeral form. A
@@ -62,7 +62,7 @@ ephemeral:
 This rule applies **inside docstrings exactly as in `#` comments** — a
 "per spec §11" buried in a module docstring is the same defect.
 
-Even a durable reference is a *breadcrumb*, never the explanation itself
+Even a durable reference is a _breadcrumb_, never the explanation itself
 — the address survives, but the content behind it can change. The comment must
 stand on its own with the link removed:
 
@@ -73,43 +73,43 @@ stand on its own with the link removed:
 #       deliberately not "+3 calendar days" (WAGE-1234).
 ```
 
-**4. Is it a *why* that's bloated or misplaced?** For comments that do carry
+**4. Is it a _why_ that's bloated or misplaced?** For comments that do carry
 real rationale, in sequence:
 
-- *Does the rationale belong in a doc, not here?* System-level "why it's built
+- _Does the rationale belong in a doc, not here?_ System-level "why it's built
   this way" narrative — an architecture decision, a benchmark result, a
   lifecycle overview — reads better in a maintained doc/README than in a long
   inline block. If a durable doc **already** carries it → delete the inline copy;
   do **not** leave a signpost. A comment that only restates a decision the code
   already reflects ("right-sized from prod", "1 vCPU is deliberate") is dead
-  weight *even pointed at the doc* — the doc is the first place anyone
+  weight _even pointed at the doc_ — the doc is the first place anyone
   questioning the value looks. If no such doc exists yet, keep the comment but
   **flag it** as extraction-worthy (writing the doc is out of scope for a
-  comment-only pass). Extraction is *pure*: once the narrative lives in the doc,
-  what survives inline is only the local invariant a reader needs *at that
-  line* — a non-obvious constraint ("timeout < interval — ALB rule") or a
+  comment-only pass). Extraction is _pure_: once the narrative lives in the doc,
+  what survives inline is only the local invariant a reader needs _at that
+  line_ — a non-obvious constraint ("timeout < interval — ALB rule") or a
   cross-file sync obligation ("keep in sync with X") — not a pointer to the doc.
-  A comment that is *nothing but* a pointer ("see PREVIEW_INFRA.md") generally
+  A comment that is _nothing but_ a pointer ("see PREVIEW_INFRA.md") generally
   shouldn't exist; inline may reference the doc only when a reader genuinely
   needs it there, and even then the substance, not the pointer, is the point.
-- *Is all of it necessary?* Trim throat-clearing, restated context the reader
+- _Is all of it necessary?_ Trim throat-clearing, restated context the reader
   already has, and anything the code itself shows. Keep every part that a
   future maintainer would need to avoid breaking or "simplifying" the code.
-- *Does it belong in one block?* A long header block covering several distinct
+- _Does it belong in one block?_ A long header block covering several distinct
   points often serves better broken up, with each short comment placed adjacent
   to the line it governs. Proximity is what keeps comments true: a comment next
   to its line gets updated when the line changes; a header block three screens
   up does not.
-- *Is the remaining length earned?* Some rationale is irreducibly multi-part
+- _Is the remaining length earned?_ Some rationale is irreducibly multi-part
   (a workaround plus the bug it works around plus the deprecation plan).
   Length alone is not a defect — unearned length is. Never shorten a comment
   at the cost of the information in it.
 
-The trap this rule exists to catch: **"carries a real *why*" and "is worded
+The trap this rule exists to catch: **"carries a real _why_" and "is worded
 minimally" are independent judgments.** A comment can carry genuine rationale
-*and* still be three times too long. Passing the first test does not exempt it
+_and_ still be three times too long. Passing the first test does not exempt it
 from the second — do not let "it's a real why" become a verdict to keep the
-wording verbatim. Apply Occam's razor to *every surviving comment*: keep the
+wording verbatim. Apply Occam's razor to _every surviving comment_: keep the
 single non-obvious fact a reader needs at that line, in the fewest words, and
 cut everything else — the mechanism the code already shows, where a value is
 consumed downstream, the consequence-of-the-consequence, restated names/types,
@@ -134,26 +134,26 @@ is worth keeping). A wrong comment is worse than no comment.
 but essential line, a contract the signature can't show (units, ranges,
 side effects, failure modes), an edge case, or the source of a copied
 algorithm. → **Keep.** Do not reword comments that are already fine — churn on
-good comments is itself noise in the diff. But "already fine" means *already
-minimal*, not merely correct: a correct-but-bloated comment is a rule-4 target,
+good comments is itself noise in the diff. But "already fine" means _already
+minimal_, not merely correct: a correct-but-bloated comment is a rule-4 target,
 not a keep. Reserve the no-churn rule for comments that are already tight.
 
 Three keep categories that are easy to misread as deletable — they are not:
 
 - **Cross-file consistency pointers** — "mirrors the Overview page", "same
-  logic as kpi1", "keep in sync with X". The *link itself* is the why: it
+  logic as kpi1", "keep in sync with X". The _link itself_ is the why: it
   prevents two copies drifting apart. Deleting it deletes the only thing
   stopping the next editor from changing one side.
 - **Data-literal semantics** — comments giving the meaning, order, or units of
   a literal (`# (width, height) in portrait` on a tuple table, `# pence, not
-  pounds`). The literal cannot show its own convention.
+pounds`). The literal cannot show its own convention.
 - **Presentation/format contracts** — "£ with full thousands, as the
   dashboard". These pin output format to an external expectation.
 
 **Structural section banners** (`# --- Name ---` dividers) are navigation, not
 narration — they don't restate any line of code. Treat them as house style and
 keep them unless the user asks for their removal. If a banner carries substance
-beyond its label, that substance is protected like any other *why*.
+beyond its label, that substance is protected like any other _why_.
 
 ## TODOs
 
@@ -170,7 +170,7 @@ All six rules apply inside docstrings, including rule 3's reference rules. A
 docstring that only re-emits the function name and parameter types is
 narration → delete or reduce. One that documents the contract the signature
 can't show (units, valid ranges, side effects, what happens on failure,
-invariants, what has *already* been done to the inputs) → keep. Condensing a
+invariants, what has _already_ been done to the inputs) → keep. Condensing a
 docstring to a one-liner is valid only when nothing beyond signature
 restatement is lost — a docstring that explains preconditions, boundary
 ownership, or cross-module behavior is contract, and trimming it to a summary
