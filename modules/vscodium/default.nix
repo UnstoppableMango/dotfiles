@@ -16,7 +16,7 @@
         enableExtensionUpdateCheck = false;
         enableUpdateCheck = false;
 
-        extensions = [ pkgs.gossamer.passthru.editorSupport.vscode ];
+        extensions = lib.optional config.dotfiles.gossamer.enable pkgs.gossamer.passthru.editorSupport.vscode;
       };
     };
   };

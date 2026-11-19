@@ -65,8 +65,8 @@ Add this repo as an input, import `homeModules.dotfiles`, and turn on the module
       homeConfigurations."you@yourmachine" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.aarch64-darwin;
         modules = [
-          # `pkgs.gossamer` is referenced by modules/zed and the nixvim
-          # config, so the overlay is not optional.
+          # The editor modules reference `pkgs.gossamer` unless
+          # `dotfiles.gossamer.enable = false`, so the overlay is not optional.
           {
             nixpkgs.overlays = [ dotfiles.overlays.default ];
             nixpkgs.config.allowUnfree = true;

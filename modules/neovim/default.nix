@@ -15,8 +15,9 @@ in
       default = true;
       description = ''
         Import the curated nixvim configuration in `./nixvim-config.nix`: the
-        LSP server set, plugin list, colorscheme, and the gossamer language
-        support wired up from the package's `editorSupport` passthru.
+        LSP server set, plugin list, and colorscheme, plus the gossamer
+        language support in `./nixvim-gossamer.nix` when
+        `dotfiles.gossamer.enable` is set.
 
         It is a default here rather than a literal in an identity layer because
         it is a toolchain choice any consumer of this flake would plausibly
@@ -36,7 +37,9 @@ in
 
       nixpkgs.useGlobalPackages = true;
 
-      imports = lib.optional cfg.defaultConfig ./nixvim-config.nix;
+      imports = lib.optionals cfg.defaultConfig (
+        [ ./nixvim-config.nix ] ++ lib.optional config.dotfiles.gossamer.enable ./nixvim-gossamer.nix
+      );
     };
   };
 }

@@ -15,6 +15,9 @@ The prezto config is kept, switched off on every host.
 - `vscodium/` mirrors `vscode/` over Home Manager's separate `programs.vscodium` (its own `~/.vscode-oss` and `~/.config/VSCodium`), so a host can enable both.
   Only `hosts/generic.nix` enables it.
 - `neovim/nixvim-config.nix` is the curated LSP and plugin set, imported when `dotfiles.neovim.defaultConfig` is on.
+  `neovim/nixvim-gossamer.nix` adds the gossamer plugin and LSP beside it.
+- Every editor's gossamer support, and the default of `dotfiles.ai.gossamer.enable`, follow `dotfiles.gossamer.enable` (in `gossamer/`, default on).
+  Setting it false keeps `pkgs.gossamer` and its LLVM toolchain out of the closure.
 - `zed/` carries the extension list as the `dotfiles.zed.extensions` default.
 
 ## home-manager/

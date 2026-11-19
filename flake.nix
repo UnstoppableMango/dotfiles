@@ -212,7 +212,10 @@
           ];
         };
 
-        nixvimModules.default = ./modules/neovim/nixvim-config.nix;
+        nixvimModules.default.imports = [
+          ./modules/neovim/nixvim-config.nix
+          ./modules/neovim/nixvim-gossamer.nix
+        ];
 
         homeConfigurations =
           let
