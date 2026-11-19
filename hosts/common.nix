@@ -9,6 +9,8 @@
 {
   nixpkgs.overlays = [ self.overlays.default ];
   nixpkgs.config.allowUnfree = true;
+  # BizHawk's Mono WinForms runtime has no gtk3 port; nixpkgs drops gtk2 before 27.05.
+  nixpkgs.config.problems.handlers."gtk+".broken = "warn";
 
   # Home Manager asserts `nix.package != null` whenever `nix.settings` is set.
   nix.package = lib.mkDefault pkgs.nix;
