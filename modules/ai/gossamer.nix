@@ -36,7 +36,8 @@ in
   options.dotfiles.ai.gossamer = {
     enable = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = config.dotfiles.gossamer.enable;
+      defaultText = lib.literalExpression "config.dotfiles.gossamer.enable";
       description = "Gossamer language support for Claude Code and Copilot CLI: gos lsp as the LSP server, and the skill-prompt content as a skill.";
     };
 

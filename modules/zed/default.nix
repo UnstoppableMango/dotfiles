@@ -99,22 +99,10 @@
 
         inherit (config.dotfiles.zed) extensions;
 
-        userSettings = {
-          # Run "zed: install dev extension" on ~/.config/zed/dev-extensions/gossamer
-          # once, and again after each gossamer package update.
-          languages.Gossamer.language_servers = [ "gossamer-lsp" ];
-          lsp.gossamer-lsp.binary = {
-            path = "${pkgs.gossamer}/bin/gos";
-            arguments = [ "lsp" ];
-          };
-        };
-
         extraPackages = with pkgs; [
           nil
         ];
       };
-
-      xdg.configFile."zed/dev-extensions/gossamer".source = pkgs.gossamer.passthru.editorSupport.zed;
 
       # Used only if the system nix.conf trusts this cache or the user.
       # Needs a non-null `nix.package`, which the nix instance owner sets.
@@ -124,6 +112,20 @@
           "zed.cachix.org-1:/pHQ6dpMsAZk2DiP4WCL0p9YDNKWj2Q5FL20bNmw1cU="
         ];
       };
+    })
+
+    (lib.mkIf (config.dotfiles.zed.enable && config.dotfiles.gossamer.enable) {
+      programs.zed-editor.userSettings = {
+        # Run "zed: install dev extension" on ~/.config/zed/dev-extensions/gossamer
+        # once, and again after each gossamer package update.
+        languages.Gossamer.language_servers = [ "gossamer-lsp" ];
+        lsp.gossamer-lsp.binary = {
+          path = "${pkgs.gossamer}/bin/gos";
+          arguments = [ "lsp" ];
+        };
+      };
+
+      xdg.configFile."zed/dev-extensions/gossamer".source = pkgs.gossamer.passthru.editorSupport.zed;
     })
 
     (lib.mkIf config.dotfiles.zed.enable {

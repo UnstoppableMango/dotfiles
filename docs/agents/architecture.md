@@ -46,7 +46,7 @@ Since `modules/default.nix` reads directories from disk, dropping a directory in
 
 `homeModules.dotfiles` is `./modules` plus `nix2git.homeModules.nix2git` and `tdl.homeModules.tdl`.
 Those two are folded in for opposite reasons: tdl declares the `programs.tdl.*` options this repo deliberately does not re-declare, while nix2git declares `nix2git.repositories`, which `modules/slip/` writes to, so the option has to exist wherever `./modules` does.
-`nixvimModules.default` exports `modules/neovim/nixvim-config.nix`, so `packages.nixvim` builds the same configuration standalone.
+`nixvimModules.default` exports `modules/neovim/nixvim-config.nix` and `modules/neovim/nixvim-gossamer.nix` together, so `packages.nixvim` builds the same configuration standalone.
 
 ## nixpkgs ownership
 

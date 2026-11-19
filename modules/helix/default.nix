@@ -11,6 +11,6 @@
     programs.helix.enable = true;
 
     # Highlighting stays plaintext until `hx --grammar fetch` and `build` run.
-    programs.helix.languages = pkgs.gossamer.passthru.editorSupport.helix.languages;
+    programs.helix.languages = lib.mkIf config.dotfiles.gossamer.enable pkgs.gossamer.passthru.editorSupport.helix.languages;
   };
 }
