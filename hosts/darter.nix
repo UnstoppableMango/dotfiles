@@ -59,6 +59,16 @@ in
     # Pop!_OS ships this helper built but not on PATH.
     git.settings.credential.helper = "/usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret";
 
+    # Not a clan machine, so the nixos repo's gc module never reaches this store.
+    nh = {
+      enable = true;
+      clean = {
+        enable = true;
+        dates = "weekly";
+        extraArgs = "--keep-since 14d --keep 5";
+      };
+    };
+
     fzf.enable = true;
     grep.enable = true;
     htop.enable = true;
