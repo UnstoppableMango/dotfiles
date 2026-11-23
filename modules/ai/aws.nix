@@ -40,8 +40,8 @@ let
     "amazon-bedrock"
     "aws-ai-ml"
     "aws-billing-and-cost-management"
-    "aws-blocks"
     "aws-cdk"
+    "aws-cdk-blocks"
     "aws-cloudformation"
     "aws-compute"
     "aws-containers"
@@ -53,7 +53,6 @@ let
     "aws-sdk-js-v3-usage"
     "aws-sdk-python-usage"
     "aws-sdk-swift-usage"
-    "aws-secrets-manager"
     "aws-serverless"
     "aws-storage"
     "launch-with-aws"
@@ -79,9 +78,7 @@ in
     (lib.mkIf (cfg.enable && cfg.aws.enable) {
       programs.claude-code.plugins."aws-core" = if cfg.aws.mcp.enable then awsCoreSrc else awsCoreNoMcp;
 
-      programs.github-copilot-cli.skills = lib.listToAttrs (
-        map (name: lib.nameValuePair name "${awsCoreSrc}/skills/${name}") skillNames
-      );
+      skills.install = map (name: "aws/agent-toolkit-for-aws@${name}") skillNames;
 
       home.packages = [
         pkgs.uv

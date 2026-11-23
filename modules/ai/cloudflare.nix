@@ -69,11 +69,8 @@ in
 
     programs.mcp.servers = mcpServers;
 
-    programs.github-copilot-cli = {
-      inherit mcpServers;
-      skills = lib.listToAttrs (
-        map (name: lib.nameValuePair name "${cloudflareSrc}/skills/${name}") skillNames
-      );
-    };
+    programs.github-copilot-cli = { inherit mcpServers; };
+
+    skills.install = map (name: "cloudflare/skills@${name}") skillNames;
   };
 }

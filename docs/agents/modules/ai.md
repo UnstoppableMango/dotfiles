@@ -13,8 +13,12 @@ Each MCP integration and third-party service (aws, azure, cloudflare, figma, sla
 - `omnigent.nix` installs omnigent and runs its server and host daemon; its model provider comes from `openrouter/omnigent.nix`.
 - `github.nix` wraps `claude` and `copilot` to export `GITHUB_PERSONAL_ACCESS_TOKEN` from the decrypted token file at launch, since both the Claude `github` plugin and Copilot CLI expand that variable in the server's `Authorization` header.
   The remote-control unit runs the wrapped `claude` through `finalPackage`.
+- Skills for agents other than Claude Code come from [skills-nix](https://github.com/z1-0/skills-nix): modules append `owner/repo@skill` entries to `skills.install`, and skills-nix pins each repo to the commit in its weekly `registry.json`, so `nix flake update skills-nix` bumps them all.
+  It installs to `~/.agents/skills`, which Copilot CLI reads, and `default.nix` adds the directory to Crush with `option skill-path`.
+  Claude Code does not read that directory, so it keeps its plugins (cloudflare, aws-core, i-have-adhd, mattpocock-skills), and `gh-stack.nix` links its one skill into `~/.claude/skills`.
+  skills-nix finds skills only at a repo's root, its top-level directories, and under `skills/`, and resolving them is import-from-derivation.
 - `mattpocock.nix` installs https://github.com/mattpocock/skills from `dotfiles.ai.mattpocock.src`.
-  Copilot CLI's skill list is read from that checkout's `.claude-plugin/plugin.json`, the same list the Claude Code plugin loads.
+  The skills-nix list is read from that checkout's `.claude-plugin/plugin.json`, the same list the Claude Code plugin loads, so a skill the registry pin lacks fails evaluation.
 
 ### coderabbit.nix
 
@@ -31,7 +35,7 @@ It carries over what the other agents get rather than declaring a third set: an 
 - MCP values are double-quoted, because the `${VAR}` references in `programs.mcp.servers` are left for the client to expand, and in a crushrc that client is a shell.
   `github.nix` sets `GITHUB_PERSONAL_ACCESS_TOKEN` at the top of the file.
 - Crush starts a browser sign-in only for a server marked `--oauth`, and a marked server will not connect until it has a token, so `dotfiles.ai.crush.oauthServers` names the ones that need it.
-- Crush reads `~/.claude/skills` by default; `mattpocock.nix` and `adhd.nix` add their plugin-only skills with `option skill-path`.
+- Crush reads `~/.claude/skills` by default, plus `~/.agents/skills` through `option skill-path`.
 
 ## modules/openrouter/
 

@@ -49,15 +49,13 @@ in
       type = lib.types.path;
       default = defaultSrc;
       defaultText = lib.literalExpression "pkgs.fetchFromGitHub { owner = \"mattpocock\"; repo = \"skills\"; ... }";
-      description = "Checkout of https://github.com/mattpocock/skills. Copilot CLI's skill list is read from its .claude-plugin/plugin.json, which is import-from-derivation when this is the default fetch rather than a flake input.";
+      description = "Checkout of https://github.com/mattpocock/skills. The skills-nix install list is read from its .claude-plugin/plugin.json, which is import-from-derivation when this is the default fetch rather than a flake input.";
     };
   };
 
   config = lib.mkIf (cfg.enable && cfg.mattpocock.enable) {
     programs.claude-code.plugins.mattpocock-skills = plugin;
 
-    programs.github-copilot-cli.skills = lib.genAttrs skillNames (name: "${plugin}/skills/${name}");
-
-    dotfiles.ai.crush.crushrc = "option skill-path ${plugin}/skills";
+    skills.install = map (name: "mattpocock/skills@${name}") skillNames;
   };
 }
