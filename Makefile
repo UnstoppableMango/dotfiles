@@ -8,6 +8,8 @@ else ifeq (${HOST},darter)
 HOME_CONFIG ?= erik@darter
 else ifeq (${HOST},hades)
 HOME_CONFIG ?= ${USER}@hades
+else ifeq (${HOST},theia)
+HOME_CONFIG ?= erik@theia
 else
 HOME_CONFIG ?= erik@server
 endif
