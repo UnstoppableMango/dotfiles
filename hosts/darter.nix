@@ -30,6 +30,7 @@ in
     c.enable = true;
     containers.enable = true;
     go.enable = true;
+    gossamer.enable = false;
     javascript.enable = true;
     kubernetes.enable = true;
     neovim.enable = true;
