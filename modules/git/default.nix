@@ -66,5 +66,7 @@ in
       enable = true;
       extensions = [ pkgs.gh-stack ];
     };
+
+    home.packages = [ pkgs.tea ];
   };
 }
