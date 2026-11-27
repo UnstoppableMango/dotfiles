@@ -33,3 +33,10 @@ The file route rather than `OCO_API_KEY`, since the `prepare-commit-msg` hook al
   `OCO_EMOJI` replaces the conventional-commit prompt with a GitMoji one that drops the type, so an assertion rejects the two together.
 - With OpenRouter on, `OCO_TOKENS_MAX_INPUT` is 128000.
   Below that limit oco drafts one message for the whole diff; above it, it drafts one per file chunk and joins them, which puts several title lines in one commit.
+
+## OAuth
+
+`git/oauth.nix` adds git-credential-oauth for each URL in `dotfiles.git.oauth.hosts`.
+The helper is set per URL, not globally, because a global oauth helper also starts a browser login for github.com, gitlab.com, and other hosts it knows.
+The `cache` helper comes before it, since git-credential-oauth only generates tokens and stores nothing.
+A host named `gitea.*` or `forgejo.*` uses the client that Gitea and Forgejo preregister, so it needs no client ID.

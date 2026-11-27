@@ -11,6 +11,7 @@ in
   imports = [
     ./git-spice.nix
     ./gitkraken.nix
+    ./oauth.nix
     ./opencommit.nix
     ./signing.nix
   ];

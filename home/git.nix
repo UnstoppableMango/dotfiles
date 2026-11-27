@@ -30,6 +30,7 @@
   dotfiles.git = {
     enable = true;
     spice.enable = true;
+    oauth.hosts = [ "https://gitea.thecluster.io" ];
 
     signing.allowedSigners = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKd+FX/6k9udgORS0uCLkvrKNaK5BXzsYYq1WaQ7+rOO erik@darter"
