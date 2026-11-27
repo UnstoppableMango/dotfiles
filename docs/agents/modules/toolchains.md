@@ -24,6 +24,6 @@ The tdl flake exports `homeModules.tdl` declaring `programs.tdl.*` (the CLI plus
 
 Submodules `k9s/`, `openshift/`, and `rosequartz/`, aggregated through `default.nix`.
 
-`rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, dex OIDC exec block).
+`rosequartz/` owns the shape of the rosequartz kubeconfig (contexts, VIP, Keycloak OIDC exec block).
 A host supplies the admin cert and key paths; omitting them yields the OIDC context alone, which is what darter takes.
 It also installs `kubelogin-oidc`, the `kubectl oidc-login` plugin that context calls.

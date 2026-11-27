@@ -28,8 +28,8 @@ let
   ++ [
     "- context:"
     "    cluster: ${cfg.clusterName}"
-    "    user: ${cfg.clusterName}-github"
-    "  name: ${cfg.clusterName}-github"
+    "    user: ${cfg.clusterName}-oidc"
+    "  name: ${cfg.clusterName}-oidc"
   ]
   ++ lib.optional (cfg.currentContext != null) "current-context: ${cfg.currentContext}"
   ++ [ "users:" ]
@@ -40,7 +40,7 @@ let
     "    client-key: ${cfg.admin.keyFile}"
   ]
   ++ [
-    "- name: ${cfg.clusterName}-github"
+    "- name: ${cfg.clusterName}-oidc"
     "  user:"
     "    exec:"
     "      apiVersion: client.authentication.k8s.io/v1"
@@ -69,7 +69,7 @@ in
       type = lib.types.str;
       default = "rosequartz";
       description = ''
-        Cluster name, and the stem for the `<name>-admin` and `<name>-github`
+        Cluster name, and the stem for the `<name>-admin` and `<name>-oidc`
         context and user names.
       '';
     };
@@ -122,25 +122,22 @@ in
     oidc = {
       issuerUrl = lib.mkOption {
         type = lib.types.str;
-        default = "https://dex.thecluster.io";
-        description = "OIDC issuer for the `<name>-github` user.";
+        default = "https://auth.thecluster.io/realms/thecluster";
+        description = "OIDC issuer for the `<name>-oidc` user.";
       };
 
       clientId = lib.mkOption {
         type = lib.types.str;
-        # Must match a staticClients id in the-cluster's apps/dex/helm-release.yml.
+        # The apiserver checks this as the ID token audience.
         default = "kubernetes";
-        description = "OIDC client id for the `<name>-github` user.";
+        description = "OIDC client id for the `<name>-oidc` user.";
       };
 
       extraScopes = lib.mkOption {
         type = with lib.types; listOf str;
-        # Required: the apiserver maps both claims, and Dex omits a claim
-        # whose scope was not granted, which fails the login.
-        default = [
-          "email"
-          "groups"
-        ];
+        # Empty: the Keycloak client's default scopes already grant `groups`,
+        # which the apiserver maps.
+        default = [ ];
         description = "Extra scopes requested by `kubectl oidc-login`.";
       };
     };
