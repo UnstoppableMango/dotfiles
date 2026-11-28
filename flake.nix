@@ -183,6 +183,8 @@
       url = "github:mattpocock/skills";
       flake = false;
     };
+
+    skills-nix.url = "github:z1-0/skills-nix";
   };
 
   outputs =
@@ -207,6 +209,7 @@
         homeModules = {
           dotfiles.imports = with inputs; [
             nix2git.homeModules.nix2git
+            skills-nix.homeModules.default
             tdl.homeModules.tdl
             ./modules
           ];

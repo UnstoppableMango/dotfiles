@@ -1180,6 +1180,7 @@
         "nixd": "nixd",
         "nixpkgs": "nixpkgs_2",
         "nixvim": "nixvim",
+        "skills-nix": "skills-nix",
         "slip": "slip",
         "sops-nix": "sops-nix",
         "stylix": "stylix",
@@ -1208,6 +1209,21 @@
       "original": {
         "owner": "oxalica",
         "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "skills-nix": {
+      "locked": {
+        "lastModified": 1795360259,
+        "narHash": "sha256-ICHlzIWTnMNihp5iyhP14QGlyJvdRKx0axMcCHjixmQ=",
+        "owner": "z1-0",
+        "repo": "skills-nix",
+        "rev": "ebca173da2642c2f698f2b2ea85b245f8c4a7d15",
+        "type": "github"
+      },
+      "original": {
+        "owner": "z1-0",
+        "repo": "skills-nix",
         "type": "github"
       }
     },

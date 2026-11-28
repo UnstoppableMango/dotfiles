@@ -80,6 +80,12 @@ in
   config = lib.mkIf cfg.enable {
     programs.mcp.enable = true;
 
+    # Copilot CLI reads ~/.agents/skills itself; Claude Code does not, so it keeps its plugins.
+    skills.enable = true;
+    dotfiles.ai.crush.crushrc = "option skill-path ${
+      lib.replaceStrings [ "~" ] [ config.home.homeDirectory ] config.skills.dir
+    }";
+
     programs.claude-code = {
       enable = true;
       context = ./global-context.md;

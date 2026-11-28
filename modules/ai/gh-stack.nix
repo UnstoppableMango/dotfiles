@@ -6,15 +6,8 @@
 }:
 let
   cfg = config.dotfiles.ai;
-
-  # https://github.com/github/gh-stack
-  ghStackSrc = pkgs.fetchFromGitHub {
-    owner = "github";
-    repo = "gh-stack";
-    rev = "ab00aa4a3f2dddc51aa65849c68b391a1b079311";
-    sha256 = "sha256-hyZbC4jEC7A7GJ9dn8coYeoC5MCk0Eei/W8EwsrSMo4=";
-  };
-  ghStackSkill = "${ghStackSrc}/skills/gh-stack";
+  home = config.home.homeDirectory;
+  claudeSkills = lib.removePrefix "${home}/" "${config.programs.claude-code.configDir}/skills";
 in
 {
   options.dotfiles.ai.ghStack = {
@@ -26,8 +19,12 @@ in
   };
 
   config = lib.mkIf (cfg.enable && cfg.ghStack.enable) {
-    programs.claude-code.skills.gh-stack = ghStackSkill;
-    programs.github-copilot-cli.skills.gh-stack = ghStackSkill;
+    skills.install = [ "github/gh-stack@gh-stack" ];
+
+    # Claude Code does not read the skills-nix directory, so it gets a link into it.
+    home.file."${claudeSkills}/gh-stack".source = config.lib.file.mkOutOfStoreSymlink "${
+      lib.replaceStrings [ "~" ] [ home ] config.skills.dir
+    }/gh-stack";
 
     programs.gh = {
       enable = true;
