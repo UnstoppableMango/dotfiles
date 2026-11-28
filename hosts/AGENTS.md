@@ -28,6 +28,7 @@ A host file lists the modules it turns on, plus what is true of that machine alo
 | `erik@darter`            | `darter.nix`        | Non-NixOS laptop; `targets.genericLinux`                                     |
 | `erik@hades`             | `hades.nix`         | NixOS desktop; imports `home/vscode/hades.nix`                               |
 | `erik@server`            | `server.nix`        | No machine has this name; `make build` falls back to it on other Linux boxes |
+| `erik@theia`             | `theia.nix`         | NixOS rosequartz worker with a GNOME session                                 |
 | `tz@hades`               | `tz-hades.nix`      | Second account on hades; imports nothing from `home/`                        |
 | `generic@container`      | `container.nix`     | The `packages.container` image; see [container](../docs/agents/container.md) |
 | `generic@x86_64-linux`   | `generic-linux.nix` | `generic.nix` plus the Linux-only desktop modules                            |
@@ -40,5 +41,7 @@ A host file lists the modules it turns on, plus what is true of that machine alo
 - `server.nix`: `home/account.nix` plus the floor, containers, and kubernetes.
   It skips the rest of `home/`, because the personal layer declares sops secrets encrypted to erik's laptop keys, which a server has no reason to hold.
   It gets oh-my-zsh and Powerlevel10k through `dotfiles.zsh.enable` and `dotfiles.zsh.ohMyZsh.enable`; a headless host that wants no prompt sets `dotfiles.zsh.p10kConfig = null`.
+- `theia.nix`: `server.nix`'s floor plus GNOME, Brave, ghostty, fonts and stylix, for the iMac's screen.
+  Like `server.nix` it skips the rest of `home/`, so it holds no sops secrets and GNOME runs without erik's dconf preferences.
 - `tz-hades.nix`: the nixos repo creates the account and installs the `home-manager` CLI for it.
 - `generic.nix`: turns most modules on, imports nothing from `home/`, and sets a throwaway account whose home directory follows the platform, so `homeModules.dotfiles` is built here rather than first breaking in someone else's flake.

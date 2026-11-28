@@ -16,7 +16,7 @@ make graph   # rebuild graphify-out/ after changing .nix files
 ```
 
 `make check` does not evaluate `homeConfigurations`, so validate a module change with `make build`.
-`make build` picks the configuration from `hostname -s` (darter and hades build their own, macOS builds `generic@aarch64-darwin`, any other Linux box builds `erik@server`).
+`make build` picks the configuration from `hostname -s` (darter, hades and theia build their own, macOS builds `generic@aarch64-darwin`, any other Linux box builds `erik@server`).
 Set `HOME_CONFIG` to build another, for example `make build HOME_CONFIG=erik@hades`.
 
 ## Architecture
