@@ -198,6 +198,7 @@
 
         home-manager.flakeModules.home-manager
         treefmt-nix.flakeModule
+        mynix.flakeModules.ci
       ];
 
       flake = {
@@ -276,6 +277,12 @@
               inherit (self.homeConfigurations."generic@container".config.home) username homeDirectory path;
               putterManifest = self.homeConfigurations."generic@container".config.home.internal.filePutterConfig;
             };
+          };
+
+          # Neither Hercules nor `nix flake check` builds homeConfigurations.
+          checks = lib.optionalAttrs (system == "x86_64-linux") {
+            home-erik-darter = self.homeConfigurations."erik@darter".activationPackage;
+            home-generic-x86_64-linux = self.homeConfigurations."generic@x86_64-linux".activationPackage;
           };
 
           devShells.default = pkgs.mkShellNoCC {

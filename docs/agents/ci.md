@@ -2,12 +2,18 @@
 
 ## CI
 
-`.github/workflows/ci.yml` runs three jobs:
+Hercules CI builds `herculesCI.onPush.default`: the x86_64-linux checks and packages, from `mynix.flakeModules.ci`.
+`nix flake check` does not evaluate `homeConfigurations`, so `perSystem.checks` exposes the activation packages of `erik@darter` and `generic@x86_64-linux`.
+CI builds no other x86_64-linux home configuration.
 
-- `check`, on the self-hosted `thecluster` runner: `nix flake check --all-systems`, then builds of `erik@darter` and `generic@x86_64-linux`, since `nix flake check` does not evaluate `homeConfigurations`.
-  CI builds no other x86_64-linux home configuration.
+`.github/workflows/ci.yml` runs these jobs:
+
+- `nix`, the hosted jobs and the Hercules wait from `unmango/ci`'s `nix-ci.yml`.
+- `required`, the gate for `main`'s ruleset: it needs `nix` and `darwin`.
+- `check`, on the self-hosted `thecluster` runner: `nix flake check --all-systems`, then builds of `erik@darter` and `generic@x86_64-linux`.
+  It stays until `required` replaces it in the ruleset.
 - `darwin`, on `macos-latest` (Apple Silicon): a real build of `generic@aarch64-darwin`.
-- `image`: builds `packages.container` on every run and pushes `ghcr.io/unstoppablemango/dotfiles` as `:latest` and `:<short-sha>` from `main` only.
+- `image`, outside the gate: builds `packages.container` on every run and pushes `ghcr.io/unstoppablemango/dotfiles` as `:latest` and `:<short-sha>` from `main` only.
 
 ## Cachix
 

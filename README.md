@@ -138,7 +138,7 @@ Note: `make build` and `make home` both act on the local flake (`$PWD`), so a sw
 
 Overridable variables: `NIX`, `HOMEMANAGER`, `WATCHEXEC` (all have defaults).
 
-CI runs `nix flake check --all-systems`, then builds the `erik@darter` home configuration, using the `unstoppablemango` [Cachix](https://www.cachix.org/) cache.
+[Hercules CI](https://hercules-ci.com/github/UnstoppableMango/dotfiles) builds the x86_64-linux checks and packages, which include the `erik@darter` and `generic@x86_64-linux` home configurations, and GitHub Actions builds `generic@aarch64-darwin`, using the `unstoppablemango` [Cachix](https://www.cachix.org/) cache.
 
 ## References and Links
 
