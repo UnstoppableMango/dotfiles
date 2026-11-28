@@ -15,7 +15,7 @@ make home    # switch home-manager from this checkout
 make graph   # rebuild graphify-out/ after changing .nix files
 ```
 
-`make check` does not evaluate `homeConfigurations`, so validate a module change with `make build`.
+`make check` builds only the `erik@darter` and `generic@x86_64-linux` home configurations (exposed as checks), so validate a module change with `make build`.
 `make build` picks the configuration from `hostname -s` (darter, hades and theia build their own, macOS builds `generic@aarch64-darwin`, any other Linux box builds `erik@server`).
 Set `HOME_CONFIG` to build another, for example `make build HOME_CONFIG=erik@hades`.
 
